@@ -1,1 +1,1 @@
-# SuBStrAte, the Similar Behaving Statements Aggregator
+SuBStrAte, the Similar Behaving Statements Aggregator.
