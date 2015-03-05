@@ -27,3 +27,13 @@
 *.i*86
 *.x86_64
 *.hex
+
+# cmake generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+bin/
+cmake_install.cmake
+
+#binary file
+substrate
