@@ -1,5 +1,5 @@
-#ifndef __OPTIONS_H
-#define __OPTIONS_H
+#ifndef __SUBSTRATE__OPTIONS_H
+#define __SUBSTRATE__OPTIONS_H
 
 #include <stdio.h>
 #include <stdbool.h>
