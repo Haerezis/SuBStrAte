@@ -20,8 +20,12 @@ set(osl_DIR ${substrate_SOURCE_DIR}/osl/)
 find_package(osl REQUIRED)
 
 add_executable(substrate
-    src/substrate.c
+    src/reuse.c
+    src/statement_profile.c
+    src/analyze.c
+    src/optimization.c
     src/options.c
+    src/substrate.c
     )
 
 target_link_libraries(substrate ${OSL_LIBRARY})

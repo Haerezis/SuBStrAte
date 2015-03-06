@@ -4,18 +4,23 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-struct substrate__options
+struct substrate_options
 {
     FILE * input_file;
     FILE * output_file;
     bool row_major;
 };
 
-extern struct substrate__options g_substrate__options;
+extern struct substrate_options g_substrate_options;
 
 
-void substrate__parse_options(int argc, char** argv);
-void substrate__print_help(char *program_name, FILE *output);
+void substrate_parse_options(
+        int argc,
+        char** argv);
+
+void substrate_print_help(
+        char *program_name,
+        FILE *output);
 
 
 #endif

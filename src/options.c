@@ -10,69 +10,73 @@ extern "C"
 {
 #endif
 
-struct substrate__options g_substrate__options;
+struct substrate_options g_substrate_options;
 
 
-void substrate__parse_options(int argc, char** argv)
+void substrate_parse_options(
+        int argc,
+        char** argv)
 {
     int i = 0;
     bool arguments_check = 1;
 
     //base options
-    g_substrate__options.input_file = NULL;
-    g_substrate__options.output_file = stdout;
-    g_substrate__options.row_major = 1;
+    g_substrate_options.input_file = NULL;
+    g_substrate_options.output_file = stdout;
+    g_substrate_options.row_major = 1;
 
     for(i=1 ; i<argc ; i++)
     {
         if( (strcmp(argv[i],"-h") && strcmp(argv[i],"--help")) == 0 )
         {
-            substrate__print_help(argv[0],stdout);
+            substrate_print_help(argv[0],stdout);
             exit(EXIT_SUCCESS);
         }
         else if( (strcmp(argv[i],"-o") && strcmp(argv[i],"--output")) == 0 )
         {
             if(((i+1) < argc) && (argv[i+1][0] != '-'))
             {
-                g_substrate__options.output_file = fopen(argv[i+1],"w");
+                g_substrate_options.output_file = fopen(argv[i+1],"w");
                 i++;
             }
             else
             {
                 fprintf(stderr,"No output filename has beed given\n");
-                substrate__print_help(argv[0],stderr);
+                substrate_print_help(argv[0],stderr);
                 exit(EXIT_FAILURE);
             }
         }
         else if(strcmp(argv[i],"--column-major") == 0)
         {
-            g_substrate__options.row_major = 0;
+            g_substrate_options.row_major = 0;
         }
         //else if(strcmp(argv[i],"") == 0)
         else if(argv[i][0] == '-')
         {
             fprintf(stderr,"Unknown options '%s'\n",argv[i]);
-            substrate__print_help(argv[0],stderr);
+            substrate_print_help(argv[0],stderr);
             exit(EXIT_FAILURE);
         }
-        else if(g_substrate__options.input_file == NULL)
+        else if(g_substrate_options.input_file == NULL)
         {
-            g_substrate__options.input_file = fopen(argv[i],"r");
+            g_substrate_options.input_file = fopen(argv[i],"r");
         }
     }
 
     //Test if required arguments were provided
-    arguments_check = arguments_check && g_substrate__options.input_file != NULL;
+    arguments_check = arguments_check && g_substrate_options.input_file != NULL;
 
     if(arguments_check != 1)
     {
         fprintf(stderr,"Some required arguments are missing\n");
-        substrate__print_help(argv[0],stderr);
+        substrate_print_help(argv[0],stderr);
         exit(EXIT_FAILURE);
     }
 }
 
-void substrate__print_help(char *program_name,FILE * output)
+void substrate_print_help(
+        char *program_name,
+        FILE * output)
 {
     fprintf(output,"Usage : %s", program_name);
     fprintf(output," [-h]");
