@@ -21,6 +21,7 @@ find_package(osl REQUIRED)
 
 add_executable(substrate
     src/substrate.c
+    src/options.c
     )
 
 target_link_libraries(substrate ${OSL_LIBRARY})
