@@ -11,8 +11,19 @@
 
 int main(int argc,char** argv)
 {
+    osl_scop_p input_scop = NULL;
+    osl_scop_p output_scop = NULL;
+
     substrate__parse_options(argc,argv);
 
-    printf("Hello World !\n");
+
+    input_scop = osl_scop_read(g_substrate__options.input_file);
+    output_scop = osl_scop_clone(input_scop);
+    osl_scop_print(stdout,output_scop);
+
+
+    osl_scop_free(input_scop);
+    osl_scop_free(output_scop);
+
     return 0;
 }
