@@ -16,7 +16,7 @@ struct substrate__options g_substrate__options;
 void substrate__parse_options(int argc, char** argv)
 {
     int i = 0;
-    bool arguments_check = 0;
+    bool arguments_check = 1;
 
     //base options
     g_substrate__options.input_file = NULL;
@@ -57,7 +57,7 @@ void substrate__parse_options(int argc, char** argv)
         }
         else if(g_substrate__options.input_file == NULL)
         {
-            g_substrate__options.input_file = fopen(argv[i+1],"r");
+            g_substrate__options.input_file = fopen(argv[i],"r");
         }
     }
 
@@ -68,6 +68,7 @@ void substrate__parse_options(int argc, char** argv)
     {
         fprintf(stderr,"Some required arguments are missing\n");
         substrate__print_help(argv[0],stderr);
+        exit(EXIT_FAILURE);
     }
 }
 

@@ -11,7 +11,7 @@ struct substrate__options
     bool row_major;
 };
 
-extern struct substrate__options substrate_options;
+extern struct substrate__options g_substrate__options;
 
 
 void substrate__parse_options(int argc, char** argv);
