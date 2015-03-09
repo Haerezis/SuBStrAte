@@ -44,7 +44,7 @@ void substrate_equivalence_class_free(
         struct substrate_equivalence_class * ec)
 {
     substrate_reuse_space_free(&ec->reuse_space);
-    free(ec->array_reference_indexes);
+    free(ec->array_references);
     ec->size = 0;
     ec->max_size = 0;
 }
@@ -52,7 +52,7 @@ void substrate_equivalence_class_free(
 void substrate_reuse_space_free(
         struct substrate_reuse_space * rp)
 {
-    free(rp->vector_indexes);
+    free(rp->spanning_vector_indexes);
     rp->size = 0;
     rp->max_size = 0;
 

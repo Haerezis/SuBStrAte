@@ -1,17 +1,18 @@
 #ifndef __SUBSTRATE__REUSE_STRUCT_H
 #define __SUBSTRATE__REUSE_STRUCT_H
 
+#include <osl/osl.h>
 
 struct substrate_reuse_space
 {
-    unsigned int * vector_indexes;
+    unsigned int * spanning_vector_indexes;
     unsigned int size;
     unsigned int max_size;
 };
 
 struct substrate_equivalence_class
 {
-    unsigned int * array_reference_indexes;
+    struct osl_relation * array_references;
     unsigned int size;
     unsigned int max_size;
     struct substrate_reuse_space reuse_space;
@@ -19,6 +20,8 @@ struct substrate_equivalence_class
 
 struct substrate_uniformly_generated_set
 {
+    struct osl_relation * H_matrix;
+
     struct substrate_equivalence_class * temporal_classes;
     unsigned int temporal_size;
     unsigned int temporal_max_size;
@@ -45,17 +48,22 @@ struct substrate_reuse_profile
 };
 
 
+
 void substrate_reuse_profile_free(
         struct substrate_reuse_profile * rp);
+
 
 void substrate_array_profile_free(
         struct substrate_array_profile * ap);
 
+
 void substrate_uniformly_generated_set_free(
         struct substrate_uniformly_generated_set * ugs);
 
+
 void substrate_equivalence_class_free(
         struct substrate_equivalence_class * ec);
+
 
 void substrate_reuse_space_free(
         struct substrate_reuse_space * rp);
