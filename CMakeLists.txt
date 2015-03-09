@@ -20,6 +20,7 @@ set(osl_DIR ${substrate_SOURCE_DIR}/osl/)
 find_package(osl REQUIRED)
 
 add_executable(substrate
+    src/reuse_struct.c
     src/reuse.c
     src/statement_profile.c
     src/analyze.c
