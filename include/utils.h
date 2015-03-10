@@ -13,4 +13,7 @@ struct substrate_osl_int_set {
 struct substrate_osl_int_set substrate_array_id_set_from_access_relations(
         struct osl_relation_list * rl);
 
+struct osl_relation_list * substrate_remove_duplicate_H_matrix(
+        struct osl_relation_list * rl);
+
 #endif
