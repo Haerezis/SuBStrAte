@@ -29,7 +29,7 @@ struct substrate_uniformly_generated_set
 
 struct substrate_array_profile
 {
-    unsigned int array_id;
+    osl_int_t array_id;
     struct substrate_uniformly_generated_set * uniformly_gen_sets;
     unsigned int size;
 };
