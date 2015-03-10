@@ -7,14 +7,12 @@ struct substrate_reuse_space
 {
     unsigned int * spanning_vector_indexes;
     unsigned int size;
-    unsigned int max_size;
 };
 
 struct substrate_equivalence_class
 {
     struct osl_relation * array_references;
     unsigned int size;
-    unsigned int max_size;
     struct substrate_reuse_space reuse_space;
 };
 
@@ -24,11 +22,9 @@ struct substrate_uniformly_generated_set
 
     struct substrate_equivalence_class * temporal_classes;
     unsigned int temporal_size;
-    unsigned int temporal_max_size;
 
     struct substrate_equivalence_class * spatial_classes;
     unsigned int spatial_size;
-    unsigned int spatial_max_size;
 };
 
 struct substrate_array_profile
@@ -36,7 +32,6 @@ struct substrate_array_profile
     unsigned int array_id;
     struct substrate_uniformly_generated_set * uniformly_gen_sets;
     unsigned int size;
-    unsigned int max_size;
 };
 
 struct substrate_reuse_profile
@@ -44,7 +39,6 @@ struct substrate_reuse_profile
     struct osl_statement * osl_statement;
     struct substrate_array_profile * array_profiles;
     unsigned int size;
-    unsigned int max_size;
 };
 
 
