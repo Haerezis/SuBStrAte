@@ -17,7 +17,7 @@ struct substrate_array_profile substrate_generate_array_profile(
 
 //génère l'uniformly_generated_set : compte le nombre de classes et groupe les
 //références dans leurs classes
-struct substrate_uniformly_generated_set substrate_generate_uniformly_generated_set(
+struct substrate_uniformly_generated_set substrate_generate_uniformly_gen_set(
         struct osl_statement * statement,
         unsigned int array_index,
         struct osl_relation * H_matrix);

@@ -16,15 +16,15 @@ int main(int argc,char** argv)
 {
     osl_scop_p input_scop = NULL;
     osl_scop_p output_scop = NULL;
-    struct substrate_statement_profile * statement_profiles = NULL;
+    struct substrate_scop_profile scop_profile;
 
-    substrate_parse_options(argc,argv);
+    substrate_parse_options(argc, argv);
 
 
     input_scop = osl_scop_read(g_substrate_options.input_file);
-    statement_profiles = substrate_analyze(input_scop);
-    output_scop = substrate_optimize(statement_profiles,input_scop);
-    osl_scop_print(stdout,output_scop);
+    scop_profile = substrate_analyze(input_scop);
+    output_scop = substrate_optimize(scop_profile);
+    osl_scop_print(stdout, output_scop);
 
 
     osl_scop_free(input_scop);

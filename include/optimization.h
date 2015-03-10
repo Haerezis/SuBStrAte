@@ -6,8 +6,7 @@
 #include "statement_profile.h"
 
 struct osl_scop * substrate_optimize(
-        struct substrate_statement_profile * statement_profiles,
-        struct osl_scop * scope);
+        struct substrate_scop_profile scop_profile);
 
 
 #endif
