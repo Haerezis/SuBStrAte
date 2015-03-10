@@ -21,6 +21,7 @@ find_package(osl REQUIRED)
 #find_package(GMP REQUIRED)
 
 add_executable(substrate
+    src/utils.c
     src/reuse_struct.c
     src/reuse.c
     src/statement_profile.c
