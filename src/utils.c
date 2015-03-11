@@ -6,49 +6,162 @@
 
 #define SIZE 16
 
-struct substrate_osl_int_set substrate_array_id_set_from_access_relations(
+
+void substrate_osl_relation_list_set_realloc(
+        struct substrate_osl_relation_list_set * set)
+{
+    if(set->size == set->max_size)
+    {
+        set->set = (struct osl_relation_list**) realloc(
+                set->set,
+                2 * set->max_size * sizeof(struct osl_relation_list*));
+        set->max_size *= 2;
+    }
+}
+
+
+osl_int_t substrate_get_array_id_from_access_relation(
+        struct osl_relation * rel)
+{
+    return rel->m[0][rel->nb_columns-1];
+}
+
+
+struct substrate_osl_relation_list_set substrate_group_access_relations_by_array(
         struct osl_relation_list * rl)
 {
-    struct substrate_osl_int_set array_id_set = {NULL,0,0};
+    struct substrate_osl_relation_list_set access_relations_groups = {NULL,0,0};
 
     unsigned int i = 0;
     struct osl_relation * current_relation = NULL;
+    struct osl_relation_list * next_rel_list = NULL;
+    struct osl_relation_list * tmp_rel_list = NULL;
     osl_int_t current_array_id;
+    osl_int_t tmp_array_id;
 
     //Initial allocation of the array containing the set
-    array_id_set.set = (osl_int_t*) malloc(SIZE * sizeof(osl_int_t));
-    array_id_set.max_size = SIZE;
+    access_relations_groups.max_size = SIZE;
+    access_relations_groups.size = 0;
+    access_relations_groups.set = (struct osl_relation_list**)
+        malloc(SIZE * sizeof(struct osl_relation_list*));
+
 
     while(rl != NULL)
     {
-        current_relation = rl->elt;
-        current_array_id = current_relation->m[0][current_relation->nb_columns-1];
+        //unlink rl from the main list because it will be added to a group later,
+        //as the last elt of the group/list, so it need have its next field at NULL
+        next_rel_list = rl->next;
+        rl->next = NULL;
 
-        for(i=0; i<array_id_set.size ; i++)
+        current_relation = rl->elt;
+        current_array_id = substrate_get_array_id_from_access_relation(current_relation);
+
+        //We check if there's already a group for the array of the current access relation
+        for(i=0; i<access_relations_groups.size ; i++)
         {
-            if(osl_int_eq(current_relation->precision, array_id_set.set[i],current_array_id))
+            tmp_array_id = substrate_get_array_id_from_access_relation(
+                    access_relations_groups.set[i]->elt);
+
+            if(osl_int_eq(current_relation->precision, tmp_array_id, current_array_id))
                 break;
         }
-        if(i >= array_id_set.size)
+        if(i >= access_relations_groups.size)
         {
-            if(array_id_set.size == array_id_set.max_size)
-            {
-                array_id_set.set = (osl_int_t*) realloc(
-                        array_id_set.set,
-                        2 * array_id_set.max_size * sizeof(osl_int_t));
-                array_id_set.max_size *= 2;
-            }
-            array_id_set.set[array_id_set.size] = current_array_id;
-            array_id_set.size++;
+            //If no group has been found, we need to create a new one (and possibly
+            //increase the size of the set of groups).
+            
+            substrate_osl_relation_list_set_realloc(&access_relations_groups);
+            
+            access_relations_groups.set[access_relations_groups.size] = rl;
+            access_relations_groups.size++;
         }
-
-        rl=rl->next;
+        else
+        {
+            //If a group was found, we iterate to the end of the list
+            //to add the new elt to the tail
+            tmp_rel_list = access_relations_groups.set[i];
+            while(tmp_rel_list->next != NULL) tmp_rel_list = tmp_rel_list->next;
+            tmp_rel_list->next = rl;
+        }
+        
+        rl = next_rel_list;
     }
 
-    return array_id_set;
+    return access_relations_groups;
 }
 
-bool substrate_different_H_matrix(
+
+
+struct substrate_osl_relation_list_set substrate_group_access_relations_by_H_matrix(
+        struct osl_relation_list * rl)
+{
+    struct substrate_osl_relation_list_set uniformly_generated_set_list = {NULL,0,0};
+    struct osl_relation_list
+        *next_relation_list = NULL,
+        *tmp = NULL;
+    unsigned int i = 0;
+
+    //Initial allocation of the array containing the set
+    uniformly_generated_set_list.max_size = SIZE;
+    uniformly_generated_set_list.size = 0;
+    uniformly_generated_set_list.set = (struct osl_relation_list**)
+        malloc(SIZE * sizeof(struct osl_relation_list*));
+
+    while(rl != NULL)
+    {
+        //unlink rl from the main list because it will be added to a group later,
+        //as the last elt of the group/list, so it need have its next field at NULL
+        next_relation_list = rl->next;
+        rl->next = NULL;
+
+        //We look all the already created Uniformly Generated Set (access matrix with a same H, Wolf91)
+        //if there is one with the same H matrix of the current access matrix.
+        for(i=0; i<uniformly_generated_set_list.size ; i++)
+        {
+            if(substrate_H_matrix_eq(uniformly_generated_set_list.set[i]->elt, rl->elt))
+                break;
+        }
+
+        if(i < uniformly_generated_set_list.size)
+        {
+            //If we've found an already created Uniformly Generated Set for this H matrix,
+            //we just add the current access matrix to the tail of the list (of the set).
+
+            //We iterate to the end of the list to add the new elt to the tail
+            tmp = uniformly_generated_set_list.set[i];
+            while(tmp->next != NULL) tmp = tmp->next;
+
+        }
+        else
+        {
+            //If we haven't found an already created Unfirmly Generated Set,
+            //we just create one by adding the current access matrix to the next
+            //spot in the list.
+            
+            //We just check that there is still space for a new group/set, if not
+            //a realloc is performed.
+            substrate_osl_relation_list_set_realloc(&uniformly_generated_set_list);
+            
+            uniformly_generated_set_list.set[uniformly_generated_set_list.size] = rl;
+            uniformly_generated_set_list.size++;
+
+        }
+
+        rl = next_relation_list;
+    }
+
+    return uniformly_generated_set_list;
+}
+
+
+
+
+
+
+
+
+
+bool substrate_H_matrix_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2)
 {
@@ -59,10 +172,13 @@ bool substrate_different_H_matrix(
     //its value could have been access_relation1 or access_relation2, because the
     //two relations should share the same nb_rows/nb_output_dims/nb_input_dims
     struct osl_relation * ar = access_relation1;
-    
+   
+    //The H matrix start at line 1 to line ar->nb_intput_dims included, and start
+    //at column 1+nb_output_dims to column 1+nb_output_dims+nb_input_dims.
+    //The size of the matrix should be nb_input_dims*nb_input_dims
     for(l = 1 ; l < (ar->nb_input_dims+1) ; l++)
     {
-        for(c = 1 + ar->nb_output_dims ; c < (1+ar->nb_output_dims+ar->nb_input_dims ; c++)
+        for(c = 1 + ar->nb_output_dims ; c < (1+ar->nb_output_dims+ar->nb_input_dims) ; c++)
         {
             if(osl_int_ne(ar->precision,access_relation1->m[l][c],access_relation2->m[l][c]))
             {
@@ -75,47 +191,9 @@ bool substrate_different_H_matrix(
     return result;
 }
 
-struct osl_relation_list * substrate_remove_duplicate_H_matrix(
-        struct osl_relation_list * rl)
+bool substrate_H_matrix_neq(
+        struct osl_relation * access_relation1,
+        struct osl_relation * access_relation2)
 {
-    struct osl_relation_list
-        *returned_list = NULL,
-        *current_relation = NULL,
-        *tmp = NULL;
-
-    returned_list = osl_relation_list_clone(rl);
-
-    //We don't start with the first item because the first item can't have
-    //a duplicate H matrix, because it's the first item of the list.
-    current_relation = returned_list;
-    while(current_relation->next != NULL)
-    {
-        //We look from the beginning of the list with tmp if an access matrix contains
-        //the same H matrix as the current_relation->next access matrix
-        tmp = returned_list;
-        while(  (tmp != current_relation->next)
-                && substrate_different_H_matrix(tmp->elt, current_relation->next->elt))
-        {
-            tmp=tmp->next;
-        }
-        if(tmp != current_relation->next)
-        {
-            //if that's the case, we remove current_relation->next of the list
-            //because it contains the same H matrix as one of its predecessor.
-            tmp = current_relation->next;
-            current_relation->next = current_relation->next->next;
-
-            tmp->next = NULL;
-            osl_relation_list_free(tmp);
-            tmp = NULL;
-        }
-        else
-        {
-            //if no access relation math the current_relation->next H matrix,
-            //then we iterate in the list.
-            current_relation = current_relation->next;
-        }
-    }
-
-    return returned_list;
+    return ! substrate_H_matrix_eq(access_relation1,access_relation2);
 }
