@@ -13,17 +13,18 @@ struct substrate_reuse_profile substrate_generate_reuse_profile(
 //et appelle generate_uniformly_generated_set pour chaque
 struct substrate_array_profile substrate_generate_array_profile(
         struct osl_statement * statement,
-        osl_int_t array_index);
+        struct osl_relation_list * array_access_rel_list);
 
 //génère l'uniformly_generated_set : compte le nombre de classes et groupe les
 //références dans leurs classes
 struct substrate_uniformly_generated_set substrate_generate_uniformly_gen_set(
-        struct osl_statement * statement,
-        osl_int_t array_index,
-        struct osl_relation * H_matrix);
+        struct osl_relation_list * uniformly_generated_set);
 
 //génère le reuse_space à partir de la classe d'equivalence
 struct substrate_equivalence_class substrate_generate_reuse_space(
-        struct substrate_equivalence_class * ec); 
+        struct substrate_equivalence_class * ec);
+
+
+
 
 #endif

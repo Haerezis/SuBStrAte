@@ -11,7 +11,7 @@ struct substrate_reuse_space
 
 struct substrate_equivalence_class
 {
-    struct osl_relation * array_references;
+    struct osl_relation_list * array_references;
     unsigned int size;
     struct substrate_reuse_space reuse_space;
 };
