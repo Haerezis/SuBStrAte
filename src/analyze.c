@@ -28,7 +28,7 @@ struct substrate_scop_profile substrate_analyze(struct osl_scop * scop)
     for(i=0; i<scop_profile.size ; i++)
     {
         statement_profiles[i].osl_statement = statement;
-        statement_profiles[i].reuse = substrate_generate_reuse_profile(statement);
+        statement_profiles[i].reuse = substrate_reuse_profile_constructor(statement);
     }
 
     return scop_profile;
