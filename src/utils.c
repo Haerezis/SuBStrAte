@@ -2,7 +2,9 @@
 #include <stdbool.h>
 
 #include "utils.h"
+
 #include "osl/int.h"
+#include "options.h"
 
 #define SIZE 16
 
@@ -115,7 +117,7 @@ bool substrate_H_matrix_eq(
     //The H matrix start at line 1 to line ar->nb_intput_dims included, and start
     //at column 1+nb_output_dims to column 1+nb_output_dims+nb_input_dims.
     //The size of the matrix should be nb_input_dims*nb_input_dims
-    for(l = 1 ; l < (ar->nb_input_dims+1) ; l++)
+    for(l = 1 ; l < ar->nb_output_dims ; l++)
     {
         for(c = 1 + ar->nb_output_dims ; c < (1+ar->nb_output_dims+ar->nb_input_dims) ; c++)
         {
@@ -138,6 +140,40 @@ bool substrate_H_matrix_neq(
 }
 
 
+bool substrate_access_class_eq(
+        struct osl_relation * access_relation1,
+        struct osl_relation * access_relation2)
+{
+    bool result = true;
+    int l = 0, c = 0;
+    int row_major = 0, column_major = 0;
+
+    //ar is created only to avoid using long named variable like access_relation1
+    //its value could have been access_relation1 or access_relation2, because the
+    //two relations should share the same nb_rows/nb_output_dims/nb_input_dims
+    struct osl_relation * ar = access_relation1;
+
+    row_major = g_substrate_options.row_major ? 1 : 0;
+    column_major = g_substrate_options.row_major ? 0 : 1;
+   
+    //The H matrix start at line 1 to line ar->nb_intput_dims included, and start
+    //at column 1+nb_output_dims to column 1+nb_output_dims+nb_input_dims.
+    //The size of the matrix should be nb_input_dims*nb_input_dims
+    for(l = 1+column_major ; l < (ar->nb_output_dims-row_major) ; l++)
+    {
+        for(c=(ar->nb_columns - ar->nb_parameters - 1) ; c < ar->nb_columns ; c++)
+        {
+            if(osl_int_ne(ar->precision,access_relation1->m[l][c],access_relation2->m[l][c]))
+            {
+                result = false;
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+/*
 bool substrate_temporal_class_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2)
@@ -151,3 +187,4 @@ bool substrate_spatial_class_eq(
 {
     return true;//TODO
 }
+*/

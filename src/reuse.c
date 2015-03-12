@@ -31,7 +31,6 @@ struct substrate_reuse_profile substrate_reuse_profile_constructor(
     for(i=0 ; i<relation_groups_set.size ; i++)
     {
         reuse_profile.array_profiles[i] = substrate_array_profile_constructor(
-                statement,
                 relation_groups_set.set[i]);
     }
 
@@ -39,7 +38,6 @@ struct substrate_reuse_profile substrate_reuse_profile_constructor(
 }
 
 struct substrate_array_profile substrate_array_profile_constructor(
-        struct osl_statement * statement,
         struct osl_relation_list * array_access_rel_list)
 {
     struct substrate_array_profile array_profile;
@@ -81,10 +79,10 @@ struct substrate_uniformly_generated_set substrate_uniformly_gen_set_constructor
 
     temporal_classes = substrate_group_access_relations_by(
             osl_relation_list_clone(uniformly_generated_set),
-            substrate_temporal_class_eq);
+            substrate_access_class_eq);
     spatial_classes = substrate_group_access_relations_by(
             osl_relation_list_clone(uniformly_generated_set),
-            substrate_spatial_class_eq);
+            substrate_access_class_eq);
 
     
     uni_gen_set.H_matrix = uniformly_generated_set->elt;

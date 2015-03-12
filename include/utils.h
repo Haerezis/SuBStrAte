@@ -31,11 +31,15 @@ bool substrate_H_matrix_neq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2);
 
-bool substrate_temporal_class_eq(
+bool substrate_access_class_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2);
 
 bool substrate_spatial_class_eq(
+        struct osl_relation * access_relation1,
+        struct osl_relation * access_relation2);
+
+bool substrate_temporal_class_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2);
 #endif
