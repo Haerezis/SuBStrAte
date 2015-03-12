@@ -21,14 +21,11 @@ struct substrate_uniformly_generated_set substrate_uniformly_gen_set_constructor
         struct osl_relation_list * uniformly_generated_set);
 
 
-struct substrate_equivalence_class substrate_equivalence_class_constructor(
-        );
-
-//génère le reuse_space à partir de la classe d'equivalence
-struct substrate_equivalence_class substrate_reuse_space_constructor(
-        struct substrate_equivalence_class * ec);
+struct substrate_equivalence_class substrate_temporal_equivalence_class_constructor(
+        struct osl_relation_list * array_references);
 
 
-
+struct substrate_equivalence_class substrate_spatial_equivalence_class_constructor(
+        struct osl_relation_list * array_references);
 
 #endif

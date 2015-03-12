@@ -15,8 +15,9 @@ struct substrate_reuse_profile substrate_reuse_profile_constructor(
 
     //We class the different access relation according to the array of the access
     //relation : each array reference of the statement should have a group.
-    relation_groups_set = substrate_group_access_relations_by_array(
-            osl_relation_list_clone(statement->access));
+    relation_groups_set = substrate_group_access_relations_by(
+            osl_relation_list_clone(statement->access),
+            substrate_array_id_eq);
 
     //We will create a profile for each array, and there will be as many array
     //profile as there is access relation group, so we use relation_groups_set 
@@ -47,8 +48,9 @@ struct substrate_array_profile substrate_array_profile_constructor(
 
     //We group all the access relation by their H matrix.
     //Each group correspond to a Uniformly Generated Set.
-    uniformly_generated_set_list = substrate_group_access_relations_by_H_matrix(
-            osl_relation_list_clone(array_access_rel_list));
+    uniformly_generated_set_list = substrate_group_access_relations_by(
+            osl_relation_list_clone(array_access_rel_list),
+            substrate_H_matrix_eq);
 
     //All the array id in array_access_rel_list should be the same so we get 1st.
     //There will be as much substrate_uniformly_generated_set in array_profile as
@@ -73,24 +75,61 @@ struct substrate_uniformly_generated_set substrate_uniformly_gen_set_constructor
         struct osl_relation_list * uniformly_generated_set)
 {
     struct substrate_uniformly_generated_set uni_gen_set = {NULL,NULL,0,NULL,0};
+    struct substrate_osl_relation_list_set temporal_classes;
+    struct substrate_osl_relation_list_set spatial_classes;
+    unsigned int i = 0;
 
-    uni_gen_set.H_matrix = uniformly_generated_set->elt;
+    temporal_classes = substrate_group_access_relations_by(
+            osl_relation_list_clone(uniformly_generated_set),
+            substrate_temporal_class_eq);
+    spatial_classes = substrate_group_access_relations_by(
+            osl_relation_list_clone(uniformly_generated_set),
+            substrate_spatial_class_eq);
+
     
+    uni_gen_set.H_matrix = uniformly_generated_set->elt;
+    uni_gen_set.temporal_classes = (struct substrate_equivalence_class*)
+        malloc(temporal_classes.size * sizeof(struct substrate_equivalence_class));
+    uni_gen_set.temporal_size = temporal_classes.size;
+    uni_gen_set.spatial_classes = (struct substrate_equivalence_class*)
+        malloc(spatial_classes.size * sizeof(struct substrate_equivalence_class));
+    uni_gen_set.spatial_size = spatial_classes.size;
+
+    for(i=0; i<uni_gen_set.temporal_size ; i++)
+    {
+        uni_gen_set.temporal_classes[i] = 
+            substrate_temporal_equivalence_class_constructor(temporal_classes.set[i]);
+    }
+    for(i=0; i<uni_gen_set.spatial_size ; i++)
+    {
+        uni_gen_set.spatial_classes[i] = 
+            substrate_spatial_equivalence_class_constructor(spatial_classes.set[i]);
+    }
 
     return uni_gen_set;
 }
 
 
-struct substrate_equivalence_class substrate_equivalence_class_constructor()
+struct substrate_equivalence_class substrate_temporal_equivalence_class_constructor(
+        struct osl_relation_list * array_references)
 {
     struct substrate_equivalence_class eq_class = {NULL,0,{NULL,0}};
 
     return eq_class;
 }
 
+struct substrate_equivalence_class substrate_spatial_equivalence_class_constructor(
+        struct osl_relation_list * array_references)
+{
+    struct substrate_equivalence_class eq_class = {NULL,0,{NULL,0}};
+
+    return eq_class;
+}
+/*
 struct substrate_equivalence_class substrate_reuse_space_constructor(
         struct substrate_equivalence_class * ec)
 {
     struct substrate_equivalence_class tmp;
     return tmp;
 }
+*/
