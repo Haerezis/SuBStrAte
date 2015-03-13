@@ -49,21 +49,26 @@ struct substrate_reuse_profile
 
 void substrate_reuse_profile_free(
         struct substrate_reuse_profile * rp);
-
-
 void substrate_array_profile_free(
         struct substrate_array_profile * ap);
-
-
 void substrate_uniformly_generated_set_free(
         struct substrate_uniformly_generated_set * ugs);
-
-
 void substrate_equivalence_class_free(
         struct substrate_equivalence_class * ec);
-
-
 void substrate_reuse_space_free(
         struct substrate_reuse_space * rp);
 
+
+void substrate_reuse_profile_dump(
+        FILE * output_stream,
+        struct substrate_reuse_profile * rp);
+void substrate_array_profile_dump(
+        FILE * output_stream,
+        struct substrate_array_profile * ap);
+void substrate_uniformly_generated_set_dump(
+        FILE * output_stream,
+        struct substrate_uniformly_generated_set * ugs);
+void substrate_equivalence_class_dump(
+        FILE * output_stream,
+        struct substrate_equivalence_class * ec);
 #endif
