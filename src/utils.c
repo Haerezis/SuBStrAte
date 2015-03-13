@@ -9,15 +9,15 @@
 #define SIZE 16
 
 
-void substrate_osl_relation_list_set_realloc(
-        struct substrate_osl_relation_list_set * set)
+void substrate_osl_relation_group_list_realloc(
+        struct substrate_osl_relation_group_list * group_list)
 {
-    if(set->size == set->max_size)
+    if(group_list->size == group_list->max_size)
     {
-        set->set = (struct osl_relation_list**) realloc(
-                set->set,
-                2 * set->max_size * sizeof(struct osl_relation_list*));
-        set->max_size *= 2;
+        group_list->list = (struct osl_relation_list**) realloc(
+                group_list->list,
+                2 * group_list->max_size * sizeof(struct osl_relation_list*));
+        group_list->max_size *= 2;
     }
 }
 
@@ -29,21 +29,20 @@ osl_int_t substrate_get_array_id_from_access_relation(
 }
 
 
-struct substrate_osl_relation_list_set substrate_group_access_relations_by(
+struct substrate_osl_relation_group_list substrate_group_access_relations_by(
         struct osl_relation_list * rl,
         bool (*by_function) (struct osl_relation *,struct osl_relation *))
 {
-    struct substrate_osl_relation_list_set access_relations_groups = {NULL,0,0};
+    struct substrate_osl_relation_group_list access_relations_groups = {NULL,0,0};
 
     unsigned int i = 0;
-    struct osl_relation * current_relation = NULL;
     struct osl_relation_list * next_rel_list = NULL;
     struct osl_relation_list * tmp_rel_list = NULL;
 
-    //Initial allocation of the array containing the set/list of group
+    //Initial allocation of the array containing the group_list/list of group
     access_relations_groups.max_size = SIZE;
     access_relations_groups.size = 0;
-    access_relations_groups.set = (struct osl_relation_list**)
+    access_relations_groups.list = (struct osl_relation_list**)
         malloc(SIZE * sizeof(struct osl_relation_list*));
 
 
@@ -60,23 +59,23 @@ struct substrate_osl_relation_list_set substrate_group_access_relations_by(
         //of the group need to return 1 when by_function is applied to them.
         for(i=0; i<access_relations_groups.size ; i++)
         {
-            if((*by_function)(rl->elt, access_relations_groups.set[i]->elt))
+            if((*by_function)(rl->elt, access_relations_groups.list[i]->elt))
                 break;
         }
         if(i >= access_relations_groups.size)
         {
             //If no group has been found, we need to create a new one (and possibly
-            //increase the size of the set of groups).
-            substrate_osl_relation_list_set_realloc(&access_relations_groups);
+            //increase the size of the group_list of groups).
+            substrate_osl_relation_group_list_realloc(&access_relations_groups);
             
-            access_relations_groups.set[access_relations_groups.size] = rl;
+            access_relations_groups.list[access_relations_groups.size] = rl;
             access_relations_groups.size++;
         }
         else
         {
             //If a group was found, we iterate to the end of the list
             //to add the new elt to the tail
-            tmp_rel_list = access_relations_groups.set[i];
+            tmp_rel_list = access_relations_groups.list[i];
             while(tmp_rel_list->next != NULL) tmp_rel_list = tmp_rel_list->next;
             tmp_rel_list->next = rl;
         }

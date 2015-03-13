@@ -3,8 +3,8 @@
 
 #include <osl/osl.h>
 
-struct substrate_osl_relation_list_set {
-    struct osl_relation_list ** set;
+struct substrate_osl_relation_group_list {
+    struct osl_relation_list ** list;
     unsigned int size;
     unsigned int max_size;
 };
@@ -14,7 +14,7 @@ osl_int_t substrate_get_array_id_from_access_relation(
         struct osl_relation * rel);
 
 
-struct substrate_osl_relation_list_set substrate_group_access_relations_by(
+struct substrate_osl_relation_group_list substrate_group_access_relations_by(
         struct osl_relation_list * rl,
         bool (*by_function) (struct osl_relation *,struct osl_relation *));
 
