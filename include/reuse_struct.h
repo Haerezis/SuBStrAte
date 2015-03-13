@@ -3,28 +3,32 @@
 
 #include <osl/osl.h>
 
+
+//depecrated structure
+////////////////////////////////////////////////
 struct substrate_reuse_space
 {
     unsigned int * spanning_vector_indexes;
     unsigned int size;
 };
+////////////////////////////////////////////////
+
+
+
 
 struct substrate_equivalence_class
 {
     struct osl_relation_list * array_references;
     unsigned int size;
-    struct substrate_reuse_space reuse_space;
+//    struct substrate_reuse_space reuse_space;
 };
 
 struct substrate_uniformly_generated_set
 {
     struct osl_relation * H_matrix;
 
-    struct substrate_equivalence_class * temporal_classes;
-    unsigned int temporal_size;
-
-    struct substrate_equivalence_class * spatial_classes;
-    unsigned int spatial_size;
+    struct substrate_equivalence_class * classes;
+    unsigned int size;
 };
 
 struct substrate_array_profile

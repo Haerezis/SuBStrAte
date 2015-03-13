@@ -25,22 +25,19 @@ void substrate_uniformly_generated_set_free(
         struct substrate_uniformly_generated_set * ugs)
 {
     unsigned int i = 0;
-    for(i=0 ; i< ugs->temporal_size ; i++)
-        substrate_equivalence_class_free(&ugs->temporal_classes[i]);
-    free(ugs->temporal_classes);
-    ugs->temporal_size = 0;
-
-    for(i=0 ; i< ugs->spatial_size ; i++)
-        substrate_equivalence_class_free(&ugs->spatial_classes[i]);
-    free(ugs->spatial_classes);
-    ugs->spatial_size = 0;
+    for(i=0 ; i< ugs->size ; i++)
+        substrate_equivalence_class_free(&ugs->classes[i]);
+    free(ugs->classes);
+    ugs->size = 0;
 }
 
 void substrate_equivalence_class_free(
         struct substrate_equivalence_class * ec)
 {
+    /*
     substrate_reuse_space_free(&ec->reuse_space);
     free(ec->array_references);
+    */
     ec->size = 0;
 }
 

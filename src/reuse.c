@@ -72,62 +72,36 @@ struct substrate_array_profile substrate_array_profile_constructor(
 struct substrate_uniformly_generated_set substrate_uniformly_gen_set_constructor(
         struct osl_relation_list * uniformly_generated_set)
 {
-    struct substrate_uniformly_generated_set uni_gen_set = {NULL,NULL,0,NULL,0};
-    struct substrate_osl_relation_group_list temporal_classes;
-    struct substrate_osl_relation_group_list spatial_classes;
+    struct substrate_uniformly_generated_set uni_gen_set = {NULL,NULL,0};
+    struct substrate_osl_relation_group_list classes;
     unsigned int i = 0;
 
-    temporal_classes = substrate_group_access_relations_by(
+    classes = substrate_group_access_relations_by(
             osl_relation_list_clone(uniformly_generated_set),
             substrate_access_class_eq);
-    spatial_classes = substrate_group_access_relations_by(
-            osl_relation_list_clone(uniformly_generated_set),
-            substrate_access_class_eq);
-
     
     uni_gen_set.H_matrix = uniformly_generated_set->elt;
-    uni_gen_set.temporal_classes = (struct substrate_equivalence_class*)
-        malloc(temporal_classes.size * sizeof(struct substrate_equivalence_class));
-    uni_gen_set.temporal_size = temporal_classes.size;
-    uni_gen_set.spatial_classes = (struct substrate_equivalence_class*)
-        malloc(spatial_classes.size * sizeof(struct substrate_equivalence_class));
-    uni_gen_set.spatial_size = spatial_classes.size;
+    uni_gen_set.classes = (struct substrate_equivalence_class*)
+        malloc(classes.size * sizeof(struct substrate_equivalence_class));
+    uni_gen_set.size = classes.size;
 
-    for(i=0; i<uni_gen_set.temporal_size ; i++)
+    for(i=0; i<uni_gen_set.size ; i++)
     {
-        uni_gen_set.temporal_classes[i] = 
-            substrate_temporal_equivalence_class_constructor(temporal_classes.list[i]);
-    }
-    for(i=0; i<uni_gen_set.spatial_size ; i++)
-    {
-        uni_gen_set.spatial_classes[i] = 
-            substrate_spatial_equivalence_class_constructor(spatial_classes.list[i]);
+        uni_gen_set.classes[i] = 
+            substrate_equivalence_class_constructor(classes.list[i]);
     }
 
     return uni_gen_set;
 }
 
 
-struct substrate_equivalence_class substrate_temporal_equivalence_class_constructor(
+struct substrate_equivalence_class substrate_equivalence_class_constructor(
         struct osl_relation_list * array_references)
 {
-    struct substrate_equivalence_class eq_class = {NULL,0,{NULL,0}};
+    struct substrate_equivalence_class eq_class = {NULL,0};
+
+    eq_class.array_references = array_references;
+    while(array_references != NULL) eq_class.size++;
 
     return eq_class;
 }
-
-struct substrate_equivalence_class substrate_spatial_equivalence_class_constructor(
-        struct osl_relation_list * array_references)
-{
-    struct substrate_equivalence_class eq_class = {NULL,0,{NULL,0}};
-
-    return eq_class;
-}
-/*
-struct substrate_equivalence_class substrate_reuse_space_constructor(
-        struct substrate_equivalence_class * ec)
-{
-    struct substrate_equivalence_class tmp;
-    return tmp;
-}
-*/
