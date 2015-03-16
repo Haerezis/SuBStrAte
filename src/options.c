@@ -98,6 +98,13 @@ void substrate_print_help(
 }
 
 
+void substrate_option_free()
+{
+    fclose(g_substrate_options.input_file);
+    fclose(g_substrate_options.output_file);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

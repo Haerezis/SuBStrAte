@@ -9,6 +9,7 @@ void substrate_reuse_profile_free(
     for(i=0; i < rp->size ; i++)
         substrate_array_profile_free(&rp->array_profiles[i]);
     free(rp->array_profiles);
+    rp->array_profiles = NULL;
     rp->size = 0;
 }
 
@@ -19,7 +20,11 @@ void substrate_array_profile_free(
     for(i=0 ; i < ap->size ; i++)
         substrate_uniformly_generated_set_free(&ap->uniformly_gen_sets[i]);
     free(ap->uniformly_gen_sets);
+    ap->uniformly_gen_sets = NULL;
     ap->size = 0;
+
+    osl_int_clear(ap->array_id_precision, &ap->array_id);
+    ap->array_id_precision = 0;
 }
 void substrate_uniformly_generated_set_free(
         struct substrate_uniformly_generated_set * ugs)
@@ -28,25 +33,18 @@ void substrate_uniformly_generated_set_free(
     for(i=0 ; i< ugs->size ; i++)
         substrate_equivalence_class_free(&ugs->classes[i]);
     free(ugs->classes);
+    ugs->classes = NULL;
     ugs->size = 0;
+    
+    ugs->H_matrix = NULL;
 }
 
 void substrate_equivalence_class_free(
         struct substrate_equivalence_class * ec)
 {
-    /*
-    substrate_reuse_space_free(&ec->reuse_space);
-    free(ec->array_references);
-    */
+    osl_relation_list_free(ec->array_references);
+    ec->array_references = NULL;
     ec->size = 0;
-}
-
-void substrate_reuse_space_free(
-        struct substrate_reuse_space * rp)
-{
-    free(rp->spanning_vector_indexes);
-    rp->size = 0;
-
 }
 
 
@@ -72,7 +70,7 @@ void substrate_array_profile_dump(
     unsigned int i = 0;
 
     fprintf(output_stream,"\tArray id : ");
-    osl_int_print(output_stream,ap->uniformly_gen_sets[0].H_matrix->precision, ap->array_id);
+    osl_int_print(output_stream,ap->array_id_precision, ap->array_id);
     fprintf(output_stream,"\n");
     fprintf(output_stream,"\tNumber of different Uniformly Generated Sets : %d\n",ap->size);
     for(i=0; i<ap->size ; i++)

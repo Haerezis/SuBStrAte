@@ -23,4 +23,7 @@ void substrate_print_help(
         FILE *output);
 
 
+void substrate_option_free();
+
+
 #endif

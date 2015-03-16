@@ -18,4 +18,10 @@ struct substrate_statement_profile
     struct substrate_reuse_profile reuse;
 };
 
+void substrate_scop_profile_free(
+        struct substrate_scop_profile * sp);
+
+void substrate_statement_profile_free(
+        struct substrate_statement_profile * sp);
+
 #endif

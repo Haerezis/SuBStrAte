@@ -31,9 +31,11 @@ struct substrate_scop_profile substrate_analyze(struct osl_scop * scop)
         statement_profiles[i].reuse = substrate_reuse_profile_constructor(statement);
 
         statement = statement->next;
-        statement_profiles[i].osl_statement->next = NULL;
-
-
+    }
+    
+    //Dump internal structures to stdout
+    for(i=0; i<scop_profile.size ; i++)
+    {
         fprintf(stdout,"\n================= DUMP S%d ==================\n",i+1);
 //        osl_statement_dump(stdout,statement_profiles[i].osl_statement);
         substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);

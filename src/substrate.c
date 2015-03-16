@@ -29,6 +29,8 @@ int main(int argc,char** argv)
 
     osl_scop_free(input_scop);
     osl_scop_free(output_scop);
+    substrate_scop_profile_free(&scop_profile);
+    substrate_option_free();
 
     return 0;
 }
