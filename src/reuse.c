@@ -101,7 +101,11 @@ struct substrate_equivalence_class substrate_equivalence_class_constructor(
     struct substrate_equivalence_class eq_class = {NULL,0};
 
     eq_class.array_references = array_references;
-    while(array_references != NULL) eq_class.size++;
+    while(array_references != NULL)
+    {
+        eq_class.size++;
+        array_references = array_references->next;
+    }
 
     return eq_class;
 }

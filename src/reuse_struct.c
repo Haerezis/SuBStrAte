@@ -74,7 +74,7 @@ void substrate_array_profile_dump(
     fprintf(output_stream,"\tArray id : ");
     osl_int_print(output_stream,ap->uniformly_gen_sets[0].H_matrix->precision, ap->array_id);
     fprintf(output_stream,"\n");
-    fprintf(output_stream,"\tNumber of references : %d\n",ap->size);
+    fprintf(output_stream,"\tNumber of different Uniformly Generated Sets : %d\n",ap->size);
     for(i=0; i<ap->size ; i++)
     {
         substrate_uniformly_generated_set_dump(output_stream,&ap->uniformly_gen_sets[i]);
@@ -105,6 +105,7 @@ void substrate_equivalence_class_dump(
 {
     fprintf(output_stream,"\n");
     fprintf(output_stream,"\t\t######################################################\n");
+    fprintf(output_stream,"\t\tNumber of references in the class : %d\n",ec->size);
     fprintf(output_stream,"\n");
     osl_relation_list_idump(output_stream,ec->array_references,3);
 }

@@ -5,7 +5,7 @@
 struct substrate_scop_profile substrate_analyze(struct osl_scop * scop)
 {
     unsigned int i = 0;
-    struct osl_statement * statement = NULL;
+    struct osl_statement *statement = NULL;
 
     struct substrate_scop_profile scop_profile;
     struct substrate_statement_profile * statement_profiles = NULL;
@@ -29,6 +29,15 @@ struct substrate_scop_profile substrate_analyze(struct osl_scop * scop)
     {
         statement_profiles[i].osl_statement = statement;
         statement_profiles[i].reuse = substrate_reuse_profile_constructor(statement);
+
+        statement = statement->next;
+        statement_profiles[i].osl_statement->next = NULL;
+
+
+        fprintf(stdout,"\n================= DUMP S%d ==================\n",i+1);
+//        osl_statement_dump(stdout,statement_profiles[i].osl_statement);
+        substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);
+        fprintf(stdout,"============================================\n");
     }
 
     return scop_profile;
