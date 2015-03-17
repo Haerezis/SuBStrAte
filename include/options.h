@@ -9,6 +9,7 @@ struct substrate_options
     FILE * input_file;
     FILE * output_file;
     bool row_major;
+    double minimal_reuse_rate;
 };
 
 extern struct substrate_options g_substrate_options;

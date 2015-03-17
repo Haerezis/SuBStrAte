@@ -120,3 +120,88 @@ struct substrate_equivalence_class substrate_equivalence_class_constructor(
 
     return eq_class;
 }
+
+
+
+double substrate_rate_reuse_profiles(
+        struct substrate_reuse_profile rp1,
+        struct substrate_reuse_profile rp2)
+{
+    double rating = 0;
+    unsigned int i1 = 0, i2 = 0;
+
+    for(i1=0; i1<rp1.size ; i1++)
+    {
+        for(i2=0 ; i2<rp2.size ; i2++)
+        {
+            if(osl_int_eq(
+                        rp1.array_profiles[i1].array_id_precision,
+                        rp1.array_profiles[i1].array_id,
+                        rp2.array_profiles[i2].array_id))
+            {
+                //TODO rating
+                rating += substrate_rate_array_profiles(
+                        rp1.array_profiles[i1],
+                        rp2.array_profiles[i2]);
+            }
+        }
+    }
+
+    return rating;
+}
+
+double substrate_rate_array_profiles(
+        struct substrate_array_profile ap1,
+        struct substrate_array_profile ap2)
+{
+    double rating = 0;
+    unsigned int i1 = 0, i2 = 0;
+
+    for(i1=0; i1<ap1.size ; i1++)
+    {
+        for(i2=0 ; i2<ap2.size ; i2++)
+        {
+            if(substrate_H_matrix_eq(
+                        ap1.uniformly_gen_sets[i1].H_matrix,
+                        ap2.uniformly_gen_sets[i2].H_matrix))
+            {
+                //rating TODO
+                rating += substrate_rate_uniformly_generated_sets(
+                        ap1.uniformly_gen_sets[i1],
+                        ap2.uniformly_gen_sets[i2]);
+            }
+        }
+    }
+
+    return rating;
+}
+
+double substrate_rate_uniformly_generated_sets(
+        struct substrate_uniformly_generated_set ugs1,
+        struct substrate_uniformly_generated_set ugs2)
+{
+    double rating = 0;
+    bool has_hit = true;
+    unsigned int nb_hit = 0;
+    unsigned int nb_miss = 0;
+    unsigned int i1 = 0, i2 = 0;
+
+    for(i1=0; i1<ugs1.size ; i1++)
+    {
+        has_hit = false;
+        for(i2=0 ; (i2<ugs2.size) && (has_hit == false) ; i2++)
+        {
+            has_hit = substrate_access_class_eq(
+                            ugs1.classes[i1].array_references->elt,
+                            ugs2.classes[i2].array_references->elt);
+        }
+        if(has_hit)
+            nb_hit++;
+        else
+            nb_miss++;
+    }
+
+    //TODO rating
+    rating = nb_hit/nb_miss;
+    return rating;
+}

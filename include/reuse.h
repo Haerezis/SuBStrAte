@@ -23,4 +23,17 @@ struct substrate_uniformly_generated_set substrate_uniformly_gen_set_constructor
 struct substrate_equivalence_class substrate_equivalence_class_constructor(
         struct osl_relation_list * array_references);
 
+
+double substrate_rate_reuse_profiles(
+        struct substrate_reuse_profile rp1,
+        struct substrate_reuse_profile rp2);
+
+double substrate_rate_array_profiles(
+        struct substrate_array_profile ap1,
+        struct substrate_array_profile ap2);
+
+double substrate_rate_uniformly_generated_sets(
+        struct substrate_uniformly_generated_set ugs1,
+        struct substrate_uniformly_generated_set ugs2);
+
 #endif
