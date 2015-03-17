@@ -1,0 +1,3 @@
+Idea for options :
+    - read access only (to only analyse read access of statements)
+    - Right Hand Side (to only analyse access of the right hande side of a statement)
