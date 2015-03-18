@@ -172,18 +172,3 @@ bool substrate_access_class_eq(
 
     return result;
 }
-/*
-bool substrate_temporal_class_eq(
-        struct osl_relation * access_relation1,
-        struct osl_relation * access_relation2)
-{
-    return true;//TODO
-}
-
-bool substrate_spatial_class_eq(
-        struct osl_relation * access_relation1,
-        struct osl_relation * access_relation2)
-{
-    return true;//TODO
-}
-*/
