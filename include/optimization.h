@@ -6,10 +6,6 @@
 #include "statement_profile.h"
 
 
-void substrate_copy_scop_except_statements(
-        struct osl_scop * source,
-        struct osl_scop * destination);
-
 struct osl_scop * substrate_optimize(
         struct substrate_scop_profile scop_profile);
 

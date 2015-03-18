@@ -20,6 +20,7 @@ void substrate_scop_profile_free(
 void substrate_statement_profile_free(
         struct substrate_statement_profile * sp)
 {
+    osl_statement_free(sp->osl_statement);
     sp->osl_statement = NULL;
     substrate_reuse_profile_free(&sp->reuse);
 }

@@ -42,4 +42,10 @@ bool substrate_spatial_class_eq(
 bool substrate_temporal_class_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2);
+
+
+void substrate_copy_scop_except_statements(
+        struct osl_scop * source,
+        struct osl_scop * destination);
+
 #endif

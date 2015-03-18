@@ -1,29 +1,11 @@
 #include <stdlib.h>
-#include <string.h>
 
 #include "optimization.h"
 
 #include "options.h"
 #include "reuse.h"
+#include "utils.h"
 
-/**
- * dest := source (except source->statement)
- */
-void substrate_copy_scop_except_statements(
-        struct osl_scop * dest,
-        struct osl_scop * source)
-{
-    dest->version = source->version;
-    dest->language = malloc(strlen(source->language)+1);//alloc the string
-    strcpy(dest->language,source->language);//copy the string after alloc
-    dest->context = osl_relation_clone(source->context);
-    dest->parameters = osl_generic_clone(source->parameters);
-    dest->statement = NULL;
-    dest->registry = osl_interface_clone(source->registry);
-    dest->extension = osl_generic_clone(source->extension);
-    dest->usr = NULL;
-    dest->next = NULL;//TODO : substrate doesn't handle files with multiples scope for now
-}
 
 struct osl_scop * substrate_optimize(
         struct substrate_scop_profile scop_profile)
