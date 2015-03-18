@@ -3,6 +3,52 @@
 #include "statement_profile.h"
 
 
+struct substrate_statement_profile substrate_aggregate_statement_profiles(
+        struct substrate_statement_profile stmt1,
+        struct substrate_statement_profile stmt2)
+{
+    struct substrate_statement_profile res;
+
+    res.osl_statement = substrate_aggregate_osl_statements(
+            stmt1.osl_statement,
+            stmt2.osl_statement);
+    
+    res.reuse = substrate_reuse_profile_add(stmt1.reuse, stmt2.reuse);
+    
+    return res;
+}
+
+struct osl_statement * substrate_aggregate_osl_statements(
+        struct osl_statement * stmt1,
+        struct osl_statement * stmt2)
+{
+    struct osl_statement * res = NULL;
+    //For now, the two statement MUST have the same domain & scattering
+    //TODO : allow aggregation of statement with diff domain (→replace the clone
+    //of the domain [and scattering]).
+    res = osl_statement_malloc();
+    res->domain = osl_relation_clone(stmt1->domain);
+    res->scattering = osl_relation_clone(stmt1->scattering);
+    res->access = NULL;
+    osl_relation_list_add(
+            &res->access,
+            osl_relation_list_clone(stmt1->access));
+    osl_relation_list_add(
+            &res->access,
+            osl_relation_list_clone(stmt1->access));
+    res->extension = NULL;
+    osl_generic_add(
+            &res->extension,
+            stmt1->extension);
+    osl_generic_add(
+            &res->extension,
+            stmt2->extension);
+    res->usr = NULL;
+    res->next = stmt2->next;
+    
+    return res;
+}
+
 void substrate_scop_profile_free(
         struct substrate_scop_profile * sp)
 {
