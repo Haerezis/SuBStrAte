@@ -26,7 +26,6 @@ int main(int argc,char** argv)
     output_scop = substrate_optimize(scop_profile);
     //osl_scop_print(stdout, output_scop);
 
-
     osl_scop_free(input_scop);
     osl_scop_free(output_scop);
     substrate_scop_profile_free(&scop_profile);

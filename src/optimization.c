@@ -5,38 +5,65 @@
 #include "options.h"
 #include "reuse.h"
 #include "utils.h"
-
+#include "osl/osl.h"
 
 struct osl_scop * substrate_optimize(
         struct substrate_scop_profile scop_profile)
 {
     struct osl_scop * scop = NULL;
 
-    scop = osl_scop_malloc();
-    substrate_copy_scop_except_statements(scop,scop_profile.scop);
-
-    substrate_successive_statements_optimization(scop, scop_profile);
+    substrate_successive_statements_optimization(scop_profile);
+    scop = substrate_scop_profile_to_osl_scop(scop_profile);
 
     return scop;
 }
 
 
 
-void substrate_successive_statements_optimization(
-        struct osl_scop * scop,
-        struct substrate_scop_profile scop_profile)
+void substrate_successive_statements_optimization(struct substrate_scop_profile scop_profile)
 {
-    unsigned int i = 0;
+    unsigned int i1 = 0, i2 = 0;
+    struct substrate_statement_profile stmt_profile;
+    bool 
+        same_domain = false,
+        same_scattering = false;
     double reuse_rate = 0.0;
 
-    for(i=0 ; i<(scop_profile.size-1) ; i++)
+
+    for(i2=1 ; i2<(scop_profile.size) ; i2++)
     {
-        reuse_rate = substrate_rate_reuse_profiles(
-                scop_profile.statement_profiles[i].reuse,
-                scop_profile.statement_profiles[i+1].reuse);
-        if(reuse_rate >= g_substrate_options.minimal_reuse_rate)
+        same_domain = osl_relation_equal(
+                scop_profile.statement_profiles[i1].osl_statement->domain,
+                scop_profile.statement_profiles[i2].osl_statement->domain);
+        same_scattering = osl_relation_equal(
+                scop_profile.statement_profiles[i1].osl_statement->scattering,
+                scop_profile.statement_profiles[i2].osl_statement->scattering);
+
+        if(same_domain && same_scattering)
         {
-            //TODO
+            reuse_rate = substrate_rate_reuse_profiles(
+                    scop_profile.statement_profiles[i1].reuse,
+                    scop_profile.statement_profiles[i2].reuse);
+            if(reuse_rate >= g_substrate_options.minimal_reuse_rate)
+            {
+                stmt_profile = substrate_statement_profile_fusion(
+                        scop_profile.statement_profiles[i1],
+                        scop_profile.statement_profiles[i2]);
+                substrate_statement_profile_free(&scop_profile.statement_profiles[i1]);
+                substrate_statement_profile_free(&scop_profile.statement_profiles[i2]);
+                scop_profile.statement_profiles[i1] = stmt_profile;
+            }
+            else
+            {
+                i1++;
+                scop_profile.statement_profiles[i1] = scop_profile.statement_profiles[i2];
+            }
+        }
+        else
+        {
+            i1++;
+            scop_profile.statement_profiles[i1] = scop_profile.statement_profiles[i2];
         }
     }
+
 }

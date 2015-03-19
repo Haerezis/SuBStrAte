@@ -181,7 +181,7 @@ void substrate_equivalence_class_dump(
 
 
 
-struct substrate_reuse_profile substrate_reuse_profile_add(
+struct substrate_reuse_profile substrate_reuse_profile_fusion(
         struct substrate_reuse_profile rp1,
         struct substrate_reuse_profile rp2)
 {
@@ -203,7 +203,7 @@ struct substrate_reuse_profile substrate_reuse_profile_add(
                         rp2.array_profiles[i2].array_id))
             {
                 res.array_profiles[res.size] = 
-                    substrate_array_profile_add(
+                    substrate_array_profile_fusion(
                             rp1.array_profiles[i1],
                             rp2.array_profiles[i2]);
                 res.size++;
@@ -241,7 +241,7 @@ struct substrate_reuse_profile substrate_reuse_profile_add(
     return res;
 }
 
-struct substrate_array_profile substrate_array_profile_add(
+struct substrate_array_profile substrate_array_profile_fusion(
         struct substrate_array_profile ap1,
         struct substrate_array_profile ap2)
 {
@@ -264,7 +264,7 @@ struct substrate_array_profile substrate_array_profile_add(
                         ap2.uniformly_gen_sets[i2].H_matrix))
             {
                 res.uniformly_gen_sets[res.size] = 
-                    substrate_uniformly_generated_set_add(
+                    substrate_uniformly_generated_set_fusion(
                             ap1.uniformly_gen_sets[i1],
                             ap2.uniformly_gen_sets[i2]);
                 res.size++;
@@ -301,7 +301,7 @@ struct substrate_array_profile substrate_array_profile_add(
     return res;
 }
 
-struct substrate_uniformly_generated_set substrate_uniformly_generated_set_add(
+struct substrate_uniformly_generated_set substrate_uniformly_generated_set_fusion(
         struct substrate_uniformly_generated_set ugs1,
         struct substrate_uniformly_generated_set ugs2)
 {
@@ -324,7 +324,7 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_add(
                         ugs1.classes[i1].array_references->elt,
                         ugs2.classes[i2].array_references->elt))
             {
-                res.classes[res.size] = substrate_equivalence_class_add(
+                res.classes[res.size] = substrate_equivalence_class_fusion(
                         ugs1.classes[i1],
                         ugs2.classes[i2]);
                 res.size++;
@@ -360,7 +360,7 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_add(
     return res;
 }
 
-struct substrate_equivalence_class substrate_equivalence_class_add(
+struct substrate_equivalence_class substrate_equivalence_class_fusion(
         struct substrate_equivalence_class ec1,
         struct substrate_equivalence_class ec2)
 {

@@ -1,24 +1,25 @@
 #include <stdlib.h>
 
 #include "statement_profile.h"
+#include "utils.h"
 
 
-struct substrate_statement_profile substrate_aggregate_statement_profiles(
+struct substrate_statement_profile substrate_statement_profile_fusion(
         struct substrate_statement_profile stmt1,
         struct substrate_statement_profile stmt2)
 {
     struct substrate_statement_profile res;
 
-    res.osl_statement = substrate_aggregate_osl_statements(
+    res.osl_statement = substrate_osl_statement_fusion(
             stmt1.osl_statement,
             stmt2.osl_statement);
     
-    res.reuse = substrate_reuse_profile_add(stmt1.reuse, stmt2.reuse);
+    res.reuse = substrate_reuse_profile_fusion(stmt1.reuse, stmt2.reuse);
     
     return res;
 }
 
-struct osl_statement * substrate_aggregate_osl_statements(
+struct osl_statement * substrate_osl_statement_fusion(
         struct osl_statement * stmt1,
         struct osl_statement * stmt2)
 {
@@ -69,4 +70,24 @@ void substrate_statement_profile_free(
     osl_statement_free(sp->osl_statement);
     sp->osl_statement = NULL;
     substrate_reuse_profile_free(&sp->reuse);
+}
+
+
+struct osl_scop * substrate_scop_profile_to_osl_scop(struct substrate_scop_profile scop_profile)
+{
+    unsigned int i = 0;
+    struct osl_scop * res = NULL;
+
+    res = osl_scop_malloc();
+    substrate_copy_scop_except_statements(res, scop_profile.scop);
+
+    res->statement = NULL;
+    for(i=0 ; i<scop_profile.size ; i++)
+    {
+        osl_statement_add(
+                &res->statement,
+                osl_statement_clone(scop_profile.statement_profiles[i].osl_statement));
+    }
+
+    return res;
 }
