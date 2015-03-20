@@ -114,7 +114,7 @@ bool substrate_H_matrix_eq(
     //two relations should share the same nb_rows/nb_output_dims/nb_input_dims
     struct osl_relation * ar = access_relation1;
    
-    //The H matrix start at line 1 to line ar->nb_intput_dims included, and start
+    //The H matrix start at line 1 to line ar->nb_input_dims included, and start
     //at column 1+nb_output_dims to column 1+nb_output_dims+nb_input_dims.
     //The size of the matrix should be nb_input_dims*nb_input_dims
     for(l = 1 ; l < ar->nb_output_dims ; l++)
@@ -192,4 +192,35 @@ void substrate_copy_scop_except_statements(
     dest->extension = osl_generic_clone(source->extension);
     dest->usr = NULL;
     dest->next = NULL;//TODO : substrate doesn't handle files with multiples scope for now
+}
+
+
+bool substrate_same_scattering_and_beta_depth(
+        struct osl_relation * rel1,
+        struct osl_relation * rel2)
+{
+    int l = 0, c = 0;
+    bool res = true;
+
+    if((rel1->nb_output_dims == rel2->nb_output_dims)
+            && (rel1->nb_input_dims == rel2->nb_input_dims)
+            && (rel1->nb_parameters == rel2->nb_parameters)
+            && (rel1->nb_local_dims == rel2->nb_local_dims))
+    {
+        //avoiding the last row, because it represents the last beta component of the
+        //scattering, used to order the statements placed at the same depth
+        for(l = 0 ; (l<(rel1->nb_output_dims-1)) && (res==true) ; l++)
+        {
+            for(c = 1 ; (c<rel1->nb_columns) && (res==true) ; c++)
+            {
+                res = osl_int_eq(rel1->precision, rel1->m[l][c], rel2->m[l][c]);
+            }
+        }
+    }
+    else
+    {
+        res = false;
+    }
+
+    return res;
 }

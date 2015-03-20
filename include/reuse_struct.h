@@ -80,4 +80,8 @@ struct substrate_equivalence_class substrate_equivalence_class_fusion(
         struct substrate_equivalence_class ec2);
 
 
+unsigned int substrate_uniformly_generated_set_count_access(
+        struct substrate_uniformly_generated_set ugs);
+unsigned int substrate_array_profile_count_access(
+        struct substrate_array_profile ap);
 #endif

@@ -127,7 +127,7 @@ double substrate_rate_reuse_profiles(
         struct substrate_reuse_profile rp1,
         struct substrate_reuse_profile rp2)
 {
-    double rating = 0;
+    struct reuse_rate rating = {0,0}, tmp = {0,0};
     unsigned int i1 = 0, i2 = 0;
 
     for(i1=0; i1<rp1.size ; i1++)
@@ -139,22 +139,32 @@ double substrate_rate_reuse_profiles(
                         rp1.array_profiles[i1].array_id,
                         rp2.array_profiles[i2].array_id))
             {
-                //TODO rating
-                rating += substrate_rate_array_profiles(
+                tmp = substrate_rate_array_profiles(
                         rp1.array_profiles[i1],
                         rp2.array_profiles[i2]);
+                break;
             }
         }
+        if(i2 >= rp2.size)
+        {
+            tmp.nb_same_class_refs = 0;
+            tmp.nb_total_refs = 
+                substrate_array_profile_count_access(rp1.array_profiles[i1])
+                + substrate_array_profile_count_access(rp2.array_profiles[i2]);
+        }
+
+        rating.nb_same_class_refs += tmp.nb_same_class_refs;
+        rating.nb_total_refs += tmp.nb_total_refs;
     }
 
-    return rating;
+    return (double)rating.nb_same_class_refs / (double)rating.nb_total_refs;
 }
 
-double substrate_rate_array_profiles(
+struct reuse_rate substrate_rate_array_profiles(
         struct substrate_array_profile ap1,
         struct substrate_array_profile ap2)
 {
-    double rating = 0;
+    struct reuse_rate rating = {0,0}, tmp = {0,0};
     unsigned int i1 = 0, i2 = 0;
 
     for(i1=0; i1<ap1.size ; i1++)
@@ -165,25 +175,33 @@ double substrate_rate_array_profiles(
                         ap1.uniformly_gen_sets[i1].H_matrix,
                         ap2.uniformly_gen_sets[i2].H_matrix))
             {
-                //rating TODO
-                rating += substrate_rate_uniformly_generated_sets(
+                tmp = substrate_rate_uniformly_generated_sets(
                         ap1.uniformly_gen_sets[i1],
                         ap2.uniformly_gen_sets[i2]);
+                break;
             }
         }
+        if(i2 >= ap2.size)
+        {
+            tmp.nb_same_class_refs = 0;
+            tmp.nb_total_refs = 
+                substrate_uniformly_generated_set_count_access(ap1.uniformly_gen_sets[i1])
+                + substrate_uniformly_generated_set_count_access(ap2.uniformly_gen_sets[i2]);
+        }
+
+        rating.nb_same_class_refs += tmp.nb_same_class_refs;
+        rating.nb_total_refs += tmp.nb_total_refs;
     }
 
     return rating;
 }
 
-double substrate_rate_uniformly_generated_sets(
+struct reuse_rate substrate_rate_uniformly_generated_sets(
         struct substrate_uniformly_generated_set ugs1,
         struct substrate_uniformly_generated_set ugs2)
 {
-    double rating = 0;
+    struct reuse_rate rating = {0,0};
     bool has_hit = true;
-    unsigned int nb_hit = 0;
-    unsigned int nb_miss = 0;
     unsigned int i1 = 0, i2 = 0;
 
     for(i1=0; i1<ugs1.size ; i1++)
@@ -196,12 +214,9 @@ double substrate_rate_uniformly_generated_sets(
                             ugs2.classes[i2].array_references->elt);
         }
         if(has_hit)
-            nb_hit++;
-        else
-            nb_miss++;
+            rating.nb_same_class_refs += ugs1.classes[i1].size + ugs2.classes[i2].size;
+        rating.nb_total_refs += ugs1.classes[i1].size + ugs2.classes[i2].size;
     }
 
-    //TODO rating
-    rating = nb_hit/nb_miss;
     return rating;
 }

@@ -35,7 +35,7 @@ void substrate_successive_statements_optimization(struct substrate_scop_profile 
         same_domain = osl_relation_equal(
                 scop_profile.statement_profiles[i1].osl_statement->domain,
                 scop_profile.statement_profiles[i2].osl_statement->domain);
-        same_scattering = osl_relation_equal(
+        same_scattering = substrate_same_scattering_and_beta_depth(
                 scop_profile.statement_profiles[i1].osl_statement->scattering,
                 scop_profile.statement_profiles[i2].osl_statement->scattering);
 

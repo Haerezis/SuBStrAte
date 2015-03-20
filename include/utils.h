@@ -48,4 +48,9 @@ void substrate_copy_scop_except_statements(
         struct osl_scop * source,
         struct osl_scop * destination);
 
+
+bool substrate_same_scattering_and_beta_depth(
+        struct osl_relation * rel1,
+        struct osl_relation * rel2);
+
 #endif

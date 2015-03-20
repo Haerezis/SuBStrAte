@@ -4,6 +4,14 @@
 #include <osl/osl.h>
 #include "reuse_struct.h"
 
+
+struct reuse_rate
+{
+    unsigned int nb_same_class_refs;
+    unsigned int nb_total_refs;
+};
+
+
 //génère le reuse_profile : compte et dénombre le nombre d'array différent
 //et appelle generate_array_profile pour chaque array
 struct substrate_reuse_profile substrate_reuse_profile_constructor(
@@ -28,11 +36,11 @@ double substrate_rate_reuse_profiles(
         struct substrate_reuse_profile rp1,
         struct substrate_reuse_profile rp2);
 
-double substrate_rate_array_profiles(
+struct reuse_rate substrate_rate_array_profiles(
         struct substrate_array_profile ap1,
         struct substrate_array_profile ap2);
 
-double substrate_rate_uniformly_generated_sets(
+struct reuse_rate substrate_rate_uniformly_generated_sets(
         struct substrate_uniformly_generated_set ugs1,
         struct substrate_uniformly_generated_set ugs2);
 

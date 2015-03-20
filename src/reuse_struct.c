@@ -377,3 +377,33 @@ struct substrate_equivalence_class substrate_equivalence_class_fusion(
     
     return res;
 }
+
+
+unsigned int substrate_uniformly_generated_set_count_access(
+        struct substrate_uniformly_generated_set ugs)
+{
+    unsigned int res = 0;
+    unsigned int i = 0;
+
+    for(i=0 ; i<ugs.size ; i++)
+    {
+        res += ugs.classes[i].size;
+    }
+
+    return res;
+}
+
+
+unsigned int substrate_array_profile_count_access(
+        struct substrate_array_profile ap)
+{
+    unsigned int res = 0;
+    unsigned int i = 0;
+
+    for(i=0 ; i<ap.size ; i++)
+    {
+        res += substrate_uniformly_generated_set_count_access(ap.uniformly_gen_sets[i]);
+    }
+
+    return res;
+}
