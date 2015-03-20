@@ -37,3 +37,7 @@ cmake_install.cmake
 
 #binary file
 substrate
+
+#doc html & latex
+doc/html
+doc/latex

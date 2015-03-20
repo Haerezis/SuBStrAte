@@ -2,6 +2,15 @@
 
 #include "analyze.h"
 
+
+/**
+ * @brief Analyze \a scop and generate a profile for every statement inside it. These
+ *         profiles will be used during the optimization pass later.
+ *
+ * @param[in] scop The scop that will be analyzed.
+ *
+ * @return The scop profile, containing a profile for every statement of the scop.
+ */
 struct substrate_scop_profile substrate_analyze(struct osl_scop * scop)
 {
     unsigned int i = 0;

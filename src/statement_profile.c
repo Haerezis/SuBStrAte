@@ -4,6 +4,15 @@
 #include "utils.h"
 
 
+/**
+ * @brief Aggregate two statement' profile into one.
+ * The osl_statements carry contained in the profiles are also aggregated.
+ *
+ * @param[in] stmt1 The first statement profile of the aggregation.
+ * @param[in] stmt2 The second statement profile of the aggregation.
+ *
+ * @return A statement profile created from the aggregation of \a stmt1 and \a stmt2 .
+ */
 struct substrate_statement_profile substrate_statement_profile_fusion(
         struct substrate_statement_profile stmt1,
         struct substrate_statement_profile stmt2)
@@ -19,6 +28,18 @@ struct substrate_statement_profile substrate_statement_profile_fusion(
     return res;
 }
 
+
+/**
+ * @brief Aggregate two osl_statement into one.
+ *
+ * A new osl_statement is created from the two osl_statement given as parameters.
+ * The parameters are not modified.
+ *
+ * @param[in] stmt1 The first osl_statement of the aggregation.
+ * @param[in] stmt2 The second osl_statement of the aggregation.
+ *
+ * @return A new osl_statement created from the aggregation of \a stmt1 and \a stmt2 .
+ */
 struct osl_statement * substrate_osl_statement_fusion(
         struct osl_statement * stmt1,
         struct osl_statement * stmt2)
@@ -50,6 +71,13 @@ struct osl_statement * substrate_osl_statement_fusion(
     return res;
 }
 
+
+
+/**
+ * @brief Free recursively an substrate_scop_profile.
+ *
+ * @param[inout] sp The substrate_scop_profile that is freed.
+ */
 void substrate_scop_profile_free(
         struct substrate_scop_profile * sp)
 {
@@ -64,6 +92,12 @@ void substrate_scop_profile_free(
     sp->size = 0;
 }
 
+
+/**
+ * @brief Free recursively an substrate_statement_profile.
+ *
+ * @param sp The substrate_statement_profile that is freed.
+ */
 void substrate_statement_profile_free(
         struct substrate_statement_profile * sp)
 {
@@ -73,6 +107,13 @@ void substrate_statement_profile_free(
 }
 
 
+/**
+ * @brief Convert a substrate_scop_profile into a osl_scop.
+ *
+ * @param[in] scop_profile The substrate_scop_profile that is converted.
+ *
+ * @return The equivalent of \a scop_profile as a osl_scop structure.
+ */
 struct osl_scop * substrate_scop_profile_to_osl_scop(struct substrate_scop_profile scop_profile)
 {
     unsigned int i = 0;

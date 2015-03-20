@@ -13,7 +13,13 @@ extern "C"
 struct substrate_options g_substrate_options;
 
 
-void substrate_parse_options(
+/**
+ * @brief Parse the program argument to initialize the options of the program.
+ *
+ * @param argc The number of options/arguments of the program.
+ * @param argv The options/arguments of the program.
+ */
+void substrate_options_init(
         int argc,
         char** argv)
 {
@@ -89,6 +95,13 @@ void substrate_parse_options(
     }
 }
 
+
+/**
+ * @brief Print the help and usage of the program.
+ *
+ * @param program_name The name of the program of which the help/usage will be printed.
+ * @param output The stream to output the help/usage.
+ */
 void substrate_print_help(
         char *program_name,
         FILE * output)
@@ -117,7 +130,10 @@ void substrate_print_help(
 }
 
 
-void substrate_option_free()
+/**
+ * @brief Terminate and free the options of the program.
+ */
+void substrate_option_terminate()
 {
     fclose(g_substrate_options.input_file);
     fclose(g_substrate_options.output_file);

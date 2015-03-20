@@ -15,16 +15,13 @@ struct substrate_options
 extern struct substrate_options g_substrate_options;
 
 
-void substrate_parse_options(
+void substrate_options_init(
         int argc,
         char** argv);
-
 void substrate_print_help(
         char *program_name,
         FILE *output);
-
-
-void substrate_option_free();
+void substrate_option_terminate();
 
 
 #endif
