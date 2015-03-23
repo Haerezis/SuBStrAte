@@ -18,7 +18,7 @@ int main(int argc,char** argv)
     osl_scop_p output_scop = NULL;
     struct substrate_scop_profile scop_profile;
 
-    substrate_parse_options(argc, argv);
+    substrate_options_init(argc, argv);
 
 
     input_scop = osl_scop_read(g_substrate_options.input_file);
@@ -29,7 +29,7 @@ int main(int argc,char** argv)
     osl_scop_free(input_scop);
     osl_scop_free(output_scop);
     substrate_scop_profile_free(&scop_profile);
-    substrate_option_free();
+    substrate_option_terminate();
 
     return 0;
 }
