@@ -16,8 +16,8 @@ struct substrate_options g_substrate_options;
 /**
  * @brief Parse the program argument to initialize the options of the program.
  *
- * @param argc The number of options/arguments of the program.
- * @param argv The options/arguments of the program.
+ * @param[in] argc The number of options/arguments of the program.
+ * @param[in] argv The options/arguments of the program.
  */
 void substrate_options_init(
         int argc,
@@ -99,8 +99,8 @@ void substrate_options_init(
 /**
  * @brief Print the help and usage of the program.
  *
- * @param program_name The name of the program of which the help/usage will be printed.
- * @param output The stream to output the help/usage.
+ * @param[in] program_name The name of the program of which the help/usage will be printed.
+ * @param[in] output The stream to output the help/usage.
  */
 void substrate_print_help(
         char *program_name,

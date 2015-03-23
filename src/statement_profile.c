@@ -76,7 +76,7 @@ struct osl_statement * substrate_osl_statement_fusion(
 /**
  * @brief Free recursively an substrate_scop_profile.
  *
- * @param[inout] sp The substrate_scop_profile that is freed.
+ * @param[in] sp The substrate_scop_profile that is freed.
  */
 void substrate_scop_profile_free(
         struct substrate_scop_profile * sp)

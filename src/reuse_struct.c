@@ -5,6 +5,13 @@
 #include "reuse_struct.h"
 #include "utils.h"
 
+/**
+ * @brief Create a recursive copy (not just a pointer copy) of a substrate_reuse_profile.
+ *
+ * @param[in] rp The substrate_reuse_profile to be copied.
+ *
+ * @return A substrate_reuse_profile that is the clone of \a rp. 
+ */
 struct substrate_reuse_profile substrate_reuse_profile_clone(
         struct substrate_reuse_profile rp)
 {
@@ -22,6 +29,14 @@ struct substrate_reuse_profile substrate_reuse_profile_clone(
     return res;
 }
 
+
+/**
+ * @brief Create a recursive copy (not just a pointer copy) of a substrate_array_profile.
+ *
+ * @param[in] ap The substrate_array_profile to be copied.
+ *
+ * @return A substrate_array_profile that is the clone of \a ap. 
+ */
 struct substrate_array_profile substrate_array_profile_clone(
         struct substrate_array_profile ap)
 {
@@ -43,6 +58,14 @@ struct substrate_array_profile substrate_array_profile_clone(
     return res;
 }
 
+
+/**
+ * @brief Create a recursive copy (not just a pointer copy) of a substrate_uniformly_generated_set.
+ *
+ * @param[in] ugs The substrate_uniformly_generated_set to be copied.
+ *
+ * @return A substrate_uniformly_generated_set that is the clone of \a ugs. 
+ */
 struct substrate_uniformly_generated_set substrate_uniformly_generated_set_clone(
         struct substrate_uniformly_generated_set ugs)
 {
@@ -61,6 +84,14 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_clone
     return res;
 }
 
+
+/**
+ * @brief Create a recursive copy (not just a pointer copy) of a substrate_equivalence_class.
+ *
+ * @param[in] ec The substrate_equivalence_class to be copied.
+ *
+ * @return A substrate_equivalence_class that is the clone of \a ec. 
+ */
 struct substrate_equivalence_class substrate_equivalence_class_clone(
         struct substrate_equivalence_class ec)
 {
@@ -73,6 +104,11 @@ struct substrate_equivalence_class substrate_equivalence_class_clone(
 }
 
 
+/**
+ * @brief Free recursively a substrate_reuse_profile.
+ *
+ * @param[in] rp The substrate_reuse_profile that will be freed.
+ */
 void substrate_reuse_profile_free(
         struct substrate_reuse_profile * rp)
 {
@@ -84,6 +120,11 @@ void substrate_reuse_profile_free(
     rp->size = 0;
 }
 
+/**
+ * @brief Free recursively a substrate_array_profile.
+ *
+ * @param[in] ap The substrate_array_profile that will be freed.
+ */
 void substrate_array_profile_free(
         struct substrate_array_profile * ap)
 {
@@ -97,6 +138,13 @@ void substrate_array_profile_free(
     osl_int_clear(ap->array_id_precision, &ap->array_id);
     ap->array_id_precision = 0;
 }
+
+
+/**
+ * @brief Free recursively a substrate_uniformly_generated_set.
+ *
+ * @param[in] ugs The substrate_uniformly_generated_set that will be freed.
+ */
 void substrate_uniformly_generated_set_free(
         struct substrate_uniformly_generated_set * ugs)
 {
@@ -110,6 +158,11 @@ void substrate_uniformly_generated_set_free(
     ugs->H_matrix = NULL;
 }
 
+/**
+ * @brief Free recursively a substrate_equivalence_class.
+ *
+ * @param[in] ec The substrate_equivalence_class that will be freed.
+ */
 void substrate_equivalence_class_free(
         struct substrate_equivalence_class * ec)
 {
@@ -120,6 +173,13 @@ void substrate_equivalence_class_free(
 
 
 
+/**
+ * @brief Print the content of a substrate_reuse_profile in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] rp The structure that will be printed.
+ */
 void substrate_reuse_profile_dump(
         FILE * output_stream,
         struct substrate_reuse_profile * rp)
@@ -134,6 +194,13 @@ void substrate_reuse_profile_dump(
 }
 
 
+/**
+ * @brief Print the content of a substrate_array_profile in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] ap The structure that will be printed.
+ */
 void substrate_array_profile_dump(
         FILE * output_stream,
         struct substrate_array_profile * ap)
@@ -151,6 +218,13 @@ void substrate_array_profile_dump(
 }
 
 
+/**
+ * @brief Print the content of a substrate_uniformly_generated_set in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] ugs The structure that will be printed.
+ */
 void substrate_uniformly_generated_set_dump(
         FILE * output_stream,
         struct substrate_uniformly_generated_set * ugs)
@@ -168,6 +242,13 @@ void substrate_uniformly_generated_set_dump(
 }
 
 
+/**
+ * @brief Print the content of a substrate_equivalence_class in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] ec The structure that will be printed.
+ */
 void substrate_equivalence_class_dump(
         FILE * output_stream,
         struct substrate_equivalence_class * ec)
@@ -181,6 +262,16 @@ void substrate_equivalence_class_dump(
 
 
 
+/**
+ * @brief Fusion recursively two substrate_reuse_profile into a third one.
+ *
+ * \a rp1 and \a rp2 are not modified, everything is cloned/copied into the result.
+ *
+ * @param[in] rp1 The first substrate_reuse_profile.
+ * @param[in] rp2 The second substrate_reuse_profile.
+ *
+ * @return A substrate_reuse_profile, result of the fusion of \a rp1 and \a rp2 .
+ */
 struct substrate_reuse_profile substrate_reuse_profile_fusion(
         struct substrate_reuse_profile rp1,
         struct substrate_reuse_profile rp2)
@@ -241,6 +332,16 @@ struct substrate_reuse_profile substrate_reuse_profile_fusion(
     return res;
 }
 
+/**
+ * @brief Fusion recursively two substrate_array_profile into a third one.
+ *
+ * \a ap1 and \a ap2 are not modified, everything is cloned/copied into the result.
+ *
+ * @param[in] ap1 The first substrate_array_profile.
+ * @param[in] ap2 The second substrate_array_profile.
+ *
+ * @return A substrate_array_profile, result of the fusion of \a ap1 and \a ap2 .
+ */
 struct substrate_array_profile substrate_array_profile_fusion(
         struct substrate_array_profile ap1,
         struct substrate_array_profile ap2)
@@ -301,6 +402,17 @@ struct substrate_array_profile substrate_array_profile_fusion(
     return res;
 }
 
+
+/**
+ * @brief Fusion recursively two substrate_uniformly_generated_set into a third one.
+ *
+ * \a ugs1 and \a ugs2 are not modified, everything is cloned/copied into the result.
+ *
+ * @param[in] ugs1 The first substrate_uniformly_generated_set.
+ * @param[in] ugs2 The second substrate_uniformly_generated_set.
+ *
+ * @return A substrate_uniformly_generated_set, result of the fusion of \a ugs1 and \a ugs2 .
+ */
 struct substrate_uniformly_generated_set substrate_uniformly_generated_set_fusion(
         struct substrate_uniformly_generated_set ugs1,
         struct substrate_uniformly_generated_set ugs2)
@@ -360,6 +472,16 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_fusio
     return res;
 }
 
+/**
+ * @brief Fusion recursively two substrate_equivalence_class into a third one.
+ *
+ * \a ec1 and \a ec2 are not modified, everything is cloned/copied into the result.
+ *
+ * @param[in] ec1 The first substrate_equivalence_class.
+ * @param[in] ec2 The second substrate_equivalence_class.
+ *
+ * @return A substrate_equivalence_class, result of the fusion of \a ec1 and \a ec2 .
+ */
 struct substrate_equivalence_class substrate_equivalence_class_fusion(
         struct substrate_equivalence_class ec1,
         struct substrate_equivalence_class ec2)
@@ -379,6 +501,14 @@ struct substrate_equivalence_class substrate_equivalence_class_fusion(
 }
 
 
+/**
+ * @brief Count the total number of reference/access relation in an
+ * substrate_uniformly_generated_set.
+ *
+ * @param[in] ugs
+ *
+ * @return 
+ */
 unsigned int substrate_uniformly_generated_set_count_access(
         struct substrate_uniformly_generated_set ugs)
 {
@@ -394,6 +524,14 @@ unsigned int substrate_uniformly_generated_set_count_access(
 }
 
 
+/**
+ * @brief Count recursively the total number of reference/access relation in
+ * a substrate_array_profile.
+ *
+ * @param[in] ap
+ *
+ * @return 
+ */
 unsigned int substrate_array_profile_count_access(
         struct substrate_array_profile ap)
 {

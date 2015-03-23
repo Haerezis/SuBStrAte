@@ -10,6 +10,13 @@
 #define SIZE 16
 
 
+/**
+ * @brief If the array in substrate_osl_relation_group_list is full, this function will
+ * reallocate it, increasing its size times 2.
+ *
+ * @param[inout] group_list The substrate_osl_relation_group_list that will be checked and maybe
+ * realloc.
+ */
 void substrate_osl_relation_group_list_realloc(
         struct substrate_osl_relation_group_list * group_list)
 {
@@ -23,6 +30,13 @@ void substrate_osl_relation_group_list_realloc(
 }
 
 
+/**
+ * @brief Get the array id from an access relation.
+ *
+ * @param[in] rel The access relation from which we will get the array id.
+ *
+ * @return The array id of the access relation \a rel.
+ */
 osl_int_t substrate_get_array_id_from_access_relation(
         struct osl_relation * rel)
 {
@@ -30,6 +44,18 @@ osl_int_t substrate_get_array_id_from_access_relation(
 }
 
 
+/**
+ * @brief Classify the relations in a relation list by using \a by_function that
+ * when given two relations tell us if they need to be the same group/class.
+ * \a rl should not be accessed after a call to this function.
+ *
+ * @param[inout] rl The list of relation that will be classify.
+ * @param[in] by_function The function used to group the relations in \a rl. Should return true
+ * if two relations have to be grouped together, false otherwise.
+ *
+ * @return A substrate_osl_relation_group_list containing an array of relation list,
+ * each list of the array representing a group/class.
+ */
 struct substrate_osl_relation_group_list substrate_group_access_relations_by(
         struct osl_relation_list * rl,
         bool (*by_function) (struct osl_relation *,struct osl_relation *))
@@ -89,6 +115,15 @@ struct substrate_osl_relation_group_list substrate_group_access_relations_by(
 
 
 
+/**
+ * @brief Check if two access relations have the same array id.
+ *
+ * @param[in] access_relation1
+ * @param[in] access_relation2
+ *
+ * @return True if \a access_relation1 and \a access_relation2 have the same array id,
+ * false otherwise.
+ */
 bool substrate_array_id_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2)
@@ -102,6 +137,15 @@ bool substrate_array_id_eq(
     return osl_int_eq(access_relation1->precision, array1_id, array2_id);
 }
 
+/**
+ * @brief Check if two access relation have the same H matrix (ie belong to the same
+ * Uniformly Generated Set, Wolf91) or not.
+ *
+ * @param[in] access_relation1
+ * @param[in] access_relation2
+ *
+ * @return True if the two access relation have the same H matrix, false otherwise.
+ */
 bool substrate_H_matrix_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2)
@@ -119,9 +163,12 @@ bool substrate_H_matrix_eq(
     //The size of the matrix should be nb_input_dims*nb_input_dims
     for(l = 1 ; l < ar->nb_output_dims ; l++)
     {
-        for(c = 1 + ar->nb_output_dims ; c < (1+ar->nb_output_dims+ar->nb_input_dims) ; c++)
+        for(c = 1 + ar->nb_output_dims ; c<(1+ar->nb_output_dims+ar->nb_input_dims) ; c++)
         {
-            if(osl_int_ne(ar->precision,access_relation1->m[l][c],access_relation2->m[l][c]))
+            if(osl_int_ne(
+                        ar->precision,
+                        access_relation1->m[l][c],
+                        access_relation2->m[l][c]))
             {
                 result = false;
                 break;
@@ -132,6 +179,15 @@ bool substrate_H_matrix_eq(
     return result;
 }
 
+/**
+ * @brief Check if two access relation have different H matrix (ie belong to different
+ * Uniformly Generated Set).
+ *
+ * @param[in] access_relation1
+ * @param[in] access_relation2
+ *
+ * @return 
+ */
 bool substrate_H_matrix_neq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2)
@@ -140,6 +196,18 @@ bool substrate_H_matrix_neq(
 }
 
 
+/**
+ * @brief Check if two access relation belonging to the same Uniformly Generated Set also
+ * belong to the same equivalence class.
+ *
+ * The two access relation NEED to belong to the same Uniformly Generated Set, because
+ * only the constant and parameters part of the relation is checked, not the H matrix.
+ *
+ * @param[in] access_relation1
+ * @param[in] access_relation2
+ *
+ * @return True if the two relations belong to the same equivalence class, false otherwise.
+ */
 bool substrate_access_class_eq(
         struct osl_relation * access_relation1,
         struct osl_relation * access_relation2)
@@ -156,9 +224,6 @@ bool substrate_access_class_eq(
     row_major = g_substrate_options.row_major ? 1 : 0;
     column_major = g_substrate_options.row_major ? 0 : 1;
    
-    //The H matrix start at line 1 to line ar->nb_intput_dims included, and start
-    //at column 1+nb_output_dims to column 1+nb_output_dims+nb_input_dims.
-    //The size of the matrix should be nb_input_dims*nb_input_dims
     for(l = 1+column_major ; l < (ar->nb_output_dims-row_major) ; l++)
     {
         for(c=(ar->nb_columns - ar->nb_parameters - 1) ; c < ar->nb_columns ; c++)
@@ -176,7 +241,12 @@ bool substrate_access_class_eq(
 
 
 /**
- * dest := source (except source->statement)
+ * @brief dest := source 
+ *
+ * Copy \a source in \dest, cloning/copying all source fields (except source->statement).
+ *
+ * @param[out] dest
+ * @param[in] source
  */
 void substrate_copy_scop_except_statements(
         struct osl_scop * dest,
@@ -195,6 +265,16 @@ void substrate_copy_scop_except_statements(
 }
 
 
+/**
+ * @brief Check if two scattering relation are the same, and if the beta depth is
+ * the same (the last beta component can be different).
+ *
+ * @param[in] rel1
+ * @param[in] rel2
+ *
+ * @return True if the two relations are the same scattering relation and the beta depth
+ * the same, false otherwise.
+ */
 bool substrate_same_scattering_and_beta_depth(
         struct osl_relation * rel1,
         struct osl_relation * rel2)
