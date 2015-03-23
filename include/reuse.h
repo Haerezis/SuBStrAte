@@ -4,11 +4,13 @@
 #include <osl/osl.h>
 #include "reuse_struct.h"
 
-
+/**
+ * A structure containing the informations needed to compute the reuse rate.
+ */
 struct reuse_rate
 {
-    unsigned int nb_same_class_refs;
-    unsigned int nb_total_refs;
+    unsigned int nb_same_class_refs;    /**<The number of references that can be fused in a same class */
+    unsigned int nb_total_refs;         /**<The total number of references */
 };
 
 

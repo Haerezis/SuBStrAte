@@ -3,10 +3,13 @@
 
 #include <osl/osl.h>
 
+/**
+ * A structure representing a groups of relations.
+ */
 struct substrate_osl_relation_group_list {
-    struct osl_relation_list ** list;
-    unsigned int size;
-    unsigned int max_size;
+    struct osl_relation_list ** list;   /**<An array of pointer that point to the first relation of each relation group */
+    unsigned int size;                  /**<The number of group in the array "list" */
+    unsigned int max_size;              /**<The max size of the array */
 };
 
 
