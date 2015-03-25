@@ -28,7 +28,7 @@ int main(int argc,char** argv)
 
     osl_scop_free(input_scop);
     osl_scop_free(output_scop);
-    substrate_scop_profile_free(&scop_profile);
+//    substrate_scop_profile_free(&scop_profile);//FIXME
     substrate_option_terminate();
 
     return 0;

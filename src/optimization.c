@@ -38,12 +38,12 @@ struct osl_scop * substrate_optimize(
  */
 void substrate_successive_statements_optimization(struct substrate_scop_profile * scop_profile)
 {
-    unsigned int i1 = 0, i2 = 0;
+    unsigned int i1 = 0, i2 = 0, scop_end_size = 0;
     struct substrate_statement_profile stmt_profile;
     bool same_domain = false, same_scattering = false;
     double reuse_rate = 0.0;
 
-
+    scop_end_size = scop_profile->size;//XXX It's important tant decrement the scop_size when fusionning two statement !
     for(i2=1 ; i2<(scop_profile->size) ; i2++)
     {
         same_domain = osl_relation_equal(
@@ -69,6 +69,7 @@ void substrate_successive_statements_optimization(struct substrate_scop_profile 
                     substrate_statement_profile_free(&scop_profile->statement_profiles[i1]);
                     substrate_statement_profile_free(&scop_profile->statement_profiles[i2]);
                     scop_profile->statement_profiles[i1] = stmt_profile;
+                    scop_end_size--;//Decrementing the end scop size because we lose a statement when fusionning
                 }
                 else
                 {
@@ -88,5 +89,6 @@ void substrate_successive_statements_optimization(struct substrate_scop_profile 
             scop_profile->statement_profiles[i1] = scop_profile->statement_profiles[i2];
         }
     }
-
+    
+    scop_profile->size = scop_end_size;
 }

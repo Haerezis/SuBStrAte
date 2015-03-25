@@ -213,7 +213,7 @@ struct osl_scop * substrate_scop_profile_to_osl_scop(struct substrate_scop_profi
     {
         osl_statement_add(
                 &res->statement,
-                osl_statement_clone(scop_profile.statement_profiles[i].osl_statement));
+                osl_statement_nclone(scop_profile.statement_profiles[i].osl_statement,1));
     }
 
     return res;

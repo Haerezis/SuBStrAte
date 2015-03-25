@@ -299,6 +299,7 @@ struct substrate_reuse_profile substrate_reuse_profile_fusion(
                             rp1.array_profiles[i1],
                             rp2.array_profiles[i2]);
                 res.size++;
+                break;
             }
         }
         if(i2 >= rp2.size)
@@ -371,6 +372,7 @@ struct substrate_array_profile substrate_array_profile_fusion(
                             ap1.uniformly_gen_sets[i1],
                             ap2.uniformly_gen_sets[i2]);
                 res.size++;
+                break;
             }
         }
         if(i2 >= ap2.size)
