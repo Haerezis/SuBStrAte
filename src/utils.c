@@ -329,21 +329,31 @@ struct osl_generic * substrate_osl_generic_lookup(
 }
 
 
+/**
+ * @brief This function builds and returns a "hard copy" (not a pointer copy) of the
+ * n first elements of an osl_generic_t list.
+ *
+ * \param generic The pointer to the generic structure we want to clone.
+ * \param n       The number of nodes we want to copy (n<0 for infinity).
+ * \return The clone of the n first nodes of the generic list.
+ *
+ * @return 
+ */
 struct osl_generic * substrate_osl_generic_nclone(
         struct osl_generic * generic,
-        int i)
+        int n)
 {
     osl_generic_p clone = NULL, new;
     osl_interface_p interface;
     void * x;
 
-    if(i<0)
+    if(n<0)
     {
         clone = osl_generic_clone(generic);
     }
     else
     {
-        while ((generic != NULL) && (i>0)) { 
+        while ((generic != NULL) && (n>0)) { 
             if (generic->interface != NULL) {
                 x = generic->interface->clone(generic->data);
                 interface = osl_interface_clone(generic->interface);
@@ -356,13 +366,20 @@ struct osl_generic * substrate_osl_generic_nclone(
                 OSL_warning("unregistered interface, cloning ignored");
             }
             generic = generic->next;
-            i--;
+            n--;
         }
     }
 
     return clone;
 }
 
+/**
+ * @brief Concatenate two osl_strings into one.
+ *
+ * @param dest[out] A pointer to the destination osl_strings.
+ * @param str1[in] The first osl_strings.
+ * @param str2[in] The second osl_strings.
+ */
 void substrate_osl_strings_concat(
         struct osl_strings ** dest,
         struct osl_strings * str1,

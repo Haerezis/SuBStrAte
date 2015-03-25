@@ -87,9 +87,25 @@ struct osl_generic * substrate_osl_generic_fusion(
     while(tmp1 != NULL)
     {
         tmp2 = substrate_osl_generic_lookup(gen2, tmp1->interface->URI);
-        if( (tmp2 == NULL) || (osl_generic_equal(tmp1, tmp2)) )
+        if(tmp2 == NULL)
         {
             osl_generic_add(&res, substrate_osl_generic_nclone(tmp1,1));
+        }
+        else if(osl_generic_equal(tmp1, tmp2))
+        {
+            if(strcmp(tmp1->interface->URI,"body") == 0)
+            {
+                new_generic = osl_generic_malloc();
+                new_generic->interface = osl_body_interface();
+                new_generic->next = NULL;
+                new_generic->data = substrate_osl_body_fusion(tmp1->data,tmp2->data);
+
+                osl_generic_add(&res, new_generic);
+            }
+            else
+            {
+                osl_generic_add(&res, substrate_osl_generic_nclone(tmp1,1));
+            }
         }
         else
         {
@@ -136,7 +152,7 @@ struct osl_body * substrate_osl_body_fusion(
     }
     else
     {
-        //TODO fuse when iterators don't match.
+        //TODO Maybe fuse when iterators don't match ? (I need to think about it...).
         OSL_error("Can't fusion body");
     }
 

@@ -62,7 +62,7 @@ struct osl_generic * substrate_osl_generic_lookup(
         char const * const URI);
 struct osl_generic * substrate_osl_generic_nclone(
         struct osl_generic * generic,
-        int i);
+        int n);
 void substrate_osl_strings_concat(
         struct osl_strings ** dest,
         struct osl_strings * str1,
