@@ -304,3 +304,79 @@ bool substrate_same_scattering_and_beta_depth(
 
     return res;
 }
+
+/**
+ * @brief This function returns the first generic structure with a given URI in the generic
+ * list provided as parameter and NULL if it doesn't find such a generic.
+ *
+ * @param[in] x The generic list where to search a given generic URI. 
+ * @param[in] URI The URI of the generic we are looking for. 
+ *
+ * @return The first generic of the requested URI in the list. 
+ */
+struct osl_generic * substrate_osl_generic_lookup(
+        struct osl_generic * x,
+        char const * const URI)
+{
+  while (x != NULL) {
+    if (osl_generic_has_URI(x, URI))
+      return x;
+
+    x = x->next;
+  }
+
+  return NULL;
+}
+
+
+struct osl_generic * substrate_osl_generic_nclone(
+        struct osl_generic * generic,
+        int i)
+{
+    osl_generic_p clone = NULL, new;
+    osl_interface_p interface;
+    void * x;
+
+    if(i<0)
+    {
+        clone = osl_generic_clone(generic);
+    }
+    else
+    {
+        while ((generic != NULL) && (i>0)) { 
+            if (generic->interface != NULL) {
+                x = generic->interface->clone(generic->data);
+                interface = osl_interface_clone(generic->interface);
+                new = osl_generic_malloc();
+                new->interface = interface;
+                new->data = x;
+                osl_generic_add(&clone, new);
+            }
+            else {
+                OSL_warning("unregistered interface, cloning ignored");
+            }
+            generic = generic->next;
+            i--;
+        }
+    }
+
+    return clone;
+}
+
+void substrate_osl_strings_concat(
+        struct osl_strings ** dest,
+        struct osl_strings * str1,
+        struct osl_strings * str2)
+{
+    struct osl_strings * res = NULL;
+    unsigned int i = 0;
+
+    res = osl_strings_clone(str1);
+    while(str2->string[i] != NULL)
+    {
+        osl_strings_add(res, str2->string[i]);
+        i++;
+    }
+    
+    *dest = res;
+}

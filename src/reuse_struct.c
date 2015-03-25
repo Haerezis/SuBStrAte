@@ -276,15 +276,16 @@ struct substrate_reuse_profile substrate_reuse_profile_fusion(
         struct substrate_reuse_profile rp1,
         struct substrate_reuse_profile rp2)
 {
-    unsigned int i=0, i1 = 0, i2 = 0;
+    unsigned int i1 = 0, i2 = 0;
     unsigned int max_size = 0, res_size = 0;
-    struct substrate_reuse_profile res;
+    struct substrate_reuse_profile res = {NULL,0};
     
     max_size = rp1.size + rp2.size;
+    res.size = 0;
     res.array_profiles = (struct substrate_array_profile*)
         malloc(max_size * sizeof(struct substrate_array_profile));
 
-    for(i1=0 ; i<rp1.size ; i1++)
+    for(i1=0 ; i1<rp1.size ; i1++)
     {
         for(i2=0; i2<rp2.size ; i2++)
         {
@@ -311,7 +312,7 @@ struct substrate_reuse_profile substrate_reuse_profile_fusion(
     res_size = res.size;
     for(i2=0 ; i2<rp2.size ; i2++)
     {
-        for(i=0 ; i<res_size ; i++)
+        for(i1=0 ; i1<res_size ; i1++)
         {
             if(osl_int_eq(
                         rp1.array_profiles[i1].array_id_precision,
@@ -321,7 +322,7 @@ struct substrate_reuse_profile substrate_reuse_profile_fusion(
                 break;
             }
         }
-        if(i >= res_size)
+        if(i1 >= res_size)
         {
             res.array_profiles[res.size] = 
                 substrate_array_profile_clone(rp2.array_profiles[i2]);
@@ -346,17 +347,18 @@ struct substrate_array_profile substrate_array_profile_fusion(
         struct substrate_array_profile ap1,
         struct substrate_array_profile ap2)
 {
-    unsigned int i=0, i1 = 0, i2 = 0;
+    unsigned int i1 = 0, i2 = 0;
     unsigned int max_size = 0, res_size = 0;
     struct substrate_array_profile res;
     
     max_size = ap1.size + ap2.size;
     res.array_id_precision = ap1.array_id_precision;
     osl_int_init_set(res.array_id_precision, &res.array_id, ap1.array_id);
+    res.size = 0;
     res.uniformly_gen_sets = (struct substrate_uniformly_generated_set*)
         malloc(max_size * sizeof(struct substrate_uniformly_generated_set));
 
-    for(i1=0 ; i<ap1.size ; i1++)
+    for(i1=0 ; i1<ap1.size ; i1++)
     {
         for(i2=0; i2<ap2.size ; i2++)
         {
@@ -382,7 +384,7 @@ struct substrate_array_profile substrate_array_profile_fusion(
     res_size = res.size;
     for(i2=0 ; i2<ap2.size ; i2++)
     {
-        for(i=0 ; i<res_size ; i++)
+        for(i1=0 ; i1<res_size ; i1++)
         {
             if(substrate_access_class_eq(
                         res.uniformly_gen_sets[i1].H_matrix,
@@ -391,7 +393,7 @@ struct substrate_array_profile substrate_array_profile_fusion(
                 break;
             }
         }
-        if(i >= res_size)
+        if(i1 >= res_size)
         {
             res.uniformly_gen_sets[res.size] = 
                 substrate_uniformly_generated_set_clone(ap2.uniformly_gen_sets[i2]);
@@ -418,7 +420,7 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_fusio
         struct substrate_uniformly_generated_set ugs2)
 {
     struct substrate_uniformly_generated_set res;
-    unsigned int i=0, i1 = 0, i2 = 0;
+    unsigned int i1 = 0, i2 = 0;
     unsigned int max_size = 0, res_size = 0;
 
     max_size = ugs1.size + ugs2.size;
@@ -453,16 +455,16 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_fusio
     res_size = res.size;
     for(i2=0 ; i2<ugs2.size ; i2++)
     {
-        for(i=0 ; i<res_size ; i++)
+        for(i1=0 ; i1<res_size ; i1++)
         {
             if(substrate_access_class_eq(
-                        res.classes[i].array_references->elt,
+                        res.classes[i1].array_references->elt,
                         ugs2.classes[i2].array_references->elt))
             {
                 break;
             }
         }
-        if(i >= res_size)
+        if(i1 >= res_size)
         {
             res.classes[res.size] = substrate_equivalence_class_clone(ugs2.classes[i2]);
             res.size++;

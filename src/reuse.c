@@ -241,11 +241,9 @@ double substrate_rate_reuse_profiles(
         }
         if(i1 >= rp1.size)
         {
-            tmp.nb_same_class_refs = 0;
-            tmp.nb_total_refs = substrate_array_profile_count_access(rp2.array_profiles[i2]);
+            rating.nb_total_refs += 
+                substrate_array_profile_count_access(rp2.array_profiles[i2]);
         }
-
-        rating.nb_total_refs += tmp.nb_total_refs;
     }
 
     return (double)rating.nb_same_class_refs / (double)rating.nb_total_refs;
@@ -310,12 +308,10 @@ struct reuse_rate substrate_rate_array_profiles(
         }
         if(i1 >= ap1.size)
         {
-            tmp.nb_same_class_refs = 0;
-            tmp.nb_total_refs = 
+            rating.nb_total_refs += 
                 substrate_uniformly_generated_set_count_access(ap2.uniformly_gen_sets[i2]);
         }
 
-        rating.nb_total_refs += tmp.nb_total_refs;
     }
 
     return rating;
@@ -336,32 +332,35 @@ struct reuse_rate substrate_rate_uniformly_generated_sets(
         struct substrate_uniformly_generated_set ugs2)
 {
     struct reuse_rate rating = {0,0};
-    bool has_hit = true;
     unsigned int i1 = 0, i2 = 0;
 
     for(i1=0; i1<ugs1.size ; i1++)
     {
-        has_hit = false;
-        for(i2=0 ; (i2<ugs2.size) && (has_hit == false) ; i2++)
+        for(i2=0 ; i2<ugs2.size ; i2++)
         {
-            has_hit = substrate_access_class_eq(
-                            ugs1.classes[i1].array_references->elt,
-                            ugs2.classes[i2].array_references->elt);
+            if(substrate_access_class_eq(
+                        ugs1.classes[i1].array_references->elt,
+                        ugs2.classes[i2].array_references->elt))
+            {
+                break;
+            }
         }
-        if(has_hit)
+        if(i2<ugs2.size)
             rating.nb_same_class_refs += ugs1.classes[i1].size + ugs2.classes[i2].size;
         rating.nb_total_refs += ugs1.classes[i1].size;
     }
     for(i2=0 ; i2<ugs2.size ; i2++)
     {
-        has_hit = false;
-        for(i1=0; (i1<ugs1.size) && (has_hit == false); i1++)
+        for(i1=0; i1<ugs1.size ; i1++)
         {
-            has_hit = substrate_access_class_eq(
-                            ugs1.classes[i1].array_references->elt,
-                            ugs2.classes[i2].array_references->elt);
+            if(substrate_access_class_eq(
+                        ugs1.classes[i1].array_references->elt,
+                        ugs2.classes[i2].array_references->elt))
+            {
+                break;
+            }
         }
-        if(has_hit == false)
+        if(i1 < ugs1.size)
             rating.nb_total_refs += ugs2.classes[i2].size;
     }
 

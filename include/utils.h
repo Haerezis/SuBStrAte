@@ -56,4 +56,15 @@ bool substrate_same_scattering_and_beta_depth(
         struct osl_relation * rel1,
         struct osl_relation * rel2);
 
+
+struct osl_generic * substrate_osl_generic_lookup(
+        struct osl_generic * x,
+        char const * const URI);
+struct osl_generic * substrate_osl_generic_nclone(
+        struct osl_generic * generic,
+        int i);
+void substrate_osl_strings_concat(
+        struct osl_strings ** dest,
+        struct osl_strings * str1,
+        struct osl_strings * str2);
 #endif
