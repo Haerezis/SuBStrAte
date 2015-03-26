@@ -241,31 +241,6 @@ bool substrate_access_class_eq(
 
 
 /**
- * @brief dest := source 
- *
- * Copy \a source in \dest, cloning/copying all source fields (except source->statement).
- *
- * @param[out] dest
- * @param[in] source
- */
-void substrate_copy_scop_except_statements(
-        struct osl_scop * dest,
-        struct osl_scop * source)
-{
-    dest->version = source->version;
-    dest->language = malloc(strlen(source->language)+1);//alloc the string
-    strcpy(dest->language,source->language);//copy the string after alloc
-    dest->context = osl_relation_clone(source->context);
-    dest->parameters = osl_generic_clone(source->parameters);
-    dest->statement = NULL;
-    dest->registry = osl_interface_clone(source->registry);
-    dest->extension = osl_generic_clone(source->extension);
-    dest->usr = NULL;
-    dest->next = NULL;//TODO : substrate doesn't handle files with multiples scope for now
-}
-
-
-/**
  * @brief Check if two scattering relation are the same, and if the beta depth is
  * the same (the last beta component can be different).
  *

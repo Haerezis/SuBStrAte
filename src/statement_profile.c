@@ -5,26 +5,85 @@
 #include "utils.h"
 
 
+struct substrate_statement_profile * substrate_statement_profile_malloc()
+{
+    struct substrate_statement_profile * res = NULL;
+
+    res = (struct substrate_statement_profile*)
+        malloc(sizeof(struct substrate_statement_profile));
+
+    memset(res, 0, sizeof(struct substrate_statement_profile));
+    
+    return res;
+}
+
+
+struct substrate_statement_profile * substrate_statement_profile_clone(
+        struct substrate_statement_profile * stmt_profile)
+{
+    struct substrate_statement_profile * res = NULL;
+
+    res = substrate_statement_profile_malloc();
+
+    res->reuse = substrate_reuse_profile_clone(stmt_profile->reuse);
+
+    return res;
+}
+
+
+struct substrate_statement_profile * substrate_statement_profile_constructor(
+        struct osl_statement * stmt)
+{
+    struct substrate_statement_profile * res = NULL;
+
+    res = substrate_statement_profile_malloc();
+
+    ////////////////////
+    // Different profiling functions go here
+
+    res->reuse = substrate_reuse_profile_constructor(stmt);
+    
+    // End of profiling
+    ///////////////////
+    return res;
+}
+
+
+
+
+struct osl_statement * substrate_statement_fusion(
+        struct osl_statement * stmt1,
+        struct osl_statement * stmt2)
+{
+    struct osl_statement * res = NULL;
+    struct substrate_statement_profile *profile1 = NULL, *profile2 = NULL;
+
+    res = substrate_osl_statement_fusion(stmt1, stmt2);
+
+    profile1 = (struct substrate_statement_profile *)stmt1->usr;
+    profile2 = (struct substrate_statement_profile *)stmt2->usr;
+    res->usr = substrate_statement_profile_fusion(profile1 , profile2);
+    
+    return res;
+}
+
+
 /**
- * @brief Aggregate two statement' profile into one.
- * The osl_statements carry contained in the profiles are also aggregated.
+ * @brief Aggregate two statements profile into one.
  *
  * @param[in] stmt1 The first statement profile of the aggregation.
  * @param[in] stmt2 The second statement profile of the aggregation.
  *
  * @return A statement profile created from the aggregation of \a stmt1 and \a stmt2 .
  */
-struct substrate_statement_profile substrate_statement_profile_fusion(
-        struct substrate_statement_profile stmt1,
-        struct substrate_statement_profile stmt2)
+struct substrate_statement_profile * substrate_statement_profile_fusion(
+        struct substrate_statement_profile * stmt1,
+        struct substrate_statement_profile * stmt2)
 {
-    struct substrate_statement_profile res;
+    struct substrate_statement_profile * res;
 
-    res.osl_statement = substrate_osl_statement_fusion(
-            stmt1.osl_statement,
-            stmt2.osl_statement);
-    
-    res.reuse = substrate_reuse_profile_fusion(stmt1.reuse, stmt2.reuse);
+    res = substrate_statement_profile_malloc();
+    res->reuse = substrate_reuse_profile_fusion(stmt1->reuse, stmt2->reuse);
     
     return res;
 }
@@ -160,22 +219,22 @@ struct osl_body * substrate_osl_body_fusion(
 }
 
 /**
- * @brief Free recursively an substrate_scop_profile.
+ * @brief Free recursively the scop profiles : meaning all the statement profiles.
  *
- * @param[in] sp The substrate_scop_profile that is freed.
+ * @param[in] sp The osl_scop containing the statement that will have their profile freed.
  */
 void substrate_scop_profile_free(
-        struct substrate_scop_profile * sp)
+        struct osl_scop * sp)
 {
-    unsigned int i = 0;
+    struct osl_statement * stmt = NULL;
 
-    for(i=0; i<sp->size ; i++)
+    stmt = sp->statement;
+    while(stmt != NULL)
     {
-        substrate_statement_profile_free(&sp->statement_profiles[i]);
+        substrate_statement_profile_free(stmt->usr);
+        stmt->usr = NULL;
+        stmt = stmt->next;
     }
-    free(sp->statement_profiles);
-    sp->statement_profiles = NULL;
-    sp->size = 0;
 }
 
 
@@ -187,34 +246,5 @@ void substrate_scop_profile_free(
 void substrate_statement_profile_free(
         struct substrate_statement_profile * sp)
 {
-    osl_statement_free(sp->osl_statement);
-    sp->osl_statement = NULL;
     substrate_reuse_profile_free(&sp->reuse);
-}
-
-
-/**
- * @brief Convert a substrate_scop_profile into a osl_scop.
- *
- * @param[in] scop_profile The substrate_scop_profile that is converted.
- *
- * @return The equivalent of \a scop_profile as a osl_scop structure.
- */
-struct osl_scop * substrate_scop_profile_to_osl_scop(struct substrate_scop_profile scop_profile)
-{
-    unsigned int i = 0;
-    struct osl_scop * res = NULL;
-
-    res = osl_scop_malloc();
-    substrate_copy_scop_except_statements(res, scop_profile.scop);
-
-    res->statement = NULL;
-    for(i=0 ; i<scop_profile.size ; i++)
-    {
-        osl_statement_add(
-                &res->statement,
-                osl_statement_nclone(scop_profile.statement_profiles[i].osl_statement,1));
-    }
-
-    return res;
 }

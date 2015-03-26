@@ -9,22 +9,31 @@
 
 /**
  * @brief Optimize a scop by aggregating similar behaving statements, using the
- * statements profiles contained in \a scop_profile.
+ * statements profiles contained in \a profiled_scop.
  *
- * @param[in] scop_profile A scop profile (containing statement profiles)
- * that will be optimized.
+ * @param[in] profiled_scop A scop that has been analyzed and profiled (the result of the
+ * \a analyze function).
  *
- * @return an osl_scop corresponding to optimization of \a scop_profile.
+ * @return an osl_scop corresponding to the optimization of \a profiled_scop.
  */
 struct osl_scop * substrate_optimize(
-        struct substrate_scop_profile scop_profile)
+        struct osl_scop * profiled_scop)
 {
-    struct osl_scop * scop = NULL;
+    struct osl_scop * res = NULL;
+    struct osl_statement *stmt1 = NULL, *stmt2 = NULL;
 
-    substrate_successive_statements_optimization(&scop_profile);
-    scop = substrate_scop_profile_to_osl_scop(scop_profile);
+    res = osl_scop_clone(profiled_scop);
+    stmt1 = profiled_scop->statement;
+    stmt2 = res->statement;
+    while((stmt1 != NULL) && (stmt2 != NULL))
+    {
+        stmt2->usr = substrate_statement_profile_clone(stmt1->usr);
+        stmt1 = stmt1->next;
+        stmt2 = stmt2->next;
+    }
+    substrate_successive_statements_optimization(res);
 
-    return scop;
+    return res;
 }
 
 
@@ -34,61 +43,89 @@ struct osl_scop * substrate_optimize(
  * @brief Optimize a scop by aggregating (if possible and preferable)
  * successive statements one by one.
  *
- * @param[inout] scop_profile A scop profile that will be optimized.
+ * @param[inout] profiled_scop A scop profile that will be optimized.
  */
-void substrate_successive_statements_optimization(struct substrate_scop_profile * scop_profile)
+void substrate_successive_statements_optimization(struct osl_scop * profiled_scop)
 {
-    unsigned int i1 = 0, i2 = 0, scop_end_size = 0;
-    struct substrate_statement_profile stmt_profile;
+    struct osl_statement 
+        *stmt = NULL,// Will point to the statement BEFORE the first statement that is rated/aggregated.
+        *stmt_original = NULL,// Point to the original address of stmt after its empty alloc.
+        *stmt1 = NULL,// Point to the first statement that is rated/aggregated
+        *stmt2 = NULL,// Point to the second statement that is rated/aggregated
+        *stmt_fusion = NULL;// Point to the new statement created when stmt1 and stmt2 are aggregated.
+    struct substrate_statement_profile *stmt_profile1 = NULL, *stmt_profile2;
     bool same_domain = false, same_scattering = false;
     double reuse_rate = 0.0;
 
-    scop_end_size = scop_profile->size;//XXX It's important tant decrement the scop_size when fusionning two statement !
-    for(i2=1 ; i2<(scop_profile->size) ; i2++)
+    //if there isn't even 2 statements, we can't aggregate anything, so we return
+    if((profiled_scop->statement == NULL) || (profiled_scop->statement->next == NULL))
+        return;
+
+    //We just create an empty osl_statement to not break the iteration pattern.
+    stmt = osl_statement_malloc();
+    stmt_original = stmt;//to keep track of the empty osl_statement, to free it at the end.
+    stmt->next = profiled_scop->statement;
+    while(stmt->next->next != NULL)
     {
+        //stmt1 point to the first statement that will be rated and maybe aggregated.
+        //stmt2 point to the second statement that will be rated and maybe aggregated.
+        stmt1 = stmt->next;
+        stmt2 = stmt->next->next;
+
         same_domain = osl_relation_equal(
-                scop_profile->statement_profiles[i1].osl_statement->domain,
-                scop_profile->statement_profiles[i2].osl_statement->domain);
+                stmt1->domain,
+                stmt2->domain);
 
         if(same_domain == true)
         {
             same_scattering = substrate_same_scattering_and_beta_depth(
-                    scop_profile->statement_profiles[i1].osl_statement->scattering,
-                    scop_profile->statement_profiles[i2].osl_statement->scattering);
+                    stmt1->scattering,
+                    stmt2->scattering);
 
             if(same_scattering == true)
             {
+                stmt_profile1 = (struct substrate_statement_profile*)stmt1->usr;
+                stmt_profile2 = (struct substrate_statement_profile*)stmt2->usr;
+
+
                 reuse_rate = substrate_rate_reuse_profiles(
-                        scop_profile->statement_profiles[i1].reuse,
-                        scop_profile->statement_profiles[i2].reuse);
+                        stmt_profile1->reuse,
+                        stmt_profile2->reuse);
                 if(reuse_rate >= g_substrate_options.minimal_reuse_rate)
                 {
-                    stmt_profile = substrate_statement_profile_fusion(
-                            scop_profile->statement_profiles[i1],
-                            scop_profile->statement_profiles[i2]);
-                    substrate_statement_profile_free(&scop_profile->statement_profiles[i1]);
-                    substrate_statement_profile_free(&scop_profile->statement_profiles[i2]);
-                    scop_profile->statement_profiles[i1] = stmt_profile;
-                    scop_end_size--;//Decrementing the end scop size because we lose a statement when fusionning
+                    //aggregate stmt1 and stmt2 into stmt_fusion.
+                    stmt_fusion = substrate_statement_fusion(stmt1, stmt2);
+                    //replace stmt1 and stmt2 in the list by stmt_fusion
+                    stmt->next = stmt_fusion;
+                    stmt2->next = NULL;
+                    substrate_statement_profile_free(stmt_profile1);
+                    substrate_statement_profile_free(stmt_profile2);
+                    osl_statement_free(stmt1);//this function normaly also free stmt2
                 }
                 else
                 {
-                    i1++;
-                    scop_profile->statement_profiles[i1] = scop_profile->statement_profiles[i2];
+                    stmt = stmt->next;
                 }
             }
             else
             {
                 //TODO Use candl and simulate a move of the 2nd statement at the same
                 //scattering and beta depth than the 1st (using the base and modified scattering)
+                stmt = stmt->next;
             }
         }
         else
         {
-            i1++;
-            scop_profile->statement_profiles[i1] = scop_profile->statement_profiles[i2];
+            stmt = stmt->next;
         }
     }
-    
-    scop_profile->size = scop_end_size;
+    //If the 1st statement of the list has been aggregated, a new osl_statement has been
+    //created and used to replace the 1st and 2nd statement, so we need to properly
+    //point profiled_scop->statement to the address of this new osl_statement, which is in
+    //stmt_original->next.
+    profiled_scop->statement = stmt_original->next;
+
+    //After that we need to free the empty osl_statement, because it's useless now.
+    stmt_original->next = NULL;
+    osl_statement_free(stmt_original);
 }

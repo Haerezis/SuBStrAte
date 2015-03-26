@@ -47,14 +47,11 @@ bool substrate_temporal_class_eq(
         struct osl_relation * access_relation2);
 
 
-void substrate_copy_scop_except_statements(
-        struct osl_scop * source,
-        struct osl_scop * destination);
-
 
 bool substrate_same_scattering_and_beta_depth(
         struct osl_relation * rel1,
         struct osl_relation * rel2);
+
 
 
 struct osl_generic * substrate_osl_generic_lookup(

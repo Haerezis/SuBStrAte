@@ -5,6 +5,6 @@
 
 #include "statement_profile.h"
 
-struct substrate_scop_profile substrate_analyze(struct osl_scop * scop);
+struct osl_scop * substrate_analyze(struct osl_scop * scop);
 
 #endif
