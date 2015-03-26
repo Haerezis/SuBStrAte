@@ -18,6 +18,42 @@ struct substrate_statement_profile * substrate_statement_profile_malloc()
 }
 
 
+/**
+ * @brief Clone (hard copy) an osl_scop, but also clone the substrate_statement_profile
+ * pointed by every osl_statement->usr field.
+ *
+ * @param scop The osl_scop that will be cloned.
+ *
+ * @return A clone of \a scop including the substrate_statement_profile pointed by the
+ * osl_statement->usr filed.
+ */
+struct osl_scop * substrate_osl_scop_clone(struct osl_scop * scop)
+{
+    struct osl_scop * res = NULL, *inital_res = NULL;
+    struct osl_statement *stmt1 = NULL, *stmt2 = NULL;
+
+    res = osl_scop_clone(scop);
+    //inital_res point to the first scop of the cloned list, and that's what will be returned
+    //at the end of the function.
+    inital_res = res;
+
+    while(res != NULL)
+    {
+        stmt1 = scop->statement;
+        stmt2 = res->statement;
+        while((stmt1 != NULL) && (stmt2 != NULL))
+        {
+            stmt2->usr = substrate_statement_profile_clone(stmt1->usr);
+            stmt1 = stmt1->next;
+            stmt2 = stmt2->next;
+        }
+        res = res->next;
+    }
+    
+    return inital_res;
+}
+
+
 struct substrate_statement_profile * substrate_statement_profile_clone(
         struct substrate_statement_profile * stmt_profile)
 {

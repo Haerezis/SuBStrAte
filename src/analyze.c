@@ -14,28 +14,34 @@
 struct osl_scop * substrate_analyze(struct osl_scop * scop)
 {
     struct osl_statement *statement = NULL;
-    struct osl_scop * profiled_scop = NULL;
+    struct osl_scop * profiled_scop = NULL, *initial_profiled_scop = NULL;
 
     profiled_scop = osl_scop_clone(scop);
+    initial_profiled_scop = profiled_scop;
 
-    //Analyzing the reuse,parallel.. informations of every statement of the scop
-    //and put them in their corresponding statement_profile
-    statement = profiled_scop->statement;
-    while(statement != NULL)
+    //For every scop in the scop list
+    while(profiled_scop != NULL)
     {
-        statement->usr = substrate_statement_profile_constructor(statement);
+        //Analyzing the reuse,parallel.. informations of every statement of the scop
+        //and put them in their corresponding statement_profile
+        statement = profiled_scop->statement;
+        while(statement != NULL)
+        {
+            statement->usr = substrate_statement_profile_constructor(statement);
 
-        statement = statement->next;
-    }
+            statement = statement->next;
+        }
+            
+        //Dump internal structures to stdout
+        /*for(i=0; i<profiled_scop.size ; i++)*/
+        /*{*/
+            /*fprintf(stdout,"\n================= DUMP S%d ==================\n",i+1);*/
+            /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
+            /*fprintf(stdout,"============================================\n");*/
+        /*}*/
         
-    //Dump internal structures to stdout
-    /*for(i=0; i<profiled_scop.size ; i++)*/
-    /*{*/
-        /*fprintf(stdout,"\n================= DUMP S%d ==================\n",i+1);*/
-/*//        osl_statement_dump(stdout,statement_profiles[i].osl_statement);*/
-        /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
-        /*fprintf(stdout,"============================================\n");*/
-    /*}*/
+        profiled_scop = profiled_scop->next;
+    }
 
-    return profiled_scop;
+    return initial_profiled_scop;
 }

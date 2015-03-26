@@ -18,6 +18,7 @@ struct substrate_statement_profile
 struct substrate_statement_profile * substrate_statement_profile_malloc();
 struct substrate_statement_profile * substrate_statement_profile_constructor(
         struct osl_statement *);
+struct osl_scop * substrate_osl_scop_clone(struct osl_scop * scop);
 struct substrate_statement_profile * substrate_statement_profile_clone(
         struct substrate_statement_profile * stmt_profile);
 

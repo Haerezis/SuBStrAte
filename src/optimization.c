@@ -19,21 +19,19 @@
 struct osl_scop * substrate_optimize(
         struct osl_scop * profiled_scop)
 {
-    struct osl_scop * res = NULL;
-    struct osl_statement *stmt1 = NULL, *stmt2 = NULL;
+    struct osl_scop * res = NULL, *original_res = NULL;
 
-    res = osl_scop_clone(profiled_scop);
-    stmt1 = profiled_scop->statement;
-    stmt2 = res->statement;
-    while((stmt1 != NULL) && (stmt2 != NULL))
+    res = substrate_osl_scop_clone(profiled_scop);
+    original_res = res;
+    while(res != NULL)
     {
-        stmt2->usr = substrate_statement_profile_clone(stmt1->usr);
-        stmt1 = stmt1->next;
-        stmt2 = stmt2->next;
+        substrate_successive_statements_optimization(res);
+        res = res->next;
     }
-    substrate_successive_statements_optimization(res);
 
-    return res;
+    //return the pointer to the first osl_scop of the list,
+    //not res directly (that point to the last)
+    return original_res;
 }
 
 
