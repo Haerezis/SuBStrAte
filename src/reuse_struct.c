@@ -72,7 +72,7 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_clone
     unsigned int i = 0;
     struct substrate_uniformly_generated_set res;
 
-    res.H_matrix = osl_relation_clone(ugs.H_matrix);
+    res.H_matrix = osl_relation_nclone(ugs.H_matrix,1);
     res.classes = (struct substrate_equivalence_class*)
         malloc(ugs.size * sizeof(struct substrate_equivalence_class));
     res.size = ugs.size;
@@ -155,6 +155,8 @@ void substrate_uniformly_generated_set_free(
     ugs->classes = NULL;
     ugs->size = 0;
     
+    ugs->H_matrix->next = NULL; //just to be sure to not have double free...
+    osl_relation_free(ugs->H_matrix);
     ugs->H_matrix = NULL;
 }
 
@@ -426,7 +428,7 @@ struct substrate_uniformly_generated_set substrate_uniformly_generated_set_fusio
     unsigned int max_size = 0, res_size = 0;
 
     max_size = ugs1.size + ugs2.size;
-    res.H_matrix = osl_relation_clone(ugs1.H_matrix);
+    res.H_matrix = osl_relation_nclone(ugs1.H_matrix,1);
     res.size = 0;
     res.classes = (struct substrate_equivalence_class*)
         malloc(max_size * sizeof(struct substrate_equivalence_class));

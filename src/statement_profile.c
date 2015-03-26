@@ -206,8 +206,8 @@ struct osl_body * substrate_osl_body_fusion(
         res->iterators = osl_strings_clone(body1->iterators);
         substrate_osl_strings_concat(
                 &res->expression,
-                osl_strings_clone(body1->expression),
-                osl_strings_clone(body2->expression));
+                body1->expression,
+                body2->expression);
     }
     else
     {
@@ -247,4 +247,5 @@ void substrate_statement_profile_free(
         struct substrate_statement_profile * sp)
 {
     substrate_reuse_profile_free(&sp->reuse);
+    free(sp);
 }

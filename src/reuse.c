@@ -123,7 +123,7 @@ struct substrate_uniformly_generated_set substrate_uniformly_gen_set_constructor
             uniformly_generated_set,
             substrate_access_class_eq);
     
-    uni_gen_set.H_matrix = uniformly_generated_set->elt;
+    uni_gen_set.H_matrix = osl_relation_nclone(uniformly_generated_set->elt, 1);
     uni_gen_set.classes = (struct substrate_equivalence_class*)
         malloc(classes.size * sizeof(struct substrate_equivalence_class));
     uni_gen_set.size = classes.size;
