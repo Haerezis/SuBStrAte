@@ -15,11 +15,21 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pedantic")
 #add the include directory containing the header files
 include_directories(${substrate_SOURCE_DIR}/include/)
 
-#add osl to the build
-set(osl_DIR ${substrate_SOURCE_DIR}/osl/)
-add_subdirectory(osl)
-include_directories(${osl_DIR}/include)
+###add osl to the build
+##Comment out to use git submodule osl directory, else we use installed lib.
+#set(osl_DIR ${substrate_SOURCE_DIR}/osl/)
+#add_subdirectory(osl)
+#include_directories(${osl_DIR}/include)
 find_library(osl REQUIRED)
+
+###add candl to the build
+##Comment out to use git submodule candl directory, else we use installed lib.
+#set(candl_DIR ${substrate_SOURCE_DIR}/candl/)
+#add_subdirectory(candl)
+#include_directories(${candl_DIR}/include)
+find_library(candl REQUIRED)
+
+
 #find_package(GMP REQUIRED)
 
 add_executable(substrate
@@ -34,4 +44,5 @@ add_executable(substrate
     )
 
 target_link_libraries(substrate osl)
+target_link_libraries(substrate candl)
 target_link_libraries(substrate gmp)
