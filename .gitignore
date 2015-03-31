@@ -41,3 +41,6 @@ substrate
 #doc html & latex
 doc/html
 doc/latex
+
+#osl
+osl/*

@@ -17,7 +17,9 @@ include_directories(${substrate_SOURCE_DIR}/include/)
 
 #add osl to the build
 set(osl_DIR ${substrate_SOURCE_DIR}/osl/)
-find_package(osl REQUIRED)
+add_subdirectory(osl)
+include_directories(${osl_DIR}/include)
+find_library(osl REQUIRED)
 #find_package(GMP REQUIRED)
 
 add_executable(substrate
@@ -31,5 +33,5 @@ add_executable(substrate
     src/substrate.c
     )
 
-target_link_libraries(substrate ${OSL_LIBRARY})
-TARGET_LINK_LIBRARIES(substrate gmp)
+target_link_libraries(substrate osl)
+target_link_libraries(substrate gmp)
