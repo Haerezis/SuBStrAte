@@ -21,6 +21,10 @@ struct substrate_osl_relation_group_list substrate_group_access_relations_by(
         struct osl_relation_list * rl,
         bool (*by_function) (struct osl_relation *,struct osl_relation *));
 
+struct osl_scop * substrate_osl_scop_nclone_expect_statement(
+        struct osl_scop * scop,
+        int n);
+
 
 bool substrate_array_id_eq(
         struct osl_relation * access_relation1,

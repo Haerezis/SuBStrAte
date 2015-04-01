@@ -114,6 +114,37 @@ struct substrate_osl_relation_group_list substrate_group_access_relations_by(
 }
 
 
+struct osl_scop * substrate_osl_scop_nclone_expect_statement(
+        struct osl_scop * scop,
+        int n)
+{
+    struct osl_scop * res = NULL, *new = NULL;
+    int i = 0;
+    
+    if(n < 0)
+    {
+        n = osl_scop_number(scop);
+    }
+   
+    for(i=0 ; i<n ; i++)
+    {
+        new = osl_scop_malloc();
+        new->version = scop->version;
+        new->language = scop->language;
+        new->context = osl_relation_clone(scop->context);
+        new->parameters = osl_generic_clone(scop->parameters);
+        new->statement = NULL;
+        new->registry = osl_interface_clone(scop->registry);
+        new->extension = osl_generic_clone(scop->extension);
+        new->usr = scop->usr;
+        new->next = NULL;
+
+        osl_scop_add(&res, new);
+    }
+
+    return res;
+}
+
 
 /**
  * @brief Check if two access relations have the same array id.

@@ -4,6 +4,7 @@
 #include <osl/osl.h>
 
 #include "reuse.h"
+#include "parallelism.h"
 
 /**
  * A structure representing the profile of a statement.
@@ -12,6 +13,7 @@
 struct substrate_statement_profile
 {
     struct substrate_reuse_profile reuse;   /**<The reuse profile of the stagtement. */
+    struct substrate_parallelism_profile parallelism;   /**<The parallelism profile of the stagtement. */
 };
 
 

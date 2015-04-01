@@ -36,6 +36,8 @@ add_executable(substrate
     src/utils.c
     src/reuse_struct.c
     src/reuse.c
+    src/parallelism_struct.c
+    src/parallelism.c
     src/statement_profile.c
     src/analyze.c
     src/optimization.c
