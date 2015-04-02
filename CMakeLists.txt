@@ -20,15 +20,21 @@ include_directories(${substrate_SOURCE_DIR}/include/)
 #set(osl_DIR ${substrate_SOURCE_DIR}/osl/)
 #add_subdirectory(osl)
 #include_directories(${osl_DIR}/include)
-find_library(osl REQUIRED)
+find_library(OSL_LIBRARY osl REQUIRED)
 
 ###add candl to the build
 ##Comment out to use git submodule candl directory, else we use installed lib.
 #set(candl_DIR ${substrate_SOURCE_DIR}/candl/)
 #add_subdirectory(candl)
 #include_directories(${candl_DIR}/include)
-find_library(candl REQUIRED)
+find_library(CANDL_LIBRARY candl REQUIRED)
 
+find_library(GMP_LIBRARY gmp REQUIRED)
+if (GMP_LIBRARY)
+    find_library(PIPLIB_GMP_LIBRARY piplib_gmp REQUIRED)
+else()
+    find_library(PIPLIB_DP_LIBRARY piplib_dp REQUIRED)
+endif()
 
 #find_package(GMP REQUIRED)
 
@@ -45,6 +51,11 @@ add_executable(substrate
     src/substrate.c
     )
 
-target_link_libraries(substrate osl)
-target_link_libraries(substrate candl)
-target_link_libraries(substrate gmp)
+target_link_libraries(substrate ${OSL_LIBRARY})
+target_link_libraries(substrate ${CANDL_LIBRARY})
+target_link_libraries(substrate ${GMP_LIBRARY})
+if (gmp_LIB)
+    target_link_libraries(substrate ${PIPLIB_GMP_LIBRARY})
+else()
+    target_link_libraries(substrate ${PIPLIB_DP_LIBRARY})
+endif()
