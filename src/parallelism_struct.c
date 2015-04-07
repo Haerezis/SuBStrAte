@@ -34,7 +34,7 @@ void substrate_parallelism_profile_dump(
 {
     unsigned int i = 0;
 
-    if(pp->size > 0)
+    if(pp->size == 0)
     {
         fprintf(output_stream, "Empty loop carried dependence vector\n");
     }

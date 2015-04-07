@@ -130,7 +130,7 @@ struct osl_scop * substrate_osl_scop_nclone_expect_statement(
     {
         new = osl_scop_malloc();
         new->version = scop->version;
-        new->language = scop->language;
+        OSL_strdup(new->language, scop->language);
         new->context = osl_relation_clone(scop->context);
         new->parameters = osl_generic_clone(scop->parameters);
         new->statement = NULL;

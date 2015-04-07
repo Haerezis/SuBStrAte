@@ -15,6 +15,7 @@ struct osl_scop * substrate_analyze(struct osl_scop * scop)
 {
     struct osl_statement *statement = NULL;
     struct osl_scop * profiled_scop = NULL, *initial_profiled_scop = NULL;
+    struct substrate_statement_profile * stmt_prof = NULL;
 
     profiled_scop = osl_scop_clone(scop);
     initial_profiled_scop = profiled_scop;
@@ -27,18 +28,28 @@ struct osl_scop * substrate_analyze(struct osl_scop * scop)
         statement = profiled_scop->statement;
         while(statement != NULL)
         {
-            statement->usr = substrate_statement_profile_constructor(statement);
+            stmt_prof = substrate_statement_profile_constructor(scop, statement);
+            statement->usr = stmt_prof;
 
             statement = statement->next;
         }
             
         //Dump internal structures to stdout
-        /*for(i=0; i<profiled_scop.size ; i++)*/
-        /*{*/
-            /*fprintf(stdout,"\n================= DUMP S%d ==================\n",i+1);*/
+        statement = profiled_scop->statement;
+        unsigned int i = 1;
+        while(statement != NULL)
+        {
+            stmt_prof = (struct substrate_statement_profile*)statement->usr;
+            fprintf(stdout,"\n================= DUMP S%d ==================\n",i);
+            fprintf(stdout,"body : ");
+            osl_generic_print(stdout,statement->extension);
             /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
-            /*fprintf(stdout,"============================================\n");*/
-        /*}*/
+            substrate_parallelism_profile_dump(stdout,&stmt_prof->parallelism);
+            fprintf(stdout,"============================================\n");
+
+            statement = statement->next;
+            i++;
+        }
         
         profiled_scop = profiled_scop->next;
     }

@@ -8,12 +8,12 @@
 
 
 struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
-       struct osl_statement * statement,
-       struct osl_scop * scop)
+       struct osl_scop * scop,
+       struct osl_statement * statement)
 {
     struct substrate_parallelism_profile res = {NULL,0};
     struct candl_options *candl_options = NULL;
-    struct osl_dependence *candl_dep = NULL;
+    struct osl_dependence *candl_dep = NULL, *candl_dep_cursor = NULL;
     struct osl_scop *candl_scop = NULL;
     unsigned int i = 0;
 
@@ -38,9 +38,22 @@ struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
     //If that's the case, the statement can't be parallelized for this loop.
     for(i=0 ; i<res.size ; i++)
     {
-        res.loop_carried_dependences[i] = 
-            candl_dependence_is_loop_carried(candl_scop,candl_dep,i);
+        //If the candl_dep is NULL, it means that there is no dependences whatsoever in the statement,
+        //we don't have to check with candl_dependence_is_loop_carried.
+        //res.loop_carried_dependences is already set to false for every loop index.
+        candl_dep_cursor = candl_dep;
+        while((candl_dep_cursor != NULL) && (res.loop_carried_dependences[i] == 0))
+        {
+            res.loop_carried_dependences[i] = 
+                candl_dependence_is_loop_carried(candl_scop, candl_dep_cursor, i);
+
+            candl_dep_cursor = candl_dep_cursor->next;
+        }
     }
+
+    candl_options_free(candl_options);
+    candl_scop_usr_cleanup(candl_scop);
+    osl_scop_free(candl_scop);
 
     return res;
 }

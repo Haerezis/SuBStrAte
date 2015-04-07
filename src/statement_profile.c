@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "statement_profile.h"
+#include "parallelism.h"
 #include "utils.h"
 
 
@@ -68,6 +69,7 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
 
 
 struct substrate_statement_profile * substrate_statement_profile_constructor(
+        struct osl_scop * scop,
         struct osl_statement * stmt)
 {
     struct substrate_statement_profile * res = NULL;
@@ -78,6 +80,7 @@ struct substrate_statement_profile * substrate_statement_profile_constructor(
     // Different profiling functions go here
 
     res->reuse = substrate_reuse_profile_constructor(stmt);
+    res->parallelism = substrate_parallelism_profile_constructor(scop, stmt);
     
     // End of profiling
     ///////////////////
@@ -267,7 +270,7 @@ void substrate_scop_profile_free(
     stmt = sp->statement;
     while(stmt != NULL)
     {
-        substrate_statement_profile_free(stmt->usr);
+        substrate_statement_profile_free((struct substrate_statement_profile*)stmt->usr);
         stmt->usr = NULL;
         stmt = stmt->next;
     }
@@ -283,5 +286,6 @@ void substrate_statement_profile_free(
         struct substrate_statement_profile * sp)
 {
     substrate_reuse_profile_free(&sp->reuse);
+    substrate_parallelism_profile_free(&sp->parallelism);
     free(sp);
 }
