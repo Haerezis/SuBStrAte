@@ -63,6 +63,7 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
     res = substrate_statement_profile_malloc();
 
     res->reuse = substrate_reuse_profile_clone(stmt_profile->reuse);
+    res->parallelism = substrate_parallelism_profile_clone(&stmt_profile->parallelism);
 
     return res;
 }
@@ -90,6 +91,14 @@ struct substrate_statement_profile * substrate_statement_profile_constructor(
 
 
 
+/**
+ * @brief Aggregate two statements into one (aggregating the osl_statement and the profiles).
+ *
+ * @param stmt1 The first statement that will be aggregated.
+ * @param stmt2 The second statement that will be aggregated.
+ *
+ * @return A new osl_statement, result of the aggregation of the arguments (even the profiles).
+ */
 struct osl_statement * substrate_statement_fusion(
         struct osl_statement * stmt1,
         struct osl_statement * stmt2)
