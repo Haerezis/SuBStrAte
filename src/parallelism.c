@@ -46,7 +46,6 @@ struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
         {
             res.loop_carried_dependences[i] = 
                 candl_dependence_is_loop_carried( candl_dep_cursor, i);
-                /*candl_dependence_is_loop_carried(candl_scop, candl_dep_cursor, i);//to use before merge of candl*/
 
             candl_dep_cursor = candl_dep_cursor->next;
         }

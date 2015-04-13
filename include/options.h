@@ -13,6 +13,10 @@ struct substrate_options
     FILE * output_file;         /**<The output file/stream where will be written the result */
     bool row_major;             /**<A boolean, true when the array references are analyzed as row-major, false if column-major */
     double minimal_reuse_rate;  /**<The minimal reuse rate necessary to aggregate 2 statements*/
+
+    double minimal_rate;        /**<The minimal value the weighted average of all rates to aggregate 2 statements */
+    double reuse_weight;        /**<The weight of the reuse rate in the weighted average */
+    double parallelism_weight;  /**<The weight of the parallelism rate in the weighted average */
 };
 
 /**

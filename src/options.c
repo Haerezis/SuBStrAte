@@ -31,6 +31,9 @@ void substrate_options_init(
     g_substrate_options.output_file = stdout;
     g_substrate_options.row_major = 1;
     g_substrate_options.minimal_reuse_rate = 0.5;
+    g_substrate_options.minimal_rate = 0.5;
+    g_substrate_options.reuse_weight = 1.0;
+    g_substrate_options.parallelism_weight = 0.0;//FIXME 0.0 used in debug, set to correct value after.
 
     for(i=1 ; i<argc ; i++)
     {
@@ -67,6 +70,51 @@ void substrate_options_init(
             else
             {
                 fprintf(stderr,"No minimal reuse rate has been given\n");
+                substrate_print_help(argv[0],stderr);
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if( (strcmp(argv[i],"-mr") && strcmp(argv[i],"--min-rate")) == 0 )
+        {
+            if(((i+1) < argc) && (argv[i+1][0] != '-'))
+            {
+                g_substrate_options.minimal_rate = strtod(argv[i+1],NULL);
+                i++;
+            }
+            else
+            {
+                fprintf(stderr,"No minimal rate has been given "
+                        "even though the parameter has been set\n");
+                substrate_print_help(argv[0],stderr);
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if( (strcmp(argv[i],"-rw") && strcmp(argv[i],"--reuse-weight")) == 0 )
+        {
+            if(((i+1) < argc) && (argv[i+1][0] != '-'))
+            {
+                g_substrate_options.reuse_weight = strtod(argv[i+1],NULL);
+                i++;
+            }
+            else
+            {
+                fprintf(stderr,"No reuse weight has been given"
+                        " even though parameter has been set\n");
+                substrate_print_help(argv[0],stderr);
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if( (strcmp(argv[i],"-pw") && strcmp(argv[i],"--paral-weight")) == 0 )
+        {
+            if(((i+1) < argc) && (argv[i+1][0] != '-'))
+            {
+                g_substrate_options.parallelism_weight = strtod(argv[i+1],NULL);
+                i++;
+            }
+            else
+            {
+                fprintf(stderr,"No parallelism weight has been given"
+                        " even though parameter has been set\n");
                 substrate_print_help(argv[0],stderr);
                 exit(EXIT_FAILURE);
             }
@@ -116,15 +164,30 @@ void substrate_print_help(
 
     fprintf(output,"-h, --help\n");
     fprintf(output,"\tPrint a usage message briefly summarizing these command-line options then exit.\n");
+    
     fprintf(output,"-o FILE, --output FILE\n");
     fprintf(output,"\tPlace output in file FILE.\n");
     fprintf(output,"\tIf this options is not specified, stdout will be used\n");
+
     fprintf(output,"-mrr N, --min-reuse-rate N\n");
     fprintf(output,"\tThe reuse rate needed for 2 statements tu be aggregated.\n");
+    
+    fprintf(output,"-mr N, --min-rate N\n");
     fprintf(output,"\tN is a float, 0.0 <= N <= 1.0\n");
+    fprintf(output,"\tThe global rate (weighted average of all the rates) needed for 2 statements tu be aggregated.\n");
+
+    fprintf(output,"-rw N, --reuse-weight N\n");
+    fprintf(output,"\tN is a float, 0 <= N\n");
+    fprintf(output,"\tThe weight of the reuse rate used in the weighted average rate.\n");
+    
+    fprintf(output,"-pw N, --paral-weight N\n");
+    fprintf(output,"\tN is a float, 0 <= N\n");
+    fprintf(output,"\tThe weight of the parallelism rate used in the weighted average rate.\n");
+    
     fprintf(output,"--column-major\n");
     fprintf(output,"\tUse the column-major layout for the analyse and optimization of the different arrays\n");
     fprintf(output,"\tIf this option is not specified, row-major layout is used as default\n");
+    
     fprintf(output,"INPUT_FILE\n");
     fprintf(output,"\tThe OpenScop file to analyse and optimize\n");
 }

@@ -8,6 +8,30 @@
 #include "osl/osl.h"
 
 /**
+ * @brief Compute the weighted average of all the different profile rate.
+ *
+ * @param reuse_rate The reuse rate.
+ * @param parallelism_rate The parallelism rate.
+ *
+ * @return The weighted average.
+ */
+double substrate_weighted_rate(
+        double reuse_rate,
+        double parallelism_rate)
+{
+    double weight_sum = 0.0;
+    double weighted_rate_sum = 0.0;
+
+    weighted_rate_sum = g_substrate_options.reuse_weight * reuse_rate +
+        g_substrate_options.parallelism_weight * parallelism_rate;
+
+    weight_sum = g_substrate_options.reuse_weight +
+        g_substrate_options.parallelism_weight;
+
+    return weighted_rate_sum / weight_sum; 
+}
+
+/**
  * @brief Optimize a scop by aggregating similar behaving statements, using the
  * statements profiles contained in \a profiled_scop.
  *
@@ -53,7 +77,8 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
         *stmt_fusion = NULL;// Point to the new statement created when stmt1 and stmt2 are aggregated.
     struct substrate_statement_profile *stmt_profile1 = NULL, *stmt_profile2;
     bool same_domain = false, same_scattering = false;
-    double reuse_rate = 0.0;
+    double reuse_rate = 0.0, parallelism_rate = 0.0;
+    double weighted_rate = 0.0;
 
     //if there isn't even 2 statements, we can't aggregate anything, so we return
     if((profiled_scop->statement == NULL) || (profiled_scop->statement->next == NULL))
@@ -89,7 +114,14 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
                 reuse_rate = substrate_rate_reuse_profiles(
                         stmt_profile1->reuse,
                         stmt_profile2->reuse);
-                if(reuse_rate >= g_substrate_options.minimal_reuse_rate)
+                parallelism_rate = substrate_rate_parallelism_profiles(
+                        stmt_profile1->parallelism,
+                        stmt_profile2->parallelism);
+
+                weighted_rate = substrate_weighted_rate(
+                        reuse_rate,
+                        parallelism_rate);
+                if(weighted_rate >= g_substrate_options.minimal_rate)
                 {
                     //aggregate stmt1 and stmt2 into stmt_fusion.
                     stmt_fusion = substrate_statement_fusion(stmt1, stmt2);
