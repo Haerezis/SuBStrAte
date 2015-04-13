@@ -45,7 +45,8 @@ struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
         while((candl_dep_cursor != NULL) && (res.loop_carried_dependences[i] == 0))
         {
             res.loop_carried_dependences[i] = 
-                candl_dependence_is_loop_carried(candl_scop, candl_dep_cursor, i);
+                candl_dependence_is_loop_carried( candl_dep_cursor, i);
+                /*candl_dependence_is_loop_carried(candl_scop, candl_dep_cursor, i);//to use before merge of candl*/
 
             candl_dep_cursor = candl_dep_cursor->next;
         }
@@ -67,7 +68,7 @@ double substrate_rate_parallelism_profiles(
     unsigned int tmp1 = 0, tmp2 = 0;
     unsigned int i = 0;
 
-    //XXX force 2 statement to have the same loop depth
+    //XXX should I force 2 statement to have the same loop depth ?
     if(pp1.size == pp2.size)
     {
         nb_parallel_loops_total = pp1.size;
