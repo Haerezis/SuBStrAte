@@ -44,6 +44,8 @@ add_executable(substrate
     src/reuse.c
     src/parallelism_struct.c
     src/parallelism.c
+    src/vectorization_struct.c
+    src/vectorization.c
     src/statement_profile.c
     src/analyze.c
     src/optimization.c
