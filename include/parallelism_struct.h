@@ -6,7 +6,7 @@
 
 struct substrate_parallelism_profile
 {
-    bool * loop_carried_dependences; /*< From outer loop to inner loop */
+    bool * parallelizable_loops; /*< The loops that can be parallelized (from outer to inner loop) */
     unsigned int size;
 };
 
