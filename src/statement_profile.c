@@ -3,6 +3,7 @@
 
 #include "statement_profile.h"
 #include "parallelism.h"
+#include "vectorization.h"
 #include "utils.h"
 
 
@@ -64,6 +65,7 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
 
     res->reuse = substrate_reuse_profile_clone(stmt_profile->reuse);
     res->parallelism = substrate_parallelism_profile_clone(&stmt_profile->parallelism);
+    res->vectorization = substrate_vectorization_profile_clone(&stmt_profile->vectorization);
 
     return res;
 }
@@ -82,6 +84,7 @@ struct substrate_statement_profile * substrate_statement_profile_constructor(
 
     res->reuse = substrate_reuse_profile_constructor(stmt);
     res->parallelism = substrate_parallelism_profile_constructor(scop, stmt);
+    res->vectorization = substrate_vectorization_profile_constructor(scop, stmt);
     
     // End of profiling
     ///////////////////
@@ -131,7 +134,15 @@ struct substrate_statement_profile * substrate_statement_profile_fusion(
     struct substrate_statement_profile * res;
 
     res = substrate_statement_profile_malloc();
-    res->reuse = substrate_reuse_profile_fusion(stmt1->reuse, stmt2->reuse);
+    res->reuse = substrate_reuse_profile_fusion(
+            stmt1->reuse,
+            stmt2->reuse);
+    res->parallelism = substrate_parallelism_profile_fusion(
+            &stmt1->parallelism,
+            &stmt2->parallelism);
+    res->vectorization = substrate_vectorization_profile_fusion(
+            &stmt1->vectorization,
+            &stmt2->vectorization);
     
     return res;
 }
@@ -259,7 +270,7 @@ struct osl_body * substrate_osl_body_fusion(
     }
     else
     {
-        //TODO Maybe fuse when iterators don't match ? (I need to think about it...).
+        //TODO Maybe fuse when iterators don't match ? (I'm not really sure).
         OSL_error("Can't fusion body");
     }
 
@@ -296,5 +307,6 @@ void substrate_statement_profile_free(
 {
     substrate_reuse_profile_free(&sp->reuse);
     substrate_parallelism_profile_free(&sp->parallelism);
+    substrate_vectorization_profile_free(&sp->vectorization);
     free(sp);
 }

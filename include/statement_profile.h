@@ -5,6 +5,7 @@
 
 #include "reuse.h"
 #include "parallelism.h"
+#include "vectorization.h"
 
 /**
  * A structure representing the profile of a statement.
@@ -14,6 +15,7 @@ struct substrate_statement_profile
 {
     struct substrate_reuse_profile reuse;   /**<The reuse profile of the stagtement. */
     struct substrate_parallelism_profile parallelism;   /**<The parallelism profile of the stagtement. */
+    struct substrate_vectorization_profile vectorization;   /**<The vectorization profile of the stagtement. */
 };
 
 
