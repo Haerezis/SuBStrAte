@@ -312,6 +312,28 @@ bool substrate_same_scattering_and_beta_depth(
 }
 
 /**
+ * @brief Reset the beta depth of a statement (set all beta component
+ * to 0).
+ *
+ * @param[inout] stmt The statement which is reset.
+ */
+void substrate_reset_beta_depth(struct osl_statement * stmt)
+{
+    int i = 0;
+    struct osl_relation *scattering = NULL;
+
+    scattering = stmt->scattering;
+    for(i=0 ; i<scattering->nb_rows; i+=2)
+    {
+        osl_int_set_si(
+                scattering->precision,
+                &scattering->m[i][scattering->nb_columns-1],
+                0);
+    }
+}
+
+
+/**
  * @brief This function returns the first generic structure with a given URI in the generic
  * list provided as parameter and NULL if it doesn't find such a generic.
  *
@@ -403,3 +425,4 @@ void substrate_osl_strings_concat(
     
     *dest = res;
 }
+
