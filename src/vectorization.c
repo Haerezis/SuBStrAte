@@ -52,7 +52,7 @@ struct substrate_vectorization_profile substrate_vectorization_profile_construct
                 line = candl_util_relation_get_line(relation_cursor, col);
 
                 val = relation_cursor->m[line][1 + relation_cursor->nb_output_dims + i];
-                common_iterators_vectorized_dim[i] = osl_int_zero(precision, val);
+                common_iterators_vectorized_dim[i] = !osl_int_zero(precision, val);
                 
                 relation_cursor = relation_cursor->next;
             }
@@ -60,10 +60,12 @@ struct substrate_vectorization_profile substrate_vectorization_profile_construct
         }
     }
 
-
-    //Creating a dummy scop with only the current analyzed statement for candl
+    //Creating a dummy scop with only the current analyzed statement for candl.
+    //Also reset the beta depth of the statement, because it's supposed to be
+    //alone now.
     candl_scop = substrate_osl_scop_nclone_expect_statement(scop, 1);
     candl_scop->statement = osl_statement_nclone(statement,1);
+    substrate_reset_beta_depth(candl_scop->statement);
 
     //Initiating candl, then using it to generate the dependences,
     //and finally extracting them to use later.
