@@ -114,6 +114,18 @@ struct substrate_osl_relation_group_list substrate_group_access_relations_by(
 }
 
 
+/**
+ * @brief Clone (hard copy) the n fist osl_scop, also cloning its
+ * different field EXCEPT the statements.
+ *
+ * If n<0 or , all the scop are cloned.
+ *
+ * @param scop The scops that will be cloned.
+ * @param n The number of scops that will be cloned.
+ *
+ * @return The n hard copy (or less if there is less scops that expected) of scop,
+ * without statements.
+ */
 struct osl_scop * substrate_osl_scop_nclone_expect_statement(
         struct osl_scop * scop,
         int n)
@@ -126,7 +138,7 @@ struct osl_scop * substrate_osl_scop_nclone_expect_statement(
         n = osl_scop_number(scop);
     }
    
-    for(i=0 ; i<n ; i++)
+    for(i=0 ; (i<n) && (scop!=NULL) ; i++)
     {
         new = osl_scop_malloc();
         new->version = scop->version;
@@ -139,6 +151,7 @@ struct osl_scop * substrate_osl_scop_nclone_expect_statement(
         new->usr = scop->usr;
         new->next = NULL;
 
+        scop = scop->next;
         osl_scop_add(&res, new);
     }
 

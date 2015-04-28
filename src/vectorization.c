@@ -8,6 +8,15 @@
 #include "utils.h"
 
 
+/**
+ * @brief Allocate and construct the vectorization profile by analyzing the
+ * osl_statement.
+ *
+ * @param scop The scop of the analyzed osl_statement.
+ * @param statement The analyzed osl_statement.
+ *
+ * @return A constructed vectorization profile.
+ */
 struct substrate_vectorization_profile substrate_vectorization_profile_constructor(
        struct osl_scop * scop,
        struct osl_statement * statement)
@@ -116,6 +125,15 @@ struct substrate_vectorization_profile substrate_vectorization_profile_construct
     return res;
 }
 
+/**
+ * @brief Rate between 0 and 1 the similarity between two vectorization profiles.
+ * O being not similar AT ALL, and 1 being TOTALLY similar.
+ *
+ * @param vp1 The first vectorization profile.
+ * @param vp2 The second vectorization profile.
+ *
+ * @return The vectorization rate of the two profiles.
+ */
 double substrate_rate_vectorization_profiles(
         struct substrate_vectorization_profile vp1,
         struct substrate_vectorization_profile vp2)

@@ -7,6 +7,11 @@
 #include "utils.h"
 
 
+/**
+ * @brief Allocate a new and blank substrate_statement_profile.
+ *
+ * @return The freshly allocated substrate_statement_profile.
+ */
 struct substrate_statement_profile * substrate_statement_profile_malloc()
 {
     struct substrate_statement_profile * res = NULL;
@@ -24,7 +29,7 @@ struct substrate_statement_profile * substrate_statement_profile_malloc()
  * @brief Clone (hard copy) an osl_scop, but also clone the substrate_statement_profile
  * pointed by every osl_statement->usr field.
  *
- * @param scop The osl_scop that will be cloned.
+ * @param[in] scop The osl_scop that will be cloned.
  *
  * @return A clone of \a scop including the substrate_statement_profile pointed by the
  * osl_statement->usr filed.
@@ -56,6 +61,14 @@ struct osl_scop * substrate_osl_scop_clone(struct osl_scop * scop)
 }
 
 
+/**
+ * @brief Make a hard and recursive (clone all the sub-profile) copy of a
+ * substrate_statement_profile.
+ *
+ * @param[in] stmt_profile The statement profile that will be cloned.
+ *
+ * @return The clone of stmt_profile.
+ */
 struct substrate_statement_profile * substrate_statement_profile_clone(
         struct substrate_statement_profile * stmt_profile)
 {
@@ -71,6 +84,18 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
 }
 
 
+/**
+ * @brief Allocate and construct a statement profile from an osl_statement
+ * by analyzing it.
+ * This function allocated and call the constructor function of all the
+ * sub-profile (reuse, parallelism,...).
+ *
+ * @param scop The scop of the statement that will be analyzed.
+ * @param stmt The statement analyzed to create the substrate_statement_profile.
+ *
+ * @return A statement_profile containing all the informations gathered during
+ * the analyze.
+ */
 struct substrate_statement_profile * substrate_statement_profile_constructor(
         struct osl_scop * scop,
         struct osl_statement * stmt)
@@ -95,10 +120,11 @@ struct substrate_statement_profile * substrate_statement_profile_constructor(
 
 
 /**
- * @brief Aggregate two statements into one (aggregating the osl_statement and the profiles).
+ * @brief Aggregate two statements into a third one 
+ * (aggregating the osl_statement and the profiles).
  *
- * @param stmt1 The first statement that will be aggregated.
- * @param stmt2 The second statement that will be aggregated.
+ * @param[in] stmt1 The first statement that will be aggregated.
+ * @param[in] stmt2 The second statement that will be aggregated.
  *
  * @return A new osl_statement, result of the aggregation of the arguments (even the profiles).
  */
@@ -249,6 +275,16 @@ struct osl_generic * substrate_osl_generic_fusion(
 }
 
 
+/**
+ * @brief Fusion two osl_body into a third one.
+ * The two osl_body must have the same iterators or the program will fail.
+ *
+ * @param body1 The first osl_body.
+ * @param body2 The second osl_body.
+ *
+ * @return An osl_body with the same iteratar as the parameters, but with
+ * their "code" fusionned.
+ */
 struct osl_body * substrate_osl_body_fusion(
         struct osl_body * body1,
         struct osl_body * body2)

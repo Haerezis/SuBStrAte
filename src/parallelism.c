@@ -7,6 +7,16 @@
 #include "utils.h"
 
 
+/**
+ * @brief Create the parallelism profile of a statement by analyzing its
+ * self-dependences (computed by candl).
+ *
+ * @param[in] scop      The scop of the statement (needed for candl).
+ * @param[in] statement The statement that is analyzed.
+ *
+ * @return A substrate_parallelism_profile containing the parallelism
+ * profile of the statement.
+ */
 struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
        struct osl_scop * scop,
        struct osl_statement * statement)
@@ -64,6 +74,17 @@ struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
     return res;
 }
 
+/**
+ * @brief Rate the similarity between two statements' parallelism profile.
+ * The rate is a double comprised between 0 and 1 (0 being totally NOT similar,
+ * and 1 being TOTALLY similar).
+ *
+ * @param pp1 The first parallelism profile.
+ * @param pp2 The second parallelism profile.
+ *
+ * @return A double comprised between 0 and 1 rating the similarity between
+ * the two profiles.
+ */
 double substrate_rate_parallelism_profiles(
         struct substrate_parallelism_profile pp1,
         struct substrate_parallelism_profile pp2)
