@@ -1,7 +1,7 @@
 #ifndef __SUBSTRATE__PARALLELISM_H
 #define __SUBSTRATE__PARALLELISM_H
 
-#include "parallelism_struct.h"
+#include "substrate/parallelism_struct.h"
 #include "osl/osl.h"
 
 struct substrate_parallelism_profile substrate_parallelism_profile_constructor(

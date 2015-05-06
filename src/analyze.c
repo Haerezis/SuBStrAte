@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "analyze.h"
+#include "substrate/analyze.h"
 
 
 /**

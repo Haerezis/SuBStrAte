@@ -3,9 +3,9 @@
 
 #include "candl/candl.h"
 
-#include "options.h"
-#include "vectorization.h"
-#include "utils.h"
+#include "substrate/options.h"
+#include "substrate/vectorization.h"
+#include "substrate/utils.h"
 
 
 /**

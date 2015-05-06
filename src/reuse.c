@@ -3,8 +3,8 @@
 #include "osl/osl.h"
 #include "osl/int.h"
 
-#include "reuse.h"
-#include "utils.h"
+#include "substrate/reuse.h"
+#include "substrate/utils.h"
 
 /**
  * @brief Create a reuse profile by analyzing an osl_statement.

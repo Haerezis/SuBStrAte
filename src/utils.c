@@ -2,10 +2,10 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "utils.h"
+#include "substrate/utils.h"
 
 #include "osl/int.h"
-#include "options.h"
+#include "substrate/options.h"
 
 #define SIZE 16
 

@@ -2,7 +2,7 @@
 #define __SUBSTRATE__REUSE_H
 
 #include <osl/osl.h>
-#include "reuse_struct.h"
+#include "substrate/reuse_struct.h"
 
 /**
  * A structure containing the informations needed to compute the reuse rate.

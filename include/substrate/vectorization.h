@@ -1,7 +1,7 @@
 #ifndef __SUBSTRATE__VECTORIZATION_H
 #define __SUBSTRATE__VECTORIZATION_H
 
-#include "vectorization_struct.h"
+#include "substrate/vectorization_struct.h"
 #include "osl/osl.h"
 
 struct substrate_vectorization_profile substrate_vectorization_profile_constructor(

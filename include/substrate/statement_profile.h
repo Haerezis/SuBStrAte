@@ -3,9 +3,9 @@
 
 #include <osl/osl.h>
 
-#include "reuse.h"
-#include "parallelism.h"
-#include "vectorization.h"
+#include "substrate/reuse.h"
+#include "substrate/parallelism.h"
+#include "substrate/vectorization.h"
 
 /**
  * A structure representing the profile of a statement.

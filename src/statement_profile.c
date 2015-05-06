@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "statement_profile.h"
-#include "parallelism.h"
-#include "vectorization.h"
-#include "utils.h"
+#include "substrate/statement_profile.h"
+#include "substrate/parallelism.h"
+#include "substrate/vectorization.h"
+#include "substrate/utils.h"
 
 
 /**

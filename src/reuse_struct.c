@@ -2,8 +2,8 @@
 
 #include "osl/osl.h"
 
-#include "reuse_struct.h"
-#include "utils.h"
+#include "substrate/reuse_struct.h"
+#include "substrate/utils.h"
 
 /**
  * @brief Create a recursive copy (not just a pointer copy) of a substrate_reuse_profile.

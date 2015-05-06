@@ -3,8 +3,8 @@
 
 #include "candl/candl.h"
 
-#include "parallelism.h"
-#include "utils.h"
+#include "substrate/parallelism.h"
+#include "substrate/utils.h"
 
 
 /**

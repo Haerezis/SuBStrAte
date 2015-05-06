@@ -3,7 +3,7 @@
 
 #include <osl/osl.h>
 
-#include "statement_profile.h"
+#include "substrate/statement_profile.h"
 
 struct osl_scop * substrate_analyze(struct osl_scop * scop);
 

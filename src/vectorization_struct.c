@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "vectorization_struct.h"
+#include "substrate/vectorization_struct.h"
 
 
 struct substrate_vectorization_profile substrate_vectorization_profile_clone(

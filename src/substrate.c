@@ -8,11 +8,11 @@
 
 #include "candl/candl.h"
 
-#include "substrate.h"
-#include "options.h"
-#include "statement_profile.h"
-#include "analyze.h"
-#include "optimization.h"
+#include "substrate/substrate.h"
+#include "substrate/options.h"
+#include "substrate/statement_profile.h"
+#include "substrate/analyze.h"
+#include "substrate/optimization.h"
 
 int main(int argc,char** argv)
 {

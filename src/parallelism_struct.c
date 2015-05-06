@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "parallelism_struct.h"
+#include "substrate/parallelism_struct.h"
 
 
 /**

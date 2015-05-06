@@ -1,10 +1,10 @@
 #include <stdlib.h>
 
-#include "optimization.h"
+#include "substrate/optimization.h"
 
-#include "options.h"
-#include "reuse.h"
-#include "utils.h"
+#include "substrate/options.h"
+#include "substrate/reuse.h"
+#include "substrate/utils.h"
 #include "osl/osl.h"
 
 /**
