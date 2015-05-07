@@ -4,3 +4,6 @@
 [submodule "candl"]
 	path = candl
 	url = https://github.com/periscop/candl.git
+[submodule "pluto"]
+	path = pluto
+	url = http://repo.or.cz/pluto.git
