@@ -46,6 +46,7 @@ struct osl_scop * substrate_analyze(struct osl_scop * scop)
             /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
             substrate_parallelism_profile_dump(stdout,&stmt_prof->parallelism);
             substrate_vectorization_profile_dump(stdout,&stmt_prof->vectorization);
+            substrate_tiling_hyperplane_profile_dump(stdout,&stmt_prof->tiling_hyperplane);
             fprintf(stdout,"============================================\n");
 
             statement = statement->next;

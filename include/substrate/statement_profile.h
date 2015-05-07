@@ -6,6 +6,7 @@
 #include "substrate/reuse.h"
 #include "substrate/parallelism.h"
 #include "substrate/vectorization.h"
+#include "substrate/tiling_hyperplane.h"
 
 /**
  * A structure representing the profile of a statement.
@@ -16,6 +17,7 @@ struct substrate_statement_profile
     struct substrate_reuse_profile reuse;   /**<The reuse profile of the stagtement. */
     struct substrate_parallelism_profile parallelism;   /**<The parallelism profile of the stagtement. */
     struct substrate_vectorization_profile vectorization;   /**<The vectorization profile of the stagtement. */
+    struct substrate_tiling_hyperplane_profile tiling_hyperplane;   /**<The vectorization profile of the stagtement. */
 };
 
 

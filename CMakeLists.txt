@@ -55,6 +55,7 @@ ExternalProject_Add(
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pluto/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pluto/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pluto/isl/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pluto/clan/include)
 add_library(libpluto SHARED IMPORTED)
 set_target_properties(libpluto PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/pluto/src/.libs/libpluto.so )
 
@@ -67,6 +68,7 @@ add_executable(substrate
     src/vectorization_struct.c
     src/vectorization.c
     src/tiling_hyperplane_struct.c
+    src/tiling_hyperplane.c
     src/statement_profile.c
     src/analyze.c
     src/optimization.c

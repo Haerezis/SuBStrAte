@@ -110,6 +110,7 @@ struct substrate_statement_profile * substrate_statement_profile_constructor(
     res->reuse = substrate_reuse_profile_constructor(stmt);
     res->parallelism = substrate_parallelism_profile_constructor(scop, stmt);
     res->vectorization = substrate_vectorization_profile_constructor(scop, stmt);
+    res->tiling_hyperplane = substrate_tiling_hyperplane_profile_constructor(scop, stmt);
     
     // End of profiling
     ///////////////////
@@ -169,6 +170,8 @@ struct substrate_statement_profile * substrate_statement_profile_fusion(
     res->vectorization = substrate_vectorization_profile_fusion(
             &stmt1->vectorization,
             &stmt2->vectorization);
+
+    //TODO FUSION TILING
     
     return res;
 }
@@ -344,5 +347,6 @@ void substrate_statement_profile_free(
     substrate_reuse_profile_free(&sp->reuse);
     substrate_parallelism_profile_free(&sp->parallelism);
     substrate_vectorization_profile_free(&sp->vectorization);
+    substrate_tiling_hyperplane_profile_free(&sp->tiling_hyperplane);
     free(sp);
 }
