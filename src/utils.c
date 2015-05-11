@@ -126,7 +126,7 @@ struct substrate_osl_relation_group_list substrate_group_access_relations_by(
  * @return The n hard copy (or less if there is less scops that expected) of scop,
  * without statements.
  */
-struct osl_scop * substrate_osl_scop_nclone_expect_statement(
+struct osl_scop * substrate_osl_scop_nclone_except_statement(
         struct osl_scop * scop,
         int n)
 {

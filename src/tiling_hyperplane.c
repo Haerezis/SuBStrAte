@@ -17,7 +17,7 @@ struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_c
     //Creating a dummy scop with only the current analyzed statement for pluto.
     //Also reset the beta depth of the statement, because it's supposed to be
     //alone now.
-    pluto_scop = substrate_osl_scop_nclone_expect_statement(scop, 1);
+    pluto_scop = substrate_osl_scop_nclone_except_statement(scop, 1);
     pluto_scop->statement = osl_statement_nclone(statement,1);
     substrate_reset_beta_depth(pluto_scop->statement);
 
