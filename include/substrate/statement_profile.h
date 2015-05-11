@@ -31,6 +31,7 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
 
 
 struct osl_statement * substrate_statement_fusion(
+        struct osl_scop * scop,
         struct osl_statement * stmt1,
         struct osl_statement * stmt2);
 struct substrate_statement_profile * substrate_statement_profile_fusion(

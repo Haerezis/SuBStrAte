@@ -9,18 +9,24 @@ struct substrate_tiling_hyperplane_profile
 
     unsigned int nb_rows;
     unsigned int nb_columns;
+
 };
 
 struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_malloc(
         unsigned int nb_rows,
         unsigned int nb_columns);
 struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_clone(
-        struct substrate_tiling_hyperplane_profile * vp);
+        struct substrate_tiling_hyperplane_profile * thp);
 void substrate_tiling_hyperplane_profile_free(
-        struct substrate_tiling_hyperplane_profile * vp);
+        struct substrate_tiling_hyperplane_profile * thp);
 void substrate_tiling_hyperplane_profile_dump(
         FILE * output_stream,
-        struct substrate_tiling_hyperplane_profile * vp);
+        struct substrate_tiling_hyperplane_profile * thp);
+struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_fusion(
+        struct substrate_tiling_hyperplane_profile * thp1,
+        struct substrate_tiling_hyperplane_profile * thp2);
+
+
 
 struct substrate_tiling_hyperplane_profile 
     substrate_tiling_hyperplane_profile_clone_PlutoMatrix(

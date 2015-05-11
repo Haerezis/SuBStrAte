@@ -79,6 +79,7 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
     res->reuse = substrate_reuse_profile_clone(stmt_profile->reuse);
     res->parallelism = substrate_parallelism_profile_clone(&stmt_profile->parallelism);
     res->vectorization = substrate_vectorization_profile_clone(&stmt_profile->vectorization);
+    res->tiling_hyperplane = substrate_tiling_hyperplane_profile_clone(&stmt_profile->tiling_hyperplane);
 
     return res;
 }
@@ -124,24 +125,38 @@ struct substrate_statement_profile * substrate_statement_profile_constructor(
  * @brief Aggregate two statements into a third one 
  * (aggregating the osl_statement and the profiles).
  *
+ * @param[in] scop  The scop the the two statements.
  * @param[in] stmt1 The first statement that will be aggregated.
  * @param[in] stmt2 The second statement that will be aggregated.
  *
  * @return A new osl_statement, result of the aggregation of the arguments (even the profiles).
  */
 struct osl_statement * substrate_statement_fusion(
+        struct osl_scop * scop,
         struct osl_statement * stmt1,
         struct osl_statement * stmt2)
 {
     struct osl_statement * res = NULL;
-    struct substrate_statement_profile *profile1 = NULL, *profile2 = NULL;
+    struct substrate_statement_profile 
+        *profile1 = NULL,
+        *profile2 = NULL,
+        *profile = NULL;
 
     res = substrate_osl_statement_fusion(stmt1, stmt2);
 
+
     profile1 = (struct substrate_statement_profile *)stmt1->usr;
     profile2 = (struct substrate_statement_profile *)stmt2->usr;
-    res->usr = substrate_statement_profile_fusion(profile1 , profile2);
-    
+    profile = substrate_statement_profile_fusion(profile1 , profile2);
+    //Pluto re-compute the best tiling_hyperplane for the fusionned statements.
+    //I don't "fusion" myself the tiling hyperplane vector because I honnestly have
+    //no idea how, so I let pluto do it.
+    profile->tiling_hyperplane = 
+        substrate_tiling_hyperplane_profile_constructor(scop, res);
+
+   
+    res->usr = profile;
+
     return res;
 }
 
@@ -170,8 +185,10 @@ struct substrate_statement_profile * substrate_statement_profile_fusion(
     res->vectorization = substrate_vectorization_profile_fusion(
             &stmt1->vectorization,
             &stmt2->vectorization);
-
-    //TODO FUSION TILING
+    //Tiling Hyperplane fusion is done in substrate_statement_fusion
+    //because we need the osl_statement, not the substrate_statement_profile.
+    //That's because the Tiling Hyperplane profile of the fusionned statement
+    //is re-computed by pluto for the fusionned osl_statement.
     
     return res;
 }

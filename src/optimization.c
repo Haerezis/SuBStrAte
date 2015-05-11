@@ -124,7 +124,7 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
                 if(weighted_rate >= g_substrate_options.minimal_rate)
                 {
                     //aggregate stmt1 and stmt2 into stmt_fusion.
-                    stmt_fusion = substrate_statement_fusion(stmt1, stmt2);
+                    stmt_fusion = substrate_statement_fusion(profiled_scop, stmt1, stmt2);
                     //replace stmt1 and stmt2 in the list by stmt_fusion
                     stmt->next = stmt_fusion;
                     stmt2->next = NULL;
