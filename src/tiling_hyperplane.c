@@ -23,12 +23,15 @@ struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_c
 
     //options is a pluto's global variable (go see main.c from pluto project).
     options = pluto_options_alloc();
-    prog = scop_to_pluto_prog(scop, options);
+    options->tile = 1;
+    prog = scop_to_pluto_prog(pluto_scop, options);
     pluto_auto_transform(prog);
     pluto_detect_transformation_properties(prog);
 
     res = substrate_tiling_hyperplane_profile_clone_PlutoMatrix(prog->stmts[0]->trans);
+
     pluto_prog_free(prog);
+    pluto_options_free(options);
 
     osl_scop_free(pluto_scop);
 
