@@ -49,10 +49,18 @@ struct substrate_tiling_hyperplane_profile
     struct substrate_tiling_hyperplane_profile res = {NULL, 0, 0};
     PlutoMatrix *tmp = NULL;
 
-    tmp = pluto_matrix_dup(m);
+    tmp = pluto_matrix_alloc(m->nrows, m->ncols);
     res.vectors = tmp->val;
     res.nb_rows = tmp->nrows;
     res.nb_columns = tmp->ncols;
+
+    for(unsigned int i = 0; i<res.nb_rows ; i++)
+    {
+        for(unsigned int j = 0; j<res.nb_columns ; j++)
+        {
+            res.vectors[i][j] = m->val[i][j];
+        }
+    }
 
     free(tmp);
 

@@ -12,21 +12,31 @@
  *
  * @param reuse_rate The reuse rate.
  * @param parallelism_rate The parallelism rate.
+ * @param vectorization_rate The vectorization rate.
+ * @param tiling_hyperplane_rate The tiling hyperplane rate.
  *
  * @return The weighted average.
  */
 double substrate_weighted_rate(
         double reuse_rate,
-        double parallelism_rate)
+        double parallelism_rate,
+        double vectorization_rate,
+        double tiling_hyperplane_rate)
 {
     double weight_sum = 0.0;
     double weighted_rate_sum = 0.0;
 
-    weighted_rate_sum = g_substrate_options.reuse_weight * reuse_rate +
-        g_substrate_options.parallelism_weight * parallelism_rate;
+    weighted_rate_sum = 
+        g_substrate_options.reuse_weight * reuse_rate +
+        g_substrate_options.parallelism_weight * parallelism_rate +
+        g_substrate_options.vectorization_weight * vectorization_rate +
+        g_substrate_options.tiling_hyperplane_weight * tiling_hyperplane_rate;
 
-    weight_sum = g_substrate_options.reuse_weight +
-        g_substrate_options.parallelism_weight;
+    weight_sum = 
+        g_substrate_options.reuse_weight +
+        g_substrate_options.parallelism_weight +
+        g_substrate_options.vectorization_weight + 
+        g_substrate_options.tiling_hyperplane_weight;
 
     return weighted_rate_sum / weight_sum; 
 }
@@ -77,7 +87,10 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
         *stmt_fusion = NULL;// Point to the new statement created when stmt1 and stmt2 are aggregated.
     struct substrate_statement_profile *stmt_profile1 = NULL, *stmt_profile2;
     bool same_domain = false, same_scattering = false;
-    double reuse_rate = 0.0, parallelism_rate = 0.0;
+    double reuse_rate = 0.0,
+           parallelism_rate = 0.0,
+           vectorization_rate = 0.0,
+           tiling_hyperplane_rate = 0.0;
     double weighted_rate = 0.0;
 
     //if there isn't even 2 statements, we can't aggregate anything, so we return
@@ -117,10 +130,18 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
                 parallelism_rate = substrate_rate_parallelism_profiles(
                         stmt_profile1->parallelism,
                         stmt_profile2->parallelism);
+                vectorization_rate = substrate_rate_vectorization_profiles(
+                        stmt_profile1->vectorization,
+                        stmt_profile2->vectorization);
+                tiling_hyperplane_rate = substrate_rate_tiling_hyperplane_profiles(
+                        stmt_profile1->tiling_hyperplane,
+                        stmt_profile2->tiling_hyperplane);
 
                 weighted_rate = substrate_weighted_rate(
                         reuse_rate,
-                        parallelism_rate);
+                        parallelism_rate,
+                        vectorization_rate,
+                        tiling_hyperplane_rate);
                 if(weighted_rate >= g_substrate_options.minimal_rate)
                 {
                     //aggregate stmt1 and stmt2 into stmt_fusion.

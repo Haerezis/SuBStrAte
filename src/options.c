@@ -14,6 +14,32 @@ struct substrate_options g_substrate_options;
 
 
 /**
+ * @brief Create a substrate_options structure with default options set.
+ *
+ * @return A default set options structure.
+ */
+struct substrate_options substrate_options_default()
+{
+    struct substrate_options options;
+    memset(&options, 0, sizeof(options));
+
+    //base options
+    options.input_file = NULL;
+    options.output_file = stdout;
+    options.row_major = 1;
+
+    options.minimal_reuse_rate = 0.5;
+    
+    options.minimal_rate = 0.5;
+    options.reuse_weight = 0.0;
+    options.parallelism_weight = 0.0;
+    options.vectorization_weight = 0.0;
+    options.tiling_hyperplane_weight = 0.0;
+
+    return options;
+}
+
+/**
  * @brief Parse the program argument to initialize the options of the program.
  *
  * @param[in] argc The number of options/arguments of the program.
@@ -26,14 +52,7 @@ void substrate_options_init(
     int i = 0;
     bool arguments_check = 1;
 
-    //base options
-    g_substrate_options.input_file = NULL;
-    g_substrate_options.output_file = stdout;
-    g_substrate_options.row_major = 1;
-    g_substrate_options.minimal_reuse_rate = 0.5;
-    g_substrate_options.minimal_rate = 0.5;
-    g_substrate_options.reuse_weight = 1.0;
-    g_substrate_options.parallelism_weight = 0.0;//FIXME 0.0 used in debug, set to correct value after.
+    g_substrate_options = substrate_options_default();
 
     for(i=1 ; i<argc ; i++)
     {
@@ -119,6 +138,36 @@ void substrate_options_init(
                 exit(EXIT_FAILURE);
             }
         }
+        else if( (strcmp(argv[i],"-vw") && strcmp(argv[i],"--vector-weight")) == 0 )
+        {
+            if(((i+1) < argc) && (argv[i+1][0] != '-'))
+            {
+                g_substrate_options.vectorization_weight = strtod(argv[i+1],NULL);
+                i++;
+            }
+            else
+            {
+                fprintf(stderr,"No vectorization weight has been given"
+                        " even though parameter has been set\n");
+                substrate_print_help(argv[0],stderr);
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if( (strcmp(argv[i],"-tw") && strcmp(argv[i],"--tiling-weight")) == 0 )
+        {
+            if(((i+1) < argc) && (argv[i+1][0] != '-'))
+            {
+                g_substrate_options.tiling_hyperplane_weight = strtod(argv[i+1],NULL);
+                i++;
+            }
+            else
+            {
+                fprintf(stderr,"No tiling hyperplane weight has been given"
+                        " even though parameter has been set\n");
+                substrate_print_help(argv[0],stderr);
+                exit(EXIT_FAILURE);
+            }
+        }
         //else if(strcmp(argv[i],"") == 0)
         else if(argv[i][0] == '-')
         {
@@ -183,6 +232,14 @@ void substrate_print_help(
     fprintf(output,"-pw N, --paral-weight N\n");
     fprintf(output,"\tN is a float, 0 <= N\n");
     fprintf(output,"\tThe weight of the parallelism rate used in the weighted average rate.\n");
+    
+    fprintf(output,"-vw N, --vector-weight N\n");
+    fprintf(output,"\tN is a float, 0 <= N\n");
+    fprintf(output,"\tThe weight of the vectorization rate used in the weighted average rate.\n");
+    
+    fprintf(output,"-tw N, --tiling-weight N\n");
+    fprintf(output,"\tN is a float, 0 <= N\n");
+    fprintf(output,"\tThe weight of the tiling hyperplane rate used in the weighted average rate.\n");
     
     fprintf(output,"--column-major\n");
     fprintf(output,"\tUse the column-major layout for the analyse and optimization of the different arrays\n");
