@@ -28,9 +28,9 @@ struct substrate_options substrate_options_default()
     options.output_file = stdout;
     options.row_major = 1;
 
-    options.minimal_reuse_rate = 0.5;
+    options.minimal_reuse_rate = 0.0;
     
-    options.minimal_rate = 0.5;
+    options.minimal_rate = 1.0;
     options.reuse_weight = 0.0;
     options.parallelism_weight = 0.0;
     options.vectorization_weight = 0.0;
