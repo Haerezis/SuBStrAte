@@ -26,7 +26,8 @@ struct substrate_options substrate_options_default()
     //base options
     options.input_file = NULL;
     options.output_file = stdout;
-    options.row_major = 1;
+    options.row_major = true;
+    options.dump = false;
 
     options.minimal_reuse_rate = 0.0;
     

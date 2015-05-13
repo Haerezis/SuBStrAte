@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "substrate/analyze.h"
+#include "substrate/options.h"
 
 
 /**
@@ -33,24 +34,27 @@ struct osl_scop * substrate_analyze(struct osl_scop * scop)
 
             statement = statement->next;
         }
-            
-        //Dump internal structures to stdout
-        statement = profiled_scop->statement;
-        unsigned int i = 1;
-        while(statement != NULL)
-        {
-            stmt_prof = (struct substrate_statement_profile*)statement->usr;
-            fprintf(stdout,"\n================= DUMP S%d ==================\n",i);
-            fprintf(stdout,"body : ");
-            osl_generic_print(stdout,statement->extension);
-            /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
-            substrate_parallelism_profile_dump(stdout,&stmt_prof->parallelism);
-            substrate_vectorization_profile_dump(stdout,&stmt_prof->vectorization);
-            substrate_tiling_hyperplane_profile_dump(stdout,&stmt_prof->tiling_hyperplane);
-            fprintf(stdout,"============================================\n");
 
-            statement = statement->next;
-            i++;
+        if(g_substrate_options.dump)
+        {
+            //Dump internal structures to stdout
+            statement = profiled_scop->statement;
+            unsigned int i = 1;
+            while(statement != NULL)
+            {
+                stmt_prof = (struct substrate_statement_profile*)statement->usr;
+                fprintf(stdout,"\n================= DUMP S%d ==================\n",i);
+                fprintf(stdout,"body : ");
+                osl_generic_print(stdout,statement->extension);
+                /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
+                substrate_parallelism_profile_dump(stdout,&stmt_prof->parallelism);
+                substrate_vectorization_profile_dump(stdout,&stmt_prof->vectorization);
+                substrate_tiling_hyperplane_profile_dump(stdout,&stmt_prof->tiling_hyperplane);
+                fprintf(stdout,"============================================\n");
+
+                statement = statement->next;
+                i++;
+            }
         }
         
         profiled_scop = profiled_scop->next;

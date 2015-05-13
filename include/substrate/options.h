@@ -12,6 +12,7 @@ struct substrate_options
     FILE * input_file;          /**<The input file used to construct the osl_scop */
     FILE * output_file;         /**<The output file/stream where will be written the result */
     bool row_major;             /**<A boolean, true when the array references are analyzed as row-major, false if column-major */
+    bool dump;                  /*<A boolean, true when after the analyze the program dump the internal infos */
 
     double minimal_reuse_rate;  /**<The minimal reuse rate necessary to aggregate 2 statements*/
     double minimal_parallelism_rate;  /**<The minimal parallelism rate necessary to aggregate 2 statements*/
