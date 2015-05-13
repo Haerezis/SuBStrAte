@@ -146,18 +146,19 @@ double substrate_rate_vectorization_profiles(
     //XXX should I force 2 statement to have the same loop depth ?
     if(vp1.size == vp2.size)
     {
-        nb_vectorizable_loops_total = vp1.size;
         for(i=0 ; i<vp1.size ; i++)
         {
             tmp1 = vp1.vectorizable_loops[i] == true ? 1 : 0;
             tmp2 = vp2.vectorizable_loops[i] == true ? 1 : 0;
-            nb_vectorizable_loops_total = tmp1 + tmp2;
+            nb_vectorizable_loops_total += tmp1 + tmp2;
             if((tmp1 == tmp2) && (tmp1 == 1))
             {
                 nb_vectorizable_loop_in_common+=2;
             }
         }
     }
-    res = ((double)nb_vectorizable_loop_in_common) / ((double)nb_vectorizable_loops_total);
+    //To avoid a divided by 0 error
+    if( nb_vectorizable_loops_total == 0 ) nb_vectorizable_loops_total = 1;
+    res = ((double)nb_vectorizable_loop_in_common) /((double)nb_vectorizable_loops_total);
     return res;
 }

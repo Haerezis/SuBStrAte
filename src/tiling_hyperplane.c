@@ -26,7 +26,10 @@ struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_c
     options->tile = 1;
     prog = scop_to_pluto_prog(pluto_scop, options);
     pluto_auto_transform(prog);
-    pluto_detect_transformation_properties(prog);
+    //For statement that doesn't have a domain, pluto segfault when detect transfo...
+    //FIXME Send a patch to pluto?
+    if(statement->domain->nb_rows > 0)
+        pluto_detect_transformation_properties(prog);
 
     res = substrate_tiling_hyperplane_profile_clone_PlutoMatrix(prog->stmts[0]->trans);
 

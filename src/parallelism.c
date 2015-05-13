@@ -97,12 +97,11 @@ double substrate_rate_parallelism_profiles(
     //XXX should I force 2 statement to have the same loop depth ?
     if(pp1.size == pp2.size)
     {
-        nb_parallel_loops_total = pp1.size;
         for(i=0 ; i<pp1.size ; i++)
         {
             tmp1 = pp1.parallelizable_loops[i] == true ? 1 : 0;
             tmp2 = pp2.parallelizable_loops[i] == true ? 1 : 0;
-            nb_parallel_loops_total = tmp1 + tmp2;
+            nb_parallel_loops_total += tmp1 + tmp2;
             if((tmp1 == tmp2) && (tmp1 == 1))
             {
                 nb_parallel_loop_in_common+=2;
