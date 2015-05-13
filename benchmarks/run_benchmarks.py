@@ -28,7 +28,7 @@ gnuplot_format = """\
 
 
 def print_usage() :
-    print "Usage : {0} <substrate_path> <scops_directory> <aggregated_scops_directory>"\
+    print "Usage : {0} <substrate_path> <scops_directory> <aggregated_scops_directory> [-no-substrate] [-no-gnuplot]"\
             .format(argv[0])
 
 
@@ -152,5 +152,7 @@ while rate <= rate_end :
 
 # List of the profile type we're asking to benchmark
 profile_type_list = profile_options.keys()
-substrate(profile_type_list, rate_list, scops_list)
-gnuplot_data(profile_type_list, rate_list, scops_list)
+if "-no-substrate" not in argv :
+    substrate(profile_type_list, rate_list, scops_list)
+if "-no-gnuplot" not in argv :
+    gnuplot_data(profile_type_list, rate_list, scops_list)
