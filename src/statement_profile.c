@@ -217,12 +217,7 @@ struct osl_statement * substrate_osl_statement_fusion(
     res->domain = osl_relation_clone(stmt1->domain);
     res->scattering = osl_relation_clone(stmt1->scattering);
     res->access = NULL;
-    osl_relation_list_add(
-            &res->access,
-            osl_relation_list_clone(stmt1->access));
-    osl_relation_list_add(
-            &res->access,
-            osl_relation_list_clone(stmt2->access));
+    res->access = substrate_osl_relation_list_fusion(stmt1->access, stmt2->access);
     res->extension = substrate_osl_generic_fusion(stmt1->extension, stmt2->extension);
     res->usr = NULL;
     res->next = stmt2->next;
@@ -230,6 +225,55 @@ struct osl_statement * substrate_osl_statement_fusion(
     return res;
 }
 
+/**
+ * @brief Fusion 2 osl_relation_list : if some osl_relation of the list
+ * are found in rl2 and rl1, only one is added to the result list.
+ *
+ * @param rl1 The first osl_relation_list.
+ * @param rl2 The second osl_relation_list.
+ *
+ * @return An osl_relation_list, fusion of rl1 and rl2, without any
+ * osl_relation duplicate.
+ */
+struct osl_relation_list * substrate_osl_relation_list_fusion(
+        struct osl_relation_list * rl1,
+        struct osl_relation_list * rl2)
+{
+    struct osl_relation_list *res = NULL, *cursor = NULL, *last_rel = NULL;
+
+    if(rl1 == NULL)
+    {
+        res = osl_relation_list_clone(rl2);
+    }
+    else
+    {
+        res = osl_relation_list_clone(rl1);
+
+        //find the last elt of the list
+        last_rel=res;
+        while(last_rel->next != NULL) last_rel = last_rel->next;
+
+        while(rl2 != NULL)
+        {
+            cursor=res;
+            while( (cursor != NULL) && !osl_relation_equal(rl2->elt, cursor->elt) )
+            {
+                cursor = cursor->next;
+            }
+            //If cursor is NULL, no relation in "res" was found equal, so we add it
+            //to the end of "res".
+            if(cursor == NULL)
+            {
+                last_rel->next=osl_relation_list_node(rl2->elt);
+                last_rel = last_rel->next;
+            }
+
+            rl2=rl2->next;
+        }
+    }
+
+    return res;
+}
 
 /**
  * @brief Aggregate two osl_generic together (cloning the necessary structures).

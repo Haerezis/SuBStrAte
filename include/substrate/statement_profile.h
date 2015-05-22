@@ -40,6 +40,9 @@ struct substrate_statement_profile * substrate_statement_profile_fusion(
 struct osl_statement * substrate_osl_statement_fusion(
         struct osl_statement * stmt1,
         struct osl_statement * stmt2);
+struct osl_relation_list * substrate_osl_relation_list_fusion(
+        struct osl_relation_list * rl1,
+        struct osl_relation_list * rl2);
 struct osl_generic * substrate_osl_generic_fusion(
         struct osl_generic * gen1,
         struct osl_generic * gen2);
