@@ -28,7 +28,7 @@ gnuplot_format = """\
 
 
 def print_usage() :
-    print "Usage : {0} <substrate_path> <scops_directory> <aggregated_scops_directory> [-no-substrate] [-no-gnuplot]"\
+    print "Usage : {0} <substrate_path> <scops_directory | scop_filepath> <aggregated_scops_directory> [-no-substrate] [-no-gnuplot]"\
             .format(argv[0])
 
 
@@ -125,7 +125,7 @@ if not os.path.isfile(argv[1]) :
     exit(1)
 
 # Check if the directories given as arguments are directories and exists.
-if not os.path.isdir(scops_dir) :
+if not ( os.path.isdir(scops_dir) or os.path.isfile(scops_dir) ) :
     print "ERROR : \"{0}\" is not a directory or doesn't exists.".format(scops_dir)
     print_usage()
     exit(1)
@@ -136,10 +136,15 @@ if not os.path.isdir(aggr_scops_dir) :
 
 
 # Creating aggregated scops
-original_working_directory = os.getcwd()
-os.chdir(scops_dir)
-scops_list = glob.glob("*.scop")
-os.chdir(original_working_directory)
+if os.path.isdir(scops_dir) :
+    original_working_directory = os.getcwd()
+    os.chdir(scops_dir)
+    scops_list = glob.glob("*.scop")
+    os.chdir(original_working_directory)
+else :
+    tmp = os.path.split(scops_dir)
+    scops_dir = tmp[0]
+    scops_list = [tmp[1]]
 
 # Creating the list of rate that will be computed
 rate = rate_begin
