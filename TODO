@@ -4,3 +4,7 @@ Idea for options :
 
 Optimizations :
     -try to aggregate statement that have different domain et/or scattering
+
+Idea for Optimization :
+    -Try to split statement into different scop for statement that SHOULD NOT BE TOGETHER
+    (go see benchmark TODO)
