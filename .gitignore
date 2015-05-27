@@ -45,3 +45,6 @@ doc/latex
 
 #osl
 osl/*
+
+*.png
+*.results
