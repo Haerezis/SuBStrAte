@@ -43,7 +43,7 @@ def benchmark(source_filepath) :
         after=time.time()
         res.append(after - before)
 
-    return mean(res)
+    return median(res)
 
 def gnuplot_data(results, source_filename, type_list, rate_list) :
     pluto_res=results["pluto"]
