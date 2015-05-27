@@ -7,45 +7,51 @@
  *
  * Web address: http://polybench.sourceforge.net
  */
-#ifndef _DURBIN_H
-# define _DURBIN_H
+#ifndef _DERICHE_H
+# define _DERICHE_H
 
 /* Default to LARGE_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(MEDIUM_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-#  define EXTRALARGE_DATASET
+#  define LARGE_DATASET
 # endif
 
-# if !defined(N)
+# if !defined(W) && !defined(H)
 /* Define sample dataset sizes. */
 #  ifdef MINI_DATASET
-#   define N 40
+#   define W 64
+#   define H 64
 #  endif 
 
 #  ifdef SMALL_DATASET
-#   define N 120
+#   define W 192
+#   define H 128
 #  endif 
 
 #  ifdef MEDIUM_DATASET
-#   define N 400
+#   define W 720
+#   define H 480
 #  endif 
 
 #  ifdef LARGE_DATASET
-#   define N 2000
+#   define W 4096
+#   define H 2160
 #  endif 
 
 #  ifdef EXTRALARGE_DATASET
-#   define N 4000
+#   define W 7680
+#   define H 4320
 #  endif 
 
 
-#endif /* !(N) */
+#endif /* !(W H) */
 
-# define _PB_N POLYBENCH_LOOP_BOUND(N,n)
+# define _PB_W POLYBENCH_LOOP_BOUND(W,w)
+# define _PB_H POLYBENCH_LOOP_BOUND(H,h)
 
 
 /* Default data type */
 # if !defined(DATA_TYPE_IS_INT) && !defined(DATA_TYPE_IS_FLOAT) && !defined(DATA_TYPE_IS_DOUBLE)
-#  define DATA_TYPE_IS_DOUBLE
+#  define DATA_TYPE_IS_FLOAT
 # endif
 
 #ifdef DATA_TYPE_IS_INT
@@ -71,5 +77,5 @@
 #  define POW_FUN(x,y) pow(x,y)
 # endif
 
-#endif /* !_DURBIN_H */
+#endif /* !_DERICHE_H */
 

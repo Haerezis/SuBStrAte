@@ -1,0 +1,16 @@
+#Gnuplot datafile
+
+# Format : min_rate_for_aggregation speedup_pluto_TYPE.... speedup_pluto_original_scop
+# with TYPE being 'reuse', 'parallelism', 'vectorization' etc...
+#rate 	parallelism 	reuse 	tiling_hyperplane 	vectorization
+ 0.0	1.309	1.291	1.301	1.292
+ 0.1	1.225	1.246	1.302	1.085
+ 0.2	1.232	1.255	1.282	1.076
+ 0.3	1.233	1.189	1.291	1.082
+ 0.4	1.218	1.195	1.296	1.067
+ 0.5	1.218	1.172	1.302	1.079
+ 0.6	1.225	1.175	1.290	1.081
+ 0.7	1.228	1.001	1.287	1.085
+ 0.8	1.239	0.998	1.291	1.082
+ 0.9	1.222	1.002	1.296	1.086
+ 1.0	1.237	0.994	1.286	1.078

@@ -1,0 +1,16 @@
+#Gnuplot datafile
+
+# Format : min_rate_for_aggregation speedup_TYPE.... speedup_scop
+# with TYPE being 'reuse', 'parallelism', 'vectorization' etc...
+#rate 	parallelism 	reuse 	tiling_hyperplane 	vectorization
+ 0.0	1.00	1.00	0.98	0.99
+ 0.1	0.99	0.99	0.98	0.99
+ 0.2	0.99	1.00	0.99	1.01
+ 0.3	0.98	1.00	0.99	1.01
+ 0.4	1.01	0.98	0.99	1.00
+ 0.5	1.00	1.00	0.99	1.01
+ 0.6	0.98	0.99	0.99	0.99
+ 0.7	1.00	1.01	0.98	1.00
+ 0.8	0.99	1.01	0.99	1.00
+ 0.9	0.98	0.99	0.99	0.99
+ 1.0	0.99	1.00	0.99	0.99

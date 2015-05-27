@@ -1,0 +1,16 @@
+#Gnuplot datafile
+
+# Format : min_rate_for_aggregation nb_aggregated_statement_TYPE.... nb_statement_original_scop
+# with TYPE being 'reuse', 'parallelism', 'vectorization' etc...
+#rate 	nb_stmt_original 	parallelism 	reuse 	tiling_hyperplane 	vectorization
+ 0.0 	10 	3 	3 	3 	3
+ 0.1 	10 	0 	0 	3 	0
+ 0.2 	10 	0 	0 	3 	0
+ 0.3 	10 	0 	0 	3 	0
+ 0.4 	10 	0 	0 	3 	0
+ 0.5 	10 	0 	0 	3 	0
+ 0.6 	10 	0 	0 	3 	0
+ 0.7 	10 	0 	0 	3 	0
+ 0.8 	10 	0 	0 	3 	0
+ 0.9 	10 	0 	0 	3 	0
+ 1.0 	10 	0 	0 	3 	0
