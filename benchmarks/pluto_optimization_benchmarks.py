@@ -61,7 +61,7 @@ def benchmark(source_filepath, scop_filepath, output_filepath) :
         raise Exception("inscop call failed")
 
     cleanup()
-    return median(res)
+    return mean(res)
 
 def gnuplot_data(results, source_filename, type_list, rate_list) :
     pluto_res=results["pluto"]

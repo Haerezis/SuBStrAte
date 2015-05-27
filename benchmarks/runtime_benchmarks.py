@@ -11,7 +11,7 @@ devnull = open(os.devnull, 'w')
 
 nb_run=5
 bin_output_filename="/tmp/a.out"
-gcc_flags=["-lm","-fopenmp",]# "-DEXTRALARGE_DATASET"]
+gcc_flags=["-O3","-lm","-fopenmp",]# "-DEXTRALARGE_DATASET"]
 
 #Gnuplot command printed in the data file (to be able to directly
 #plot the data
@@ -43,13 +43,16 @@ def benchmark(source_filepath) :
         after=time.time()
         res.append(after - before)
 
-    return median(res)
+    return res
 
 def gnuplot_data(results, source_filename, type_list, rate_list) :
     pluto_res=results["pluto"]
     res_filepath = "{0}/{1}.results".format(res_dir, source_filename)
     with open(res_filepath, "w") as output :
         output.write(gnuplot_commands+"\n\n")
+
+
+        output.write("#MEAN\n")
         output.write(gnuplot_format+'\n')
         
         output.write("#")
@@ -58,11 +61,29 @@ def gnuplot_data(results, source_filename, type_list, rate_list) :
         for k in sorted(type_list) : output.write(" \t"+k)
         output.write('\n')
         for rate in rate_list :
-            output.write(" {0}".format(rate,pluto_res))
-            #output.write(" \t%.3f" % (pluto_res))
+            output.write(" {0}".format(rate,mean(pluto_res)))
+            #output.write(" \t%.3f" % mean((pluto_res)))
             for type_ in type_list :
                 substrate_res=results[type_][rate]
-                substrate_res=1.0 + (pluto_res - substrate_res) / pluto_res
+                substrate_res=1.0 + (mean(pluto_res) - mean(substrate_res)) / mean(pluto_res)
+                output.write("\t"+('%.2f' % substrate_res))
+            output.write("\n")
+        
+        output.write("\n\n")
+        output.write("#MEDIAN\n")
+        output.write(gnuplot_format+'\n')
+        
+        output.write("#")
+        output.write("rate")
+        #output.write("\tpluto")
+        for k in sorted(type_list) : output.write(" \t"+k)
+        output.write('\n')
+        for rate in rate_list :
+            output.write(" {0}".format(rate,median(pluto_res)))
+            #output.write(" \t%.3f" % (median(pluto_res)))
+            for type_ in type_list :
+                substrate_res=results[type_][rate]
+                substrate_res=1.0 + ((median(pluto_res) - median(substrate_res))) / median(pluto_res)
                 output.write("\t"+('%.2f' % substrate_res))
             output.write("\n")
 

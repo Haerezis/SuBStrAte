@@ -44,7 +44,7 @@ set style fill solid border -1
 set boxwidth 0.85
 set title "Runtime speedup (vs. Pluto) for ${f/\.c\.*/\.c}\n"
 set term pngcairo size 960,720
-set output "${graphes_directory}/${f}_pluto.png"
+set output "${graphes_directory}/${f}.png"
 plot "${res_files_directory}/${f}" using 2:xticlabels(1) title "Parallelization", \
     "${res_files_directory}/${f}" using 3 title "Reuse", \
     "${res_files_directory}/${f}" using 4 title "Tiling Hyperplane", \
