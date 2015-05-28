@@ -3,7 +3,7 @@
 
 res_files_directory=""
 graphes_directory=""
-
+EVERY=0
 
 print_usage() {
     echo "Usage : $0 <results_files_directory> <output_graphes_directory>"
@@ -45,10 +45,10 @@ set boxwidth 0.85
 set title "Pluto optimisation time speedup for ${f/\.c\.*/\.c}\n"
 set term pngcairo size 960,720
 set output "${graphes_directory}/${f}.png"
-plot "${res_files_directory}/${f}" using 2:xticlabels(1) title "Parallelization", \
-    "${res_files_directory}/${f}" using 3 title "Reuse", \
-    "${res_files_directory}/${f}" using 4 title "Tiling Hyperplane", \
-    "${res_files_directory}/${f}" using 5 title "Vectorization"
+plot "${res_files_directory}/${f}" every :::$EVERY::$EVERY using 2:xticlabels(1) title "Parallelization", \
+    "${res_files_directory}/${f}" every :::$EVERY::$EVERY using 3 title "Reuse", \
+    "${res_files_directory}/${f}" every :::$EVERY::$EVERY using 4 title "Tiling Hyperplane", \
+    "${res_files_directory}/${f}" every :::$EVERY::$EVERY using 5 title "Vectorization"
 EOF
 done
 
