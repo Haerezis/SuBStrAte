@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#Script to use with speedup results per nb_stmt
 
 res_files_directory=""
 graphes_directory=""
@@ -36,20 +37,22 @@ gnuplot_style=bar
 for f in $(ls ${res_files_directory}/*.results) ; do
     f=$(basename $f)
     gnuplot <<- EOF
-set xlabel "Minimal rating to aggregate statements"
-set ylabel "Speedup in pourcentage"
-set yrange [:2]
+set xlabel "Number of aggregated statements"
+set ylabel "Average speedup"
+set yrange [*:2]
+set datafile separator ","
 set style data histogram
 set style histogram cluster gap 1
+set style histogram errorbars gap 1 lw 1
 set style fill solid border -1
 set boxwidth 0.85
 set title "Runtime speedup (vs. Pluto) for ${f/\.c\.*/\.c}\n"
 set term pngcairo size 960,720
 set output "${graphes_directory}/${f}.png"
-plot "${res_files_directory}/${f}" i $block_index using 2:xticlabels(1) title "Parallelization", \
-    "${res_files_directory}/${f}"  i $block_index using 3 title "Reuse", \
-    "${res_files_directory}/${f}"  i $block_index using 4 title "Tiling Hyperplane", \
-    "${res_files_directory}/${f}"  i $block_index using 5 title "Vectorization"
+plot "${res_files_directory}/${f}" i $block_index using 2:3:xticlabels(1) title "Parallelization", \
+    "${res_files_directory}/${f}"  i $block_index using 4:5:xticlabels(1) title "Reuse", \
+    "${res_files_directory}/${f}"  i $block_index using 6:7:xticlabels(1) title "Tiling Hyperplane", \
+    "${res_files_directory}/${f}"  i $block_index using 8:9:xticlabels(1) title "Vectorization"
 EOF
 done
 

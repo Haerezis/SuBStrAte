@@ -38,8 +38,9 @@ for f in $(ls ${res_files_directory}/*.results) ; do
     f=$(basename $f)
     gnuplot <<- EOF
 set xlabel "Minimal rating to aggregate statements"
-set ylabel "Pourcentage of aggregated statements"
-set yrange [0:100]
+set ylabel "Number of aggregated statements"
+set yrange [0:$n]
+set ytics 1
 set style data histogram
 set style histogram cluster gap 1
 set style fill solid border -1
@@ -47,10 +48,10 @@ set boxwidth 0.85
 set title "SuBStrAte aggregation results for ${f/\.c\.*/\.c}\nOriginal number of statement : $n"
 set term pngcairo size 960,720
 set output "${graphes_directory}/${f}.png"
-plot "${res_files_directory}/${f}" using ((\$3 == 0) ? 0.5 : \$3*100.0 / \$2):xticlabels(1) title "Parallelization", \
-    "${res_files_directory}/${f}" using ((\$4 == 0) ? 0.5 : \$4*100.0 / \$2) title "Reuse", \
-    "${res_files_directory}/${f}" using ((\$5 == 0) ? 0.5 : \$5*100.0 / \$2) title "Tiling Hyperplane", \
-    "${res_files_directory}/${f}" using ((\$6 == 0) ? 0.5 : \$6*100.0 / \$2) title "Vectorization"
+plot "${res_files_directory}/${f}" using 3:xticlabels(1) title "Parallelization", \
+    "${res_files_directory}/${f}" using 4 title "Reuse", \
+    "${res_files_directory}/${f}" using 5 title "Tiling Hyperplane", \
+    "${res_files_directory}/${f}" using 6 title "Vectorization"
 EOF
 done
 
