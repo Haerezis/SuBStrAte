@@ -60,6 +60,12 @@ void substrate_reset_beta_depth(
         struct osl_statement * stmt);
 
 
+bool substrate_osl_relation_equal(
+        struct osl_relation * rel1,
+        struct osl_relation * rel2);
+bool substrate_osl_relation_part_equal(
+        struct osl_relation * rel1,
+        struct osl_relation * rel2);
 
 struct osl_generic * substrate_osl_generic_lookup(
         struct osl_generic * x,

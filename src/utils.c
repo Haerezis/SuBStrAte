@@ -439,3 +439,103 @@ void substrate_osl_strings_concat(
     *dest = res;
 }
 
+
+bool substrate_osl_relation_part_equal(struct osl_relation * rel1,struct osl_relation * rel2)
+{
+    bool res = true;
+    bool is_equal = true;
+    int i = 0, j = 0, k = 0;
+
+    if (((rel1 == NULL) && (rel2 != NULL)) ||
+            ((rel1 != NULL) && (rel2 == NULL)) ||
+            (rel1->type != rel2->type) ||
+            (rel1->precision != rel2->precision) ||
+            (rel1->nb_rows != rel2->nb_rows) ||
+            (rel1->nb_columns != rel2->nb_columns) ||
+            (rel1->nb_output_dims != rel2->nb_output_dims) ||
+            (rel1->nb_input_dims != rel2->nb_input_dims) ||
+            (rel1->nb_local_dims != rel2->nb_local_dims) ||
+            (rel1->nb_parameters != rel2->nb_parameters))
+        return false;
+
+    bool equal_rows[rel2->nb_rows];
+    memset(&equal_rows, false, sizeof(bool) * rel2->nb_rows);
+
+    for (i = 0; (i < rel1->nb_rows) && res ; i++)
+    {
+        for (j = 0; j < rel2->nb_rows; j++)
+        {
+            if(equal_rows[j])
+                continue;
+
+            is_equal = true;
+            for (k = 0; (k < rel2->nb_columns) && is_equal ; k++)
+            {
+                if (osl_int_ne(rel1->precision, rel1->m[i][k], rel2->m[j][k]))
+                    is_equal = false;
+            }
+
+            if(is_equal)
+            {
+                equal_rows[j] = true;
+                break;
+            }
+        }
+        if( j >= rel2->nb_rows )
+            res = false;
+    }
+
+    return res;
+}
+
+bool substrate_osl_relation_equal(struct osl_relation * rel1,struct osl_relation * rel2)
+{
+    bool res = true;
+    unsigned int rel_size1 = 0, rel_size2 = 0;
+    unsigned int i = 0;
+    struct osl_relation * rel_iterator = NULL;
+
+
+    if (rel1 == rel2)
+        return true;
+
+
+    rel_size1 = osl_relation_count(rel1);
+    rel_size2 = osl_relation_count(rel2);
+
+    if (((rel1 == NULL) && (rel2 != NULL)) ||
+            ((rel1 != NULL) && (rel2 == NULL)) ||
+            (rel_size1 != rel_size2))
+        return false;
+
+
+    struct osl_relation * rel2_array[rel_size2];
+    rel_iterator = rel2;
+    for (i = 0 ; i<rel_size2 ; i++)
+    {
+        rel2_array[i] = rel_iterator;
+        rel_iterator = rel_iterator->next;
+    }
+
+    rel_iterator = rel1;
+    while(rel_iterator != NULL)
+    {
+        for (i = 0 ; i < rel_size2 ; i++)
+        {
+            if (substrate_osl_relation_part_equal(rel_iterator, rel2_array[i]))
+            {
+                rel2_array[i] = NULL;
+                break;
+            }
+        }
+        if (i >= rel_size2)
+        {
+            res = false;
+            break;
+        }
+        rel_iterator = rel_iterator->next;
+    }
+    
+    return res;
+}
+
