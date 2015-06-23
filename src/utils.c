@@ -500,8 +500,8 @@ bool substrate_osl_relation_equal(struct osl_relation * rel1,struct osl_relation
         return true;
 
 
-    rel_size1 = osl_relation_count(rel1);
-    rel_size2 = osl_relation_count(rel2);
+    rel_size1 = osl_relation_nb_components(rel1);
+    rel_size2 = osl_relation_nb_components(rel2);
 
     if (((rel1 == NULL) && (rel2 != NULL)) ||
             ((rel1 != NULL) && (rel2 == NULL)) ||
