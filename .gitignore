@@ -36,7 +36,7 @@ bin/
 cmake_install.cmake
 
 #binary file
-substrate
+./substrate
 bin/substrate
 
 #doc html & latex
