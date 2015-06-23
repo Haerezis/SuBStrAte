@@ -60,6 +60,7 @@ add_library(libpluto SHARED IMPORTED)
 set_target_properties(libpluto PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/pluto/src/.libs/libpluto.so )
 
 add_executable(substrate
+    src/adjacency_matrix.c
     src/utils.c
     src/reuse_struct.c
     src/reuse.c
