@@ -31,6 +31,14 @@ find_library(OSL_LIBRARY osl REQUIRED)
 #include_directories(${candl_DIR}/include)
 find_library(CANDL_LIBRARY candl REQUIRED)
 
+###add clay to the build
+##Comment out to use git submodule clay directory, else we use installed lib.
+#set(clay_DIR ${substrate_SOURCE_DIR}/clay/)
+#add_subdirectory(clay)
+#include_directories(${clay_DIR}/include)
+find_library(CLAY_LIBRARY clay REQUIRED)
+
+
 find_library(GMP_LIBRARY gmp)
 if (GMP_LIBRARY)
     find_library(PIPLIB_GMP_LIBRARY piplib_gmp REQUIRED)
@@ -79,6 +87,7 @@ add_executable(substrate
 
 target_link_libraries(substrate ${OSL_LIBRARY})
 target_link_libraries(substrate ${CANDL_LIBRARY})
+target_link_libraries(substrate ${CLAY_LIBRARY})
 if (GMP_LIBRARY)
     target_link_libraries(substrate ${GMP_LIBRARY})
     target_link_libraries(substrate ${PIPLIB_GMP_LIBRARY})
