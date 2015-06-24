@@ -8,6 +8,8 @@
 #include "substrate/utils.h"
 #include "substrate/adjacency_matrix.h"
 #include "osl/osl.h"
+#include "clay/beta.h"
+#include "clay/util.h"
 
 /**
  * @brief Compute the weighted average of all the different profile rate.
@@ -204,21 +206,91 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
 void substrate_move_statement(
         struct osl_scop * scop,
         unsigned int src_stmt_index,
-        unsigned int dst_stmt_index)
+        unsigned int dst_stmt_index,
+        bool before)
 {
-    printf("todo");
+    struct osl_statement 
+        *src_stmt = NULL,
+        *dst_stmt = NULL,
+        *before_dst_stmt = NULL,
+        *iter_stmt = NULL,
+        *start_stmt = NULL;
+    struct clay_array *dst_beta = NULL;
+    unsigned int nb_stmts = 0;
+
+    nb_stmts = osl_statement_number(scop->statement);
+    if ((src_stmt_index >= nb_stmts) || (dst_stmt_index >= nb_stmts))
+    {
+        OSL_error("substrate_move_statement : statement index value\
+                greater than number of statement");
+    }
+
+    start_stmt = osl_statement_malloc();
+    start_stmt->next = scop->statement;
+    iter_stmt = start_stmt;
+    for (unsigned int i = 0 ; !src_stmt || !dst_stmt ; i++)
+    {
+        if (i == dst_stmt_index)
+        {
+            before_dst_stmt = iter_stmt;
+            dst_stmt = iter_stmt->next;
+        }
+        else if (i == src_stmt_index)
+        {
+            src_stmt = iter_stmt->next;
+            iter_stmt->next = iter_stmt->next->next;
+            src_stmt->next = NULL;
+            dst_stmt_index--;
+        }
+
+        iter_stmt = iter_stmt->next;
+    }
+
+    if ((src_stmt->scattering->next != NULL) || (dst_stmt->scattering->next != NULL))
+        OSL_error("substrate_move_statement : union of scattering relation not supported yet");
+
+    dst_beta = clay_beta_extract(dst_stmt->scattering);
+
+    clay_util_scattering_update_beta(src_stmt->scattering, dst_beta);
+    if (before)
+    {
+        clay_beta_shift_before(scop->statement, dst_beta, dst_beta->size);
+
+        src_stmt->next = dst_stmt;
+        before_dst_stmt->next = src_stmt;
+    }
+    else
+    {
+        clay_beta_shift_after(scop->statement, dst_beta, dst_beta->size);
+        
+        src_stmt->next = dst_stmt->next;
+        dst_stmt->next = src_stmt;
+        
+       
+        osl_int_increment(src_stmt->scattering->precision, 
+              &src_stmt->scattering->m[(dst_beta->size-1) * 2][src_stmt->scattering->nb_columns-1],
+              src_stmt->scattering->m[(dst_beta->size-1) * 2][src_stmt->scattering->nb_columns-1]);
+    }
+
+    clay_array_free(dst_beta);
+    scop->statement = start_stmt->next;
+    start_stmt->next = NULL;
+    osl_statement_free(start_stmt);
+
 }
 
 bool substrate_is_stmt_moving_legal(
         struct osl_scop * scop,
         unsigned int src_stmt_index,
-        unsigned int dst_stmt_index)
+        unsigned int dst_stmt_index,
+        bool before)
 {
     bool res = true;
-    struct osl_scop * candl_scop = NULL, *tmp = NULL;
+    struct osl_scop * candl_scop = NULL;
 
 
     candl_scop = osl_scop_clone(scop);
+    substrate_move_statement(candl_scop, src_stmt_index, dst_stmt_index, before);
 
     return res;
 }
@@ -339,17 +411,17 @@ void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
         if(similarity_rate < g_substrate_options.minimal_rate)
             break;
         
-        if(substrate_is_stmt_moving_legal(profiled_scop, stmt_index1, stmt_index2))
+        if(substrate_is_stmt_moving_legal(profiled_scop, stmt_index1, stmt_index2, true))
         {
             //move stmt1 to before stmt2 and fuse stmt1 and stmt2
-            substrate_move_statement(profiled_scop, stmt_index1, stmt_index2);
+            substrate_move_statement(profiled_scop, stmt_index1, stmt_index2, true);
 
             substrate_update_adj_matrix(profiled_scop, adj_mat, stmt_index1);
         }
-        else if(substrate_is_stmt_moving_legal(profiled_scop, stmt_index2, stmt_index1))
+        else if(substrate_is_stmt_moving_legal(profiled_scop, stmt_index2, stmt_index1, false))
         {
             //move stmt2 to after stmt1 and fuse stmt2 and stmt1
-            substrate_move_statement(profiled_scop, stmt_index2, stmt_index1);
+            substrate_move_statement(profiled_scop, stmt_index2, stmt_index1, false);
 
             substrate_update_adj_matrix(profiled_scop, adj_mat, stmt_index2);
         }
