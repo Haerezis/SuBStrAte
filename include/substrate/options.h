@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "substrate/enum.h"
 
 /**
  * A structure containing all the options informations and structure.
@@ -24,6 +25,8 @@ struct substrate_options
     double parallelism_weight;  /**<The weight of the parallelism rate in the weighted average */
     double vectorization_weight;  /**<The weight of the vectorization rate in the weighted average */
     double tiling_hyperplane_weight;  /**<The weight of the tiling hyperplane rate in the weighted average */
+
+    enum substrate_aggregation_strategy aggregation_strategy; /**< The aggregation strategy used during optimization */
 };
 
 /**

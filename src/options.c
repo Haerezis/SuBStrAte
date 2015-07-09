@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "substrate/enum.h"
+
 # ifdef __cplusplus
 extern "C"
 {
@@ -36,6 +38,8 @@ struct substrate_options substrate_options_default()
     options.parallelism_weight = 0.0;
     options.vectorization_weight = 0.0;
     options.tiling_hyperplane_weight = 0.0;
+
+    options.aggregation_strategy = SIMPLE_SUCCESSIVE_AGGREGATION;
 
     return options;
 }
@@ -169,6 +173,14 @@ void substrate_options_init(
                 exit(EXIT_FAILURE);
             }
         }
+        else if( (strcmp(argv[i],"-ssa") && strcmp(argv[i],"--simple-successive-aggregation")) == 0)
+        {
+            g_substrate_options.aggregation_strategy = SIMPLE_SUCCESSIVE_AGGREGATION;
+        }
+        else if( (strcmp(argv[i],"-gga") && strcmp(argv[i],"--greedy-graph-aggregation")) == 0)
+        {
+            g_substrate_options.aggregation_strategy = GREEDY_GRAPH_AGGREGATION;
+        }
         //else if(strcmp(argv[i],"") == 0)
         else if(argv[i][0] == '-')
         {
@@ -211,6 +223,12 @@ void substrate_print_help(
     fprintf(output," [--min-reuse-rate N]");
     fprintf(output," INPUT_FILE");
     fprintf(output,"\n\n");
+
+    fprintf(output,"-ssa, --simple-successive-aggregation\n");
+    fprintf(output,"\tUse the Simple Successive Aggregation algorithm during aggregation optimization\n");
+
+    fprintf(output,"-gga, --greedy-graph-aggregation\n");
+    fprintf(output,"\tUse the Greedy Graph Aggregation algorithm during aggregation optimization\n");
 
     fprintf(output,"-h, --help\n");
     fprintf(output,"\tPrint a usage message briefly summarizing these command-line options then exit.\n");

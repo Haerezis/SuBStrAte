@@ -4,6 +4,7 @@
 #include "substrate/optimization.h"
 
 #include "substrate/options.h"
+#include "substrate/enum.h"
 #include "substrate/reuse.h"
 #include "substrate/utils.h"
 #include "substrate/adjacency_matrix.h"
@@ -104,7 +105,16 @@ struct osl_scop * substrate_optimize(
     original_res = res;
     while(res != NULL)
     {
-        substrate_successive_statements_optimization(res);
+        switch(g_substrate_options.aggregation_strategy) {
+            case SIMPLE_SUCCESSIVE_AGGREGATION :
+                substrate_successive_statements_optimization(res);
+                break;
+            case GREEDY_GRAPH_AGGREGATION :
+                substrate_greedy_graph_optimization(res);
+                break;
+            default:
+                break;
+        }
         res = res->next;
     }
 
@@ -324,8 +334,6 @@ void substrate_update_adj_matrix(
 /**
  * @brief Optimize a scop by aggregating (if possible and preferable)
  * statements of a scop with a greedy algorithm
- *
- * WIP, do not use.
  *
  * @param[inout] profiled_scop A scop profile that will be optimized.
  */
