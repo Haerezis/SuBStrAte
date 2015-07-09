@@ -67,31 +67,56 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/pluto/clan/include)
 add_library(libpluto SHARED IMPORTED)
 set_target_properties(libpluto PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/pluto/src/.libs/libpluto.so )
 
-add_executable(substrate
-    src/adjacency_matrix.c
-    src/utils.c
-    src/reuse_struct.c
-    src/reuse.c
-    src/parallelism_struct.c
-    src/parallelism.c
-    src/vectorization_struct.c
-    src/vectorization.c
-    src/tiling_hyperplane_struct.c
-    src/tiling_hyperplane.c
-    src/statement_profile.c
-    src/analyze.c
-    src/optimization.c
-    src/options.c
-    src/substrate.c
-    )
 
-target_link_libraries(substrate ${OSL_LIBRARY})
-target_link_libraries(substrate ${CANDL_LIBRARY})
-target_link_libraries(substrate ${CLAY_LIBRARY})
+# files .c
+set(
+  sources
+  src/adjacency_matrix.c
+  src/utils.c
+  src/reuse_struct.c
+  src/reuse.c
+  src/parallelism_struct.c
+  src/parallelism.c
+  src/vectorization_struct.c
+  src/vectorization.c
+  src/tiling_hyperplane_struct.c
+  src/tiling_hyperplane.c
+  src/statement_profile.c
+  src/analyze.c
+  src/optimization.c
+  src/options.c
+  #src/substrate.c
+)
+
+# substrate program
+add_executable(substrate_exe
+  ${sources}
+  src/substrate.c
+)
+set_target_properties(substrate_exe PROPERTIES OUTPUT_NAME "substrate")
+
+
+# substrate static library
+add_library(substrate_lib_static STATIC
+  ${sources}
+)
+set_target_properties(substrate_lib_static PROPERTIES OUTPUT_NAME "substrate")
+
+# substrate shared library
+add_library(substrate_lib_shared SHARED
+  ${sources}
+)
+set_target_properties(substrate_lib_shared PROPERTIES OUTPUT_NAME "substrate")
+
+
+
+target_link_libraries(substrate_exe ${OSL_LIBRARY})
+target_link_libraries(substrate_exe ${CANDL_LIBRARY})
+target_link_libraries(substrate_exe ${CLAY_LIBRARY})
 if (GMP_LIBRARY)
-    target_link_libraries(substrate ${GMP_LIBRARY})
-    target_link_libraries(substrate ${PIPLIB_GMP_LIBRARY})
+    target_link_libraries(substrate_exe ${GMP_LIBRARY})
+    target_link_libraries(substrate_exe ${PIPLIB_GMP_LIBRARY})
 else()
-    target_link_libraries(substrate ${PIPLIB_DP_LIBRARY})
+    target_link_libraries(substrate_exe ${PIPLIB_DP_LIBRARY})
 endif()
-target_link_libraries(substrate libpluto)
+target_link_libraries(substrate_exe libpluto)
