@@ -6,6 +6,7 @@
 
 #include "osl/int.h"
 #include "substrate/options.h"
+#include "substrate/statement_profile.h"
 
 #define SIZE 16
 
@@ -539,3 +540,79 @@ bool substrate_osl_relation_equal(struct osl_relation * rel1,struct osl_relation
     return res;
 }
 
+struct osl_statement * substrate_get_statement(
+        struct osl_statement * stmts,
+        unsigned int index,
+        struct osl_statement ** before_stmt)
+{
+    struct osl_statement *iter_stmt = NULL, *res = NULL;
+
+    if (index == 0)
+    {
+        res = stmts;
+        if (before_stmt != NULL)
+            *before_stmt = NULL;
+    }
+
+    for (iter_stmt = stmts ; iter_stmt != NULL ; index--, iter_stmt = iter_stmt->next)
+    {
+        if (index == 1)
+        {
+            res = iter_stmt->next;
+            if (before_stmt != NULL)
+                *before_stmt = iter_stmt;
+        }
+    }
+
+    return res;
+}
+
+void substrate_statement_fusion_and_replace(
+        struct osl_scop * scop,
+        struct osl_statement * before_stmt1,
+        struct osl_statement * stmt1,
+        struct osl_statement * before_stmt2,
+        struct osl_statement * stmt2,
+        struct osl_statement * before_target)
+{
+    struct osl_statement * stmt_fusion = NULL;
+    struct substrate_statement_profile *stmt_profile1 = NULL, *stmt_profile2 = NULL;
+
+
+    if (!before_target || !stmt1 || !stmt2)
+    {
+        OSL_error("substrate_statement_fusion_and_replace : before_target pointer NULL");
+    }
+
+    stmt_profile1 = (struct substrate_statement_profile*) stmt1->usr;
+    stmt_profile2 = (struct substrate_statement_profile*) stmt2->usr;
+
+    if ((stmt1->next == stmt2) && (before_stmt1 != NULL))
+    {
+        before_stmt1->next = stmt2->next;
+    }
+    else if ((stmt2->next == stmt1) && (before_stmt2 != NULL))
+    {
+        before_stmt2->next = stmt1->next;
+    }
+    else
+    {
+        if (before_stmt1 != NULL)
+            before_stmt1->next = stmt1->next;
+        if (before_stmt2 != NULL)
+            before_stmt2->next = stmt2->next;
+    }
+    stmt1->next = NULL;
+    stmt2->next = NULL;
+
+    //aggregate stmt1 and stmt2 into stmt_fusion.
+    stmt_fusion = substrate_statement_fusion(scop, stmt1, stmt2);
+    stmt_fusion->next = before_target->next;
+    before_target->next = stmt_fusion;
+
+
+    substrate_statement_profile_free(stmt_profile1);
+    substrate_statement_profile_free(stmt_profile2);
+    osl_statement_free(stmt1);
+    osl_statement_free(stmt2);
+}

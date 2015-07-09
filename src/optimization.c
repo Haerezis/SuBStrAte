@@ -8,6 +8,7 @@
 #include "substrate/utils.h"
 #include "substrate/adjacency_matrix.h"
 #include "osl/osl.h"
+#include "candl/candl.h"
 #include "clay/beta.h"
 #include "clay/util.h"
 
@@ -127,8 +128,7 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
         *stmt = NULL,// Will point to the statement BEFORE the first statement that is rated/aggregated.
         *stmt_original = NULL,// Point to the original address of stmt after its empty alloc.
         *stmt1 = NULL,// Point to the first statement that is rated/aggregated
-        *stmt2 = NULL,// Point to the second statement that is rated/aggregated
-        *stmt_fusion = NULL;// Point to the new statement created when stmt1 and stmt2 are aggregated.
+        *stmt2 = NULL;// Point to the second statement that is rated/aggregated
     bool same_domain = false, same_scattering = false;
     struct substrate_statement_profile *stmt_profile1 = NULL, *stmt_profile2 = NULL;
     double similarity_rate = 0.0;
@@ -165,14 +165,13 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
                 similarity_rate = substrate_similarity_rate(stmt_profile1, stmt_profile2);
                 if(similarity_rate >= g_substrate_options.minimal_rate)
                 {
-                    //aggregate stmt1 and stmt2 into stmt_fusion.
-                    stmt_fusion = substrate_statement_fusion(profiled_scop, stmt1, stmt2);
-                    //replace stmt1 and stmt2 in the list by stmt_fusion
-                    stmt->next = stmt_fusion;
-                    stmt2->next = NULL;
-                    substrate_statement_profile_free(stmt_profile1);
-                    substrate_statement_profile_free(stmt_profile2);
-                    osl_statement_free(stmt1);//this function normaly also free stmt2
+                    substrate_statement_fusion_and_replace(
+                            profiled_scop,
+                            stmt,
+                            stmt1,
+                            stmt1,
+                            stmt2,
+                            stmt);
                 }
                 else
                 {
@@ -203,47 +202,17 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
 }
 
 
-void substrate_move_statement(
+void substrate_move_statement_scattering(
         struct osl_scop * scop,
-        unsigned int src_stmt_index,
-        unsigned int dst_stmt_index,
+        struct osl_statement *src_stmt,
+        struct osl_statement *dst_stmt,
         bool before)
 {
-    struct osl_statement 
-        *src_stmt = NULL,
-        *dst_stmt = NULL,
-        *before_dst_stmt = NULL,
-        *iter_stmt = NULL,
-        *start_stmt = NULL;
     struct clay_array *dst_beta = NULL;
-    unsigned int nb_stmts = 0;
 
-    nb_stmts = osl_statement_number(scop->statement);
-    if ((src_stmt_index >= nb_stmts) || (dst_stmt_index >= nb_stmts))
+    if ((src_stmt == NULL) || (dst_stmt == NULL))
     {
-        OSL_error("substrate_move_statement : statement index value\
-                greater than number of statement");
-    }
-
-    start_stmt = osl_statement_malloc();
-    start_stmt->next = scop->statement;
-    iter_stmt = start_stmt;
-    for (unsigned int i = 0 ; !src_stmt || !dst_stmt ; i++)
-    {
-        if (i == dst_stmt_index)
-        {
-            before_dst_stmt = iter_stmt;
-            dst_stmt = iter_stmt->next;
-        }
-        else if (i == src_stmt_index)
-        {
-            src_stmt = iter_stmt->next;
-            iter_stmt->next = iter_stmt->next->next;
-            src_stmt->next = NULL;
-            dst_stmt_index--;
-        }
-
-        iter_stmt = iter_stmt->next;
+        OSL_error("substrate_move_statement : NULL pointer to osl_statement");
     }
 
     if ((src_stmt->scattering->next != NULL) || (dst_stmt->scattering->next != NULL))
@@ -255,17 +224,10 @@ void substrate_move_statement(
     if (before)
     {
         clay_beta_shift_before(scop->statement, dst_beta, dst_beta->size);
-
-        src_stmt->next = dst_stmt;
-        before_dst_stmt->next = src_stmt;
     }
     else
     {
         clay_beta_shift_after(scop->statement, dst_beta, dst_beta->size);
-        
-        src_stmt->next = dst_stmt->next;
-        dst_stmt->next = src_stmt;
-        
        
         osl_int_increment(src_stmt->scattering->precision, 
               &src_stmt->scattering->m[(dst_beta->size-1) * 2][src_stmt->scattering->nb_columns-1],
@@ -273,24 +235,37 @@ void substrate_move_statement(
     }
 
     clay_array_free(dst_beta);
-    scop->statement = start_stmt->next;
-    start_stmt->next = NULL;
-    osl_statement_free(start_stmt);
-
 }
 
-bool substrate_is_stmt_moving_legal(
+bool substrate_is_legal_to_move_statement(
         struct osl_scop * scop,
-        unsigned int src_stmt_index,
-        unsigned int dst_stmt_index,
+        struct osl_statement *src_stmt,
+        struct osl_statement *dst_stmt,
         bool before)
 {
-    bool res = true;
+    bool res = false;
     struct osl_scop * candl_scop = NULL;
+    struct osl_dependence *dependences = NULL;
+    struct candl_options *options = NULL;
+    struct candl_violation *violations = NULL;
 
 
     candl_scop = osl_scop_clone(scop);
-    substrate_move_statement(candl_scop, src_stmt_index, dst_stmt_index, before);
+    substrate_move_statement_scattering(candl_scop, src_stmt, dst_stmt, before);
+
+    options = candl_options_malloc();
+    candl_scop_usr_init(candl_scop);
+    candl_dependence_add_extension(candl_scop, options);
+    dependences = osl_generic_lookup(candl_scop->extension, OSL_URI_DEPENDENCE);
+    violations = candl_violation(scop, dependences, candl_scop, options);
+
+    if(violations == NULL)
+        res = true;
+
+    candl_options_free(options);
+    candl_scop_usr_cleanup(candl_scop);
+    osl_scop_free(candl_scop);
+    candl_violation_free(violations);
 
     return res;
 }
@@ -357,7 +332,9 @@ void substrate_update_adj_matrix(
 void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
 {
     struct osl_statement 
+        *before_stmt1 = NULL,
         *stmt1 = NULL,
+        *before_stmt2 = NULL,
         *stmt2 = NULL;
     bool same_domain = false;
     struct substrate_statement_profile *stmt_profile1 = NULL, *stmt_profile2 = NULL;
@@ -410,18 +387,35 @@ void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
 
         if(similarity_rate < g_substrate_options.minimal_rate)
             break;
+
+        stmt1 = substrate_get_statement(profiled_scop->statement, stmt_index1, &before_stmt1);
+        stmt2 = substrate_get_statement(profiled_scop->statement, stmt_index2, &before_stmt2);
         
-        if(substrate_is_stmt_moving_legal(profiled_scop, stmt_index1, stmt_index2, true))
+        if(substrate_is_legal_to_move_statement(profiled_scop, stmt1, stmt2, true))
         {
             //move stmt1 to before stmt2 and fuse stmt1 and stmt2
-            substrate_move_statement(profiled_scop, stmt_index1, stmt_index2, true);
+            substrate_move_statement_scattering(profiled_scop, stmt1, stmt2, true);
+            substrate_statement_fusion_and_replace(
+                    profiled_scop,
+                    before_stmt1,
+                    stmt1,
+                    before_stmt2,
+                    stmt2,
+                    before_stmt2);
 
             substrate_update_adj_matrix(profiled_scop, adj_mat, stmt_index1);
         }
-        else if(substrate_is_stmt_moving_legal(profiled_scop, stmt_index2, stmt_index1, false))
+        else if(substrate_is_legal_to_move_statement(profiled_scop, stmt2, stmt1, false))
         {
             //move stmt2 to after stmt1 and fuse stmt2 and stmt1
-            substrate_move_statement(profiled_scop, stmt_index2, stmt_index1, false);
+            substrate_move_statement_scattering(profiled_scop, stmt2, stmt1, false);
+            substrate_statement_fusion_and_replace(
+                    profiled_scop,
+                    before_stmt1,
+                    stmt1,
+                    before_stmt2,
+                    stmt2,
+                    before_stmt1);
 
             substrate_update_adj_matrix(profiled_scop, adj_mat, stmt_index2);
         }

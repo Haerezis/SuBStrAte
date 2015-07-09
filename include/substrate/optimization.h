@@ -20,15 +20,15 @@ void substrate_successive_statements_optimization(struct osl_scop *);
 void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop);
 
 
-void substrate_move_statement(
+void substrate_move_statement_scattering(
         struct osl_scop * scop,
-        unsigned int src_stmt_index,
-        unsigned int dst_stmt_index,
+        struct osl_statement *src_stmt,
+        struct osl_statement *dst_stmt,
         bool before);
-bool substrate_is_stmt_moving_legal(
+bool substrate_is_legal_to_move_statement(
         struct osl_scop * scop,
-        unsigned int src_stmt_index,
-        unsigned int dst_stmt_index,
+        struct osl_statement *src_stmt,
+        struct osl_statement *dst_stmt,
         bool before);
 void substrate_update_adj_matrix(
         struct osl_scop * profiled_scop,

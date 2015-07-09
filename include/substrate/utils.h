@@ -77,4 +77,17 @@ void substrate_osl_strings_concat(
         struct osl_strings ** dest,
         struct osl_strings * str1,
         struct osl_strings * str2);
+
+
+struct osl_statement * substrate_get_statement(
+        struct osl_statement * stmts,
+        unsigned int index,
+        struct osl_statement ** before_stmt);
+void substrate_statement_fusion_and_replace(
+        struct osl_scop * scop,
+        struct osl_statement * before_stmt1,
+        struct osl_statement * stmt1,
+        struct osl_statement * before_stmt2,
+        struct osl_statement * stmt2,
+        struct osl_statement * before_target);
 #endif
