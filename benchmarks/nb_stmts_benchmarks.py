@@ -28,7 +28,7 @@ gnuplot_format = """\
 
 
 def print_usage() :
-    print "Usage : {0} <substrate_path> <scops_directory | scop_filepath> <aggregated_scops_directory> [-no-substrate] [-no-gnuplot]"\
+    print "Usage : {0} <substrate_path> <scops_directory | scop_filepath> <aggregated_scops_directory> <results_directory> [-no-substrate] [-no-gnuplot]"\
             .format(argv[0])
 
 

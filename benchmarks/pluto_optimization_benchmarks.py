@@ -131,6 +131,9 @@ if not os.path.isdir(opti_scops_dir) :
     print_usage()
     exit(1)
 
+if not os.path.isdir(opti_scops_dir+"/pluto") :
+    os.mkdir(opti_scops_dir+"/pluto")
+
 type_list = sorted(next(os.walk(opti_scops_dir))[1])
 type_list.remove("pluto")
 rate_list = sorted(next(os.walk("{0}/{1}/".format(opti_scops_dir, type_list[0])))[1])
@@ -144,9 +147,6 @@ else :
     tmp = os.path.split(sources_dir)
     sources_dir = tmp[0]
     source_list = [tmp[1]]
-
-if not os.path.isdir(opti_scops_dir+"/pluto") :
-    os.mkdir(opti_scops_dir+"/pluto")
 
 results={y:{z:None for z in rate_list} for y in type_list}
 for source in source_list :
