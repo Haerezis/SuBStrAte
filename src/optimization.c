@@ -16,10 +16,10 @@
 /**
  * @brief Compute the weighted average of all the different profile rate.
  *
- * @param reuse_rate The reuse rate.
- * @param parallelism_rate The parallelism rate.
- * @param vectorization_rate The vectorization rate.
- * @param tiling_hyperplane_rate The tiling hyperplane rate.
+ * @param[in] reuse_rate The reuse rate.
+ * @param[in] parallelism_rate The parallelism rate.
+ * @param[in] vectorization_rate The vectorization rate.
+ * @param[in] tiling_hyperplane_rate The tiling hyperplane rate.
  *
  * @return The weighted average.
  */
@@ -50,8 +50,8 @@ double substrate_weighted_rate(
 /**
  * @brief Rate the similarity between 2 statements
  *
- * @param stmt1 first statement.
- * @param stmt2 second statement.
+ * @param[in] stmt1 first statement.
+ * @param[in] stmt2 second statement.
  *
  * @return The similarity rate between stmt1 and stmt2.
  */
@@ -90,6 +90,8 @@ double substrate_similarity_rate(
 /**
  * @brief Optimize a scop by aggregating similar behaving statements, using the
  * statements profiles contained in \a profiled_scop.
+ * The choice of the aggregation strategy used depend on the value of
+ * g_substrate_options.aggregation_strategy .
  *
  * @param[in] profiled_scop A scop that has been analyzed and profiled (the result of the
  * \a analyze function).
@@ -212,6 +214,16 @@ void substrate_successive_statements_optimization(struct osl_scop * profiled_sco
 }
 
 
+/**
+ * @brief Move a statement to before/after another statement in the scop, modifying
+ * the scattering (beta vector) of some statements inside the scop.
+ *
+ * @param[inout] scop The scop containing the source and destination statements.
+ * @param[inout] src_stmt A pointer to the statement that will be moved.
+ * @param[inout] dst_stmt A pointer to the destination where src_stmt will be moved.
+ * @param[in] before A boolean indicating if src_stmt is moved before (if true) or
+ * after (if false) dst_stmt.
+ */
 void substrate_move_statement_scattering(
         struct osl_scop * scop,
         struct osl_statement *src_stmt,
@@ -247,6 +259,19 @@ void substrate_move_statement_scattering(
     clay_array_free(dst_beta);
 }
 
+/**
+ * @brief Test if it is legal to move a statement to before or after
+ * another statement in the scop.
+ * The scop will not be modified.
+ *
+ * @param[in] scop The scop containing the statements src_stmt and dst_stmt.
+ * @param[in] src_stmt A pointer to the statement whose move will be tested.
+ * @param[in] dst_stmt A pointer to the destination where src_stmt will be moved and tested.
+ * @param[in] before A boolean indicating if src_stmt is moved before (if true) or
+ * after (if false) dst_stmt.
+ *
+ * @return True if the move is legal, false otherwise.
+ */
 bool substrate_is_legal_to_move_statement(
         struct osl_scop * scop,
         struct osl_statement *src_stmt,
@@ -281,8 +306,17 @@ bool substrate_is_legal_to_move_statement(
 }
 
 
+/**
+ * @brief Update the weight of the edge of the adjacency matrxi adj_mat
+ * from/to the stmt_index statement of the scop.
+ * 
+ *
+ * @param[in] scop The scop containing the statements corresponding to the adjacency matrix.
+ * @param[inout] adj_mat The adjacency matrix that will be updated
+ * @param[in] stmt_index The index of the statement involved in the edges that will be updated.
+ */
 void substrate_update_adj_matrix(
-        struct osl_scop * profiled_scop,
+        struct osl_scop * scop,
         struct substrate_adj_matrix * adj_mat,
         unsigned int stmt_index)
 {
@@ -295,9 +329,9 @@ void substrate_update_adj_matrix(
     
     
     substrate_adj_matrix_remove_vertex(adj_mat, stmt_index);
-    nb_stmts = osl_statement_number(profiled_scop->statement);
+    nb_stmts = osl_statement_number(scop->statement);
     
-    stmt = profiled_scop->statement;
+    stmt = scop->statement;
     for(unsigned int i = 0 ; i<nb_stmts ; i++)
     {
         if(stmt_index == i)
@@ -305,7 +339,7 @@ void substrate_update_adj_matrix(
         stmt = stmt->next;
     }
 
-    stmt2 = profiled_scop->statement;
+    stmt2 = scop->statement;
     stmt_index2 = 0;
     while(stmt2 != NULL)
     {
@@ -355,7 +389,7 @@ void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
     if((profiled_scop->statement == NULL) || (profiled_scop->statement->next == NULL))
         return;
 
-    adj_mat = substrate_adj_matrix_new(osl_statement_number(profiled_scop->statement));
+    adj_mat = substrate_adj_matrix_malloc(osl_statement_number(profiled_scop->statement));
 
     stmt1 = profiled_scop->statement;
     stmt_index1 = 0;
@@ -432,4 +466,6 @@ void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
             substrate_adj_matrix_set_edge(adj_mat, stmt_index1, stmt_index2, 0.0);
         }
     }
+
+    substrate_adj_matrix_free(adj_mat);
 }

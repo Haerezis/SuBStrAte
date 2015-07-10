@@ -79,8 +79,8 @@ struct substrate_parallelism_profile substrate_parallelism_profile_constructor(
  * The rate is a double comprised between 0 and 1 (0 being totally NOT similar,
  * and 1 being TOTALLY similar).
  *
- * @param pp1 The first parallelism profile.
- * @param pp2 The second parallelism profile.
+ * @param[in] pp1 The first parallelism profile.
+ * @param[in] pp2 The second parallelism profile.
  *
  * @return A double comprised between 0 and 1 rating the similarity between
  * the two profiles.

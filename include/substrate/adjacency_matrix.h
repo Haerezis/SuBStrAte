@@ -1,6 +1,7 @@
 #ifndef __SUBSTRATE__ADJACENCY_MATRIX_H
 #define __SUBSTRATE__ADJACENCY_MATRIX_H
 
+#include <stdio.h>
 
 
 struct substrate_adj_matrix {
@@ -9,7 +10,7 @@ struct substrate_adj_matrix {
     unsigned int allocated_size;
 };
 
-struct substrate_adj_matrix * substrate_adj_matrix_new(unsigned int size);
+struct substrate_adj_matrix * substrate_adj_matrix_malloc(unsigned int size);
 void substrate_adj_matrix_free(struct substrate_adj_matrix * mat);
 
 double substrate_adj_matrix_get_edge(
@@ -32,5 +33,7 @@ void substrate_adj_matrix_max_edge(
         unsigned int * vertex_index2);
 
 
-void substrate_adj_matrix_print(struct substrate_adj_matrix * mat);
+void substrate_adj_matrix_dump(
+    FILE * output_stream,
+    struct substrate_adj_matrix * mat);
 #endif

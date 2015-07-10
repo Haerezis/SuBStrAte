@@ -91,8 +91,8 @@ struct substrate_statement_profile * substrate_statement_profile_clone(
  * This function allocated and call the constructor function of all the
  * sub-profile (reuse, parallelism,...).
  *
- * @param scop The scop of the statement that will be analyzed.
- * @param stmt The statement analyzed to create the substrate_statement_profile.
+ * @param[in] scop The scop of the statement that will be analyzed.
+ * @param[in] stmt The statement analyzed to create the substrate_statement_profile.
  *
  * @return A statement_profile containing all the informations gathered during
  * the analyze.
@@ -229,8 +229,8 @@ struct osl_statement * substrate_osl_statement_fusion(
  * @brief Fusion 2 osl_relation_list : if some osl_relation of the list
  * are found in rl2 and rl1, only one is added to the result list.
  *
- * @param rl1 The first osl_relation_list.
- * @param rl2 The second osl_relation_list.
+ * @param[in] rl1 The first osl_relation_list.
+ * @param[in] rl2 The second osl_relation_list.
  *
  * @return An osl_relation_list, fusion of rl1 and rl2, without any
  * osl_relation duplicate.

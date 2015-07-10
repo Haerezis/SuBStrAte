@@ -12,8 +12,8 @@
  * @brief Allocate and construct the vectorization profile by analyzing the
  * osl_statement.
  *
- * @param scop The scop of the analyzed osl_statement.
- * @param statement The analyzed osl_statement.
+ * @param[in] scop The scop of the analyzed osl_statement.
+ * @param[in] statement The analyzed osl_statement.
  *
  * @return A constructed vectorization profile.
  */
@@ -129,8 +129,8 @@ struct substrate_vectorization_profile substrate_vectorization_profile_construct
  * @brief Rate between 0 and 1 the similarity between two vectorization profiles.
  * O being not similar AT ALL, and 1 being TOTALLY similar.
  *
- * @param vp1 The first vectorization profile.
- * @param vp2 The second vectorization profile.
+ * @param[in] vp1 The first vectorization profile.
+ * @param[in] vp2 The second vectorization profile.
  *
  * @return The vectorization rate of the two profiles.
  */

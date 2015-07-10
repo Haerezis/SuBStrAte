@@ -181,8 +181,8 @@ struct substrate_equivalence_class substrate_equivalence_class_constructor(
  * In the end, the rating will be equal to : number of references in the aggregated
  * equivalence classes / total number of reference of the reuse profile.
  *
- * @param rp1 The first reuse profile used for the rating.
- * @param rp2 The second reuse profile used for the rating.
+ * @param[in] rp1 The first reuse profile used for the rating.
+ * @param[in] rp2 The second reuse profile used for the rating.
  *
  * @return A rating between 0 and 1 (0 meaning that there isn't any reuse, and 1 meaning
  * a perfect reuse).
@@ -253,8 +253,8 @@ double substrate_rate_reuse_profiles(
 /**
  * @brief Rate the reuse between two array profile.
  *
- * @param ap1 The first array profile used for the rating.
- * @param ap2 The second array profile used for the rating.
+ * @param[in] ap1 The first array profile used for the rating.
+ * @param[in] ap2 The second array profile used for the rating.
  *
  * @return A reuse_rate corresponding to the number of access relation that would be
  * aggregated (because they belong to the same Uniformly Generated Set and equivalence class)
@@ -321,8 +321,8 @@ struct reuse_rate substrate_rate_array_profiles(
  * @brief Rate two Uniformly Generated Set profile (with same H matrix)
  * by comparing the number of access relations that have the same equivalence class.
  *
- * @param ugs1 The first profile used for the rating.
- * @param ugs2 The second profile used for the rating.
+ * @param[in] ugs1 The first profile used for the rating.
+ * @param[in] ugs2 The second profile used for the rating.
  *
  * @return A reuse rate composed of : the number of access relations that have the same
  * equivalence class, and the total number of access relations.

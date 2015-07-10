@@ -4,6 +4,13 @@
 #include "substrate/vectorization_struct.h"
 
 
+/**
+ * @brief Make a hard copy of a substrate_vectorization_profile.
+ *
+ * @param[in] vp A pointer to the profile that will be cloned.
+ *
+ * @return A clone of the argument.
+ */
 struct substrate_vectorization_profile substrate_vectorization_profile_clone(
         struct substrate_vectorization_profile * vp)
 {
@@ -20,6 +27,13 @@ struct substrate_vectorization_profile substrate_vectorization_profile_clone(
     return res;
 }
 
+
+/**
+ * @brief Free the memory taken by an substrate_vectorization_profile.
+ *
+ * @param[inout] vp A pointer to the vectorization profile that will
+ * be freed.
+ */
 void substrate_vectorization_profile_free(
         struct substrate_vectorization_profile * vp)
 {
@@ -28,6 +42,14 @@ void substrate_vectorization_profile_free(
     vp->size = 0;
 }
 
+
+/**
+ * @brief Dump the internal data of a substrate_vectorization_profile, in a 
+ * somewhat organized manner, to a FILE* (can be stdout).
+ *
+ * @param[in] output_stream The output FILE* used to print the dump.
+ * @param[in] vp The vectorization profile that will be dumped.
+ */
 void substrate_vectorization_profile_dump(
         FILE * output_stream,
         struct substrate_vectorization_profile * vp)
@@ -49,6 +71,17 @@ void substrate_vectorization_profile_dump(
     }
 }
 
+
+/**
+ * @brief Fusion two vectorization profiles into a third one by aggregating
+ * their informations in a logical way.
+ *
+ * @param vp1 The first vectorization profile.
+ * @param vp2 The second vectorization profile.
+ *
+ * @return A new substrate_vectorization_profile containing the aggregated
+ * informations of the arguments.
+ */
 struct substrate_vectorization_profile substrate_vectorization_profile_fusion(
         struct substrate_vectorization_profile * vp1,
         struct substrate_vectorization_profile * vp2)

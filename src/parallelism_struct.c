@@ -30,7 +30,7 @@ struct substrate_parallelism_profile substrate_parallelism_profile_clone(
 /**
  * @brief Free the memory taken by an substrate_parallelism_profile.
  *
- * @param pp[inout] A pointer to the parallelism profile that will
+ * @param[inout] ppA pointer to the parallelism profile that will
  * be freed.
  */
 void substrate_parallelism_profile_free(
@@ -46,8 +46,8 @@ void substrate_parallelism_profile_free(
  * @brief Dump the internal data of a parallelism_profile, in a 
  * somewhat organized manner, to a FILE* (can be stdout).
  *
- * @param output_stream The output FILE* used to print the dump.
- * @param pp The parallelism profile that will be dumped.
+ * @param[in] output_stream The output FILE* used to print the dump.
+ * @param[in] pp The parallelism profile that will be dumped.
  */
 void substrate_parallelism_profile_dump(
         FILE * output_stream,
@@ -74,8 +74,8 @@ void substrate_parallelism_profile_dump(
  * @brief Fusion two parallelism profiles into a third one by aggregating
  * their informations in a logical way.
  *
- * @param pp1 The first parallelism profile.
- * @param pp2 The second parallelism profile.
+ * @param[in] pp1 The first parallelism profile.
+ * @param[in] pp2 The second parallelism profile.
  *
  * @return A new substrate_parallelism_profile containing the aggregated
  * informations of the arguments.

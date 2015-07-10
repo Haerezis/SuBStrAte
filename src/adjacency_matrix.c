@@ -4,7 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct substrate_adj_matrix * substrate_adj_matrix_new(unsigned int size)
+/**
+ * @brief Allocate and initialize a substrate_adj_matrix.
+ * The matrix contained int the structure is a only triangular :
+ * o
+ * oo
+ * ooo
+ *
+ * @param[in] size The size of the matrix.
+ *
+ * @return The allocated and initialized substrate_adj_matrix.
+ */
+struct substrate_adj_matrix * substrate_adj_matrix_malloc(unsigned int size)
 {
     struct substrate_adj_matrix * res = NULL;
 
@@ -26,6 +37,11 @@ struct substrate_adj_matrix * substrate_adj_matrix_new(unsigned int size)
 }
 
 
+/**
+ * @brief Free the structure of a substrate_adj_matrix structure.
+ *
+ * @param[inout] mat A pointer to the structure that will be freed.
+ */
 void substrate_adj_matrix_free(struct substrate_adj_matrix * mat)
 {
     for (unsigned int i=0 ; i<mat->allocated_size ; i++)
@@ -36,6 +52,16 @@ void substrate_adj_matrix_free(struct substrate_adj_matrix * mat)
     free(mat);
 }
 
+
+/**
+ * @brief Get the weight of the edge between 2 vertices.
+ *
+ * @param[in] mat A pointer to the adjacency matrix where is taken the value of the edge.
+ * @param[in] vertex_index1 The index of the first vertex.
+ * @param[in] vertex_index2 The index of the second vertex.
+ *
+ * @return The weight of the edge.
+ */
 double substrate_adj_matrix_get_edge(
         struct substrate_adj_matrix * mat,
         unsigned int vertex_index1,
@@ -56,6 +82,15 @@ double substrate_adj_matrix_get_edge(
     return res;
 }
 
+/**
+ * @brief Set the weight of the edge between 2 vertices.
+ *
+ * @param[inout] mat A pointer to the adjacency matrix where is set the value of the edge.
+ * @param[in] vertex_index1 The index of the first vertex.
+ * @param[in] vertex_index2 The index of the second vertex.
+ * @param[in] value The value that will be set for the edge beteen vertex_index1
+ * and vertex_index2.
+ */
 void substrate_adj_matrix_set_edge(
         struct substrate_adj_matrix * mat,
         unsigned int vertex_index1,
@@ -74,6 +109,12 @@ void substrate_adj_matrix_set_edge(
     }
 }
 
+/**
+ * @brief Remove a vertex from the adjacency matrix (remove a line and column).
+ *
+ * @param[inout] mat A pointer to the adjacency matrix that will be modified.
+ * @param[in] vertex_index The index of the vertex that will be removed.
+ */
 void substrate_adj_matrix_remove_vertex(
         struct substrate_adj_matrix * mat,
         unsigned int vertex_index)
@@ -100,23 +141,32 @@ void substrate_adj_matrix_remove_vertex(
 }
 
 
-void substrate_adj_matrix_print(struct substrate_adj_matrix * mat)
+/**
+ * @brief Dump the content of a substrate_adj_matrix to a output stream.
+ * (a file, stdout or stderr).
+ *
+ * @param[inout] output_stream The output stream where will be printed the matrix.
+ * @param[in] mat A pointer to the adjacency matrix that will be printed.
+ */
+void substrate_adj_matrix_print(
+    FILE * output_stream,
+    struct substrate_adj_matrix * mat)
 {
     for(unsigned int i = 0; i<mat->size ; i++)
     {
-        printf("%d | ",i);
+        fprintf(output_stream, "%d | ",i);
         for(unsigned int j = 0; j<i ; j++)
         {
-            printf("%.2f ",mat->val[i][j]);
+            fprintf(output_stream, "%.2f ",mat->val[i][j]);
         }
-        printf("\n");
+        fprintf(output_stream, "\n");
     }
-    printf("\n\n");
+    fprintf(output_stream, "\n\n");
 }
 
 
 /**
- * @brief Return the max value (with the vertices index) of an adjacency matrix.
+ * @brief Return the max value (with the vertices index) of an adjacency matrix's edges.
  *
  * @param[in] mat The adjacency matrix.
  * @param[out] value pointer to where will be stored the max value.

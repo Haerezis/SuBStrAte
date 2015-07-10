@@ -121,8 +121,8 @@ struct substrate_osl_relation_group_list substrate_group_access_relations_by(
  *
  * If n<0 or , all the scop are cloned.
  *
- * @param scop The scops that will be cloned.
- * @param n The number of scops that will be cloned.
+ * @param[in] scop The scops that will be cloned.
+ * @param[in] n The number of scops that will be cloned.
  *
  * @return The n hard copy (or less if there is less scops that expected) of scop,
  * without statements.
@@ -375,8 +375,8 @@ struct osl_generic * substrate_osl_generic_lookup(
  * @brief This function builds and returns a "hard copy" (not a pointer copy) of the
  * n first elements of an osl_generic_t list.
  *
- * \param generic The pointer to the generic structure we want to clone.
- * \param n       The number of nodes we want to copy (n<0 for infinity).
+ * \param[in] generic The pointer to the generic structure we want to clone.
+ * \param[in] n       The number of nodes we want to copy (n<0 for infinity).
  * \return The clone of the n first nodes of the generic list.
  *
  * @return 
@@ -418,9 +418,9 @@ struct osl_generic * substrate_osl_generic_nclone(
 /**
  * @brief Concatenate two osl_strings into one.
  *
- * @param dest[out] A pointer to the destination osl_strings.
- * @param str1[in] The first osl_strings.
- * @param str2[in] The second osl_strings.
+ * @param[out] dest[out] A pointer to the destination osl_strings.
+ * @param[in] str1[in] The first osl_strings.
+ * @param[in] str2[in] The second osl_strings.
  */
 void substrate_osl_strings_concat(
         struct osl_strings ** dest,
@@ -441,6 +441,15 @@ void substrate_osl_strings_concat(
 }
 
 
+/**
+ * @brief Test if the first part of an osl_relation is equal or not, even if
+ * the lines of the matrix are not in the same order (not sorted).
+ *
+ * @param[in] rel1 The first relation.
+ * @param[in] rel2 The second relation.
+ *
+ * @return True if the 2 relations are partially equal, false otherwise.
+ */
 bool substrate_osl_relation_part_equal(struct osl_relation * rel1,struct osl_relation * rel2)
 {
     bool res = true;
@@ -489,6 +498,15 @@ bool substrate_osl_relation_part_equal(struct osl_relation * rel1,struct osl_rel
     return res;
 }
 
+/**
+ * @brief Test is 2 osl_relation are equal (every of theirs components), even if the lines
+ * of their matrix are not in the same order.
+ *
+ * @param[in] rel1 The first relation.
+ * @param[in] rel2 The second relation.
+ *
+ * @return True if the 2 relations are totally equal, false otherwise.
+ */
 bool substrate_osl_relation_equal(struct osl_relation * rel1,struct osl_relation * rel2)
 {
     bool res = true;
@@ -540,6 +558,19 @@ bool substrate_osl_relation_equal(struct osl_relation * rel1,struct osl_relation
     return res;
 }
 
+/**
+ * @brief Get the the indexth statement of a statements list.
+ * If \a before_stmt is not NULL, it is set to the statement before
+ * the one that we try to get.
+ *
+ *
+ * @param[in] stmts The statements list.
+ * @param[in] index The index of the statement to get.
+ * @param[inout] before_stmt A pointer to an osl_statement, set to the statement
+ * before indexth statement..
+ *
+ * @return The indexth statement of the list.
+ */
 struct osl_statement * substrate_get_statement(
         struct osl_statement * stmts,
         unsigned int index,
@@ -567,6 +598,17 @@ struct osl_statement * substrate_get_statement(
     return res;
 }
 
+/**
+ * @brief Fuse 2 osl_statement into a third, insert it to a specified target place, then
+ * remove and delete the first 2 statements.
+ *
+ * @param[inout] scop The scop of the 2 statements.
+ * @param[inout] before_stmt1 The pointer to the statement before stmt1.
+ * @param[inout] stmt1 The pointer to the first fused statement.
+ * @param[inout] before_stmt2 The pointer to the statement before stmt2.
+ * @param[inout] stmt2 The pointer to the second fused statement.
+ * @param[inout] before_target The pointer to the statement before the target place.
+ */
 void substrate_statement_fusion_and_replace(
         struct osl_scop * scop,
         struct osl_statement * before_stmt1,

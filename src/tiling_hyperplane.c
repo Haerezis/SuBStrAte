@@ -6,6 +6,14 @@
 #include <stdbool.h>
 
 
+/**
+ * @brief Build the substrate_tiling_hyperplane_profile of an osl_statement.
+ *
+ * @param[in] scop The osl_scop containing the statement given as argument.
+ * @param[in] statement The osl_statement from which will be build the profile.
+ *
+ * @return The substrate_tiling_hyperplane_profile constructed from the statement.
+ */
 struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_constructor(
        struct osl_scop * scop,
        struct osl_statement * statement)
@@ -26,8 +34,9 @@ struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_c
     options->tile = 1;
     prog = scop_to_pluto_prog(pluto_scop, options);
     pluto_auto_transform(prog);
-    //For statement that doesn't have a domain, pluto segfault when detect transfo...
+
     //FIXME Send a patch to pluto?
+    //For statement that doesn't have a domain, pluto segfault when detect transfo...
     if(statement->domain->nb_rows > 0)
         pluto_detect_transformation_properties(prog);
 
@@ -41,6 +50,16 @@ struct substrate_tiling_hyperplane_profile substrate_tiling_hyperplane_profile_c
     return res;
 }
 
+/**
+ * @brief Rate the affinity/similarity between 2 tiling hyperplane profiles.
+ *
+ * @param[in] thp1 The first tiling hyperplane profile.
+ * @param[in] thp2 The second tiling hyperplane profile.
+ *
+ * @return A rate between 0 and 1, 0 meaning that they don't share any 
+ * affinity/similarity, 1 meaning full similarity/affinity.
+ *
+ */
 double substrate_rate_tiling_hyperplane_profiles(
         struct substrate_tiling_hyperplane_profile thp1,
         struct substrate_tiling_hyperplane_profile thp2)
