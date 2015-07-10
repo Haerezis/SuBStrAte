@@ -242,15 +242,16 @@ void substrate_move_statement_scattering(
 
     dst_beta = clay_beta_extract(dst_stmt->scattering);
 
-    clay_util_scattering_update_beta(src_stmt->scattering, dst_beta);
     if (before)
     {
         clay_beta_shift_before(scop->statement, dst_beta, dst_beta->size);
+        clay_util_scattering_update_beta(src_stmt->scattering, dst_beta);
     }
     else
     {
         clay_beta_shift_after(scop->statement, dst_beta, dst_beta->size);
-       
+        clay_util_scattering_update_beta(src_stmt->scattering, dst_beta);
+
         osl_int_increment(src_stmt->scattering->precision, 
               &src_stmt->scattering->m[(dst_beta->size-1) * 2][src_stmt->scattering->nb_columns-1],
               src_stmt->scattering->m[(dst_beta->size-1) * 2][src_stmt->scattering->nb_columns-1]);
