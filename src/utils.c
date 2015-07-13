@@ -644,12 +644,29 @@ void substrate_statement_fusion_and_replace(
         if (before_stmt2 != NULL)
             before_stmt2->next = stmt2->next;
     }
+    if (scop->statement == stmt1)
+    {
+        scop->statement = stmt1->next;
+    }
+    else if (scop->statement == stmt2)
+    {
+        scop->statement = stmt2->next;
+    }
     stmt1->next = NULL;
     stmt2->next = NULL;
 
     //aggregate stmt1 and stmt2 into stmt_fusion.
     stmt_fusion = substrate_statement_fusion(scop, stmt1, stmt2);
     stmt_fusion->next = before_target->next;
+
+    if (before_target == stmt1)
+    {
+        before_target = before_stmt1;
+    }
+    else if (before_target == stmt2)
+    {
+        before_target = before_stmt2;
+    }
     before_target->next = stmt_fusion;
 
 

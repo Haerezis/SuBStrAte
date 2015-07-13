@@ -344,21 +344,21 @@ void substrate_update_adj_matrix(
     stmt_index2 = 0;
     while(stmt2 != NULL)
     {
-        if(stmt == stmt2)
-            continue;
-
-        same_domain = substrate_osl_relation_equal(stmt->domain, stmt2->domain);
-        if(same_domain)
+        if(stmt != stmt2)
         {
-            stmt_profile = (struct substrate_statement_profile*) stmt->usr;
-            stmt_profile2 = (struct substrate_statement_profile*) stmt2->usr;
-            similarity_rate = substrate_similarity_rate(stmt_profile, stmt_profile2);
+            same_domain = substrate_osl_relation_equal(stmt->domain, stmt2->domain);
+            if(same_domain)
+            {
+                stmt_profile = (struct substrate_statement_profile*) stmt->usr;
+                stmt_profile2 = (struct substrate_statement_profile*) stmt2->usr;
+                similarity_rate = substrate_similarity_rate(stmt_profile, stmt_profile2);
 
-            substrate_adj_matrix_set_edge(
-                    adj_mat,
-                    stmt_index,
-                    stmt_index2,
-                    similarity_rate);
+                substrate_adj_matrix_set_edge(
+                        adj_mat,
+                        stmt_index,
+                        stmt_index2,
+                        similarity_rate);
+            }
         }
         stmt2 = stmt2->next;
         stmt_index2++;

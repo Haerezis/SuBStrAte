@@ -122,6 +122,7 @@ void substrate_adj_matrix_remove_vertex(
     if (vertex_index < mat->size)
     {
         free(mat->val[vertex_index]);
+        mat->allocated_size--;
         if(vertex_index < (mat->size-1))
         {
             memmove(
@@ -179,16 +180,22 @@ void substrate_adj_matrix_max_edge(
         unsigned int * vertex_index1,
         unsigned int * vertex_index2)
 {
+    double val = mat->val[0][0];
+    unsigned int max_i = 0, max_j = 0;
+
     for(unsigned int i = 0; i<mat->size ; i++)
     {
         for(unsigned int j = 0 ; j<i ; j++)
         {
-            if(mat->val[i][j] > *value)
+            if(mat->val[i][j] > val)
             {
-                *value = mat->val[i][j];
-                *vertex_index1 = j;
-                *vertex_index2 = i;
+                val = mat->val[i][j];
+                max_j = j;
+                max_i = i;
             }
         }
     }
+    *value = val;
+    *vertex_index1 = max_j;
+    *vertex_index2 = max_i;
 }
