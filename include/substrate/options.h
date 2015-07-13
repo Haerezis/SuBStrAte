@@ -15,10 +15,12 @@ struct substrate_options
     bool row_major;             /**<A boolean, true when the array references are analyzed as row-major, false if column-major */
     bool dump;                  /*<A boolean, true when after the analyze the program dump the internal infos */
 
+    //Not in use for now
     double minimal_reuse_rate;  /**<The minimal reuse rate necessary to aggregate 2 statements*/
     double minimal_parallelism_rate;  /**<The minimal parallelism rate necessary to aggregate 2 statements*/
     double minimal_vectorization_rate;  /**<The minimal vectorization rate necessary to aggregate 2 statements*/
     double minimal_tiling_hyperplane_rate;  /**<The minimal tiling hyperplane rate necessary to aggregate 2 statements*/
+    //Not in use for now
 
     double minimal_rate;        /**<The minimal value the weighted average of all rates to aggregate 2 statements */
     double reuse_weight;        /**<The weight of the reuse rate in the weighted average */
