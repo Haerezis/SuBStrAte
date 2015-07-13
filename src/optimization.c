@@ -437,7 +437,6 @@ void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
         if(substrate_is_legal_to_move_statement(profiled_scop, stmt1, stmt2, true))
         {
             //move stmt1 to before stmt2 and fuse stmt1 and stmt2
-            substrate_move_statement_scattering(profiled_scop, stmt1, stmt2, true);
             substrate_statement_fusion_and_replace(
                     profiled_scop,
                     before_stmt1,
@@ -451,7 +450,6 @@ void substrate_greedy_graph_optimization(struct osl_scop * profiled_scop)
         else if(substrate_is_legal_to_move_statement(profiled_scop, stmt2, stmt1, false))
         {
             //move stmt2 to after stmt1 and fuse stmt2 and stmt1
-            substrate_move_statement_scattering(profiled_scop, stmt2, stmt1, false);
             substrate_statement_fusion_and_replace(
                     profiled_scop,
                     before_stmt1,
