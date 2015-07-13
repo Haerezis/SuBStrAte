@@ -136,14 +136,14 @@ void substrate_adj_matrix_remove_vertex(
             memmove(
                     &mat->val[i][vertex_index],
                     &mat->val[i][vertex_index + 1],
-                    sizeof(double) * (mat->size - vertex_index - 1));
+                    sizeof(double) * (i - vertex_index));
         }
     }
 }
 
 
 /**
- * @brief Dump the content of a substrate_adj_matrix to a output stream.
+ * @brief Print the content of a substrate_adj_matrix to a output stream.
  * (a file, stdout or stderr).
  *
  * @param[inout] output_stream The output stream where will be printed the matrix.
@@ -180,7 +180,7 @@ void substrate_adj_matrix_max_edge(
         unsigned int * vertex_index1,
         unsigned int * vertex_index2)
 {
-    double val = mat->val[0][0];
+    double val = mat->val[1][0];
     unsigned int max_i = 0, max_j = 0;
 
     for(unsigned int i = 0; i<mat->size ; i++)

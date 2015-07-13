@@ -33,7 +33,7 @@ void substrate_adj_matrix_max_edge(
         unsigned int * vertex_index2);
 
 
-void substrate_adj_matrix_dump(
+void substrate_adj_matrix_print(
     FILE * output_stream,
     struct substrate_adj_matrix * mat);
 #endif
