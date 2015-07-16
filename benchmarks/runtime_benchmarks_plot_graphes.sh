@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#This script take the gnuplot data files containing the results of the runtime speedup
+#to generate graphs, using the correct gnuplot options.
 
 res_files_directory=""
 graphes_directory=""

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#Generate the graphs files from the gnuplot data files, using the correct gnuplot options
 
 res_files_directory=""
 graphes_directory=""

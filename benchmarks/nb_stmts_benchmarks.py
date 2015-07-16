@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+#This script use the substrate program to optimize .scop files for each
+#profile type independently (mono criteria) and for different minimal aggregating rates.
+#The aggregation strategy used is the default one.
+#
+#It also compare the original .scop file to the generated ones to see if some
+#statements were aggregated or not. It then produce a gnuplot data file with the results.
+
 import os, os.path, glob, re
 from sys import argv
 from subprocess import call
@@ -32,13 +39,16 @@ def print_usage() :
             .format(argv[0])
 
 
+#The profile type option used to call substrate in monocriteria mode.
+#The script will try to call benchmark substrate for each of these profile type
 profile_options = {
         "reuse" : "--reuse-weight",
         "parallelism" : "--paral-weight",
         "vectorization" : "--vector-weight",
         "tiling_hyperplane" : "--tiling-weight" }
 
-
+#Optimize in monocriteria for every profile type in the list, for every minimal rate
+#in the list for every scop file in the list.
 def substrate(profile_type_list , rate_list, scop_filename_list) :
     for profile_type in profile_type_list :
         directory = "{0}/{1}".format(aggr_scops_dir,profile_type)
@@ -61,7 +71,7 @@ def substrate(profile_type_list , rate_list, scop_filename_list) :
                         "{0}/{1}".format(scops_dir,scop_filename)]
                 #print command
                 call( command )
-
+#Get the number of statement in a .scop file.
 def nb_stmt_in_scop_file(scop_filepath) :
     with open(scop_filepath, "r") as scop :
         for line in scop :
@@ -70,6 +80,7 @@ def nb_stmt_in_scop_file(scop_filepath) :
                 return int(line)
     return 0
 
+#Generate the gnuplot data files for every optimized scop.
 def gnuplot_data(profile_type_list, rate_list, scop_filename_list) :
 
     for scop_filename in scop_filename_list :

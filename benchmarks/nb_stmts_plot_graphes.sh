@@ -1,12 +1,13 @@
 #!/bin/bash
 
+#Call gnuplot for every gnuplot data files with the correct options to generate graphs
 
 res_files_directory=""
-graphes_directory=""
+graphs_directory=""
 
 
 print_usage() {
-    echo "Usage : $0 <results_files_directory> <output_graphes_directory>"
+    echo "Usage : $0 <results_files_directory> <output_graphs_directory>"
 }
 
 # Check if there is enough argument
@@ -30,7 +31,7 @@ if ! [ -d $2 ] ; then
 fi
 
 res_files_directory=$1
-graphes_directory=$2
+graphs_directory=$2
 
 gnuplot_style=bar
 for f in $(ls ${res_files_directory}/*.results) ; do
@@ -47,7 +48,7 @@ set style fill solid border -1
 set boxwidth 0.85
 set title "SuBStrAte aggregation results for ${f/\.c\.*/\.c}\nOriginal number of statement : $n"
 set term pngcairo size 960,720
-set output "${graphes_directory}/${f}.png"
+set output "${graphs_directory}/${f}.png"
 plot "${res_files_directory}/${f}" using 3:xticlabels(1) title "Parallelization", \
     "${res_files_directory}/${f}" using 4 title "Reuse", \
     "${res_files_directory}/${f}" using 5 title "Tiling Hyperplane", \

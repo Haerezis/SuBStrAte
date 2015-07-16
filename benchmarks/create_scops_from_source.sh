@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#This script take care of creating the .scop files from all the .c
+#files in a directory.
+
 print_usage() {
     echo "Usage : $0 <sources_directory> <scops_directory>"
 }

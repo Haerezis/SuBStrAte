@@ -1,5 +1,14 @@
 #!/usr/bin/python3
 
+#This script call pluto to generate optimized/parallelized source code from
+#the original .scop files and the ones produced by substrate as a result of aggregation.
+#
+#The time pluto take to optimize/parallelize is recorded to compare what time it
+#take with the original version and the optimized version of the scops, to see if
+#there is a speedup of pluto with the substrate optimized scops.
+#The speedup results are written in a gnuplot data file for every 
+#scop/minimal aggregating rate/profile type.
+
 import os, os.path, glob, re
 from sys import argv
 import time
@@ -24,6 +33,7 @@ gnuplot_format = """\
 # Format : min_rate_for_aggregation speedup_pluto_TYPE.... speedup_pluto_original_scop
 # with TYPE being 'reuse', 'parallelism', 'vectorization' etc..."""
 
+#Cleanup the dotfiles created by pluto
 def cleanup():
     files = [".unroll", ".vectorize", ".pragmas",  ".params", ".orcc", ".linearized",
             ".nonlinearized", "*.pluto.cloog", ".srcfilename", ".outfilename",
@@ -34,6 +44,7 @@ def cleanup():
     os.remove(pluto_output_filename+".pluto.cloog")
     os.remove(pluto_output_filename)
 
+#Call pluto for a scop
 def benchmark(source_filepath, scop_filepath, output_filepath) :
     res = []
     pluto_cmd=[pluto_path,
@@ -63,6 +74,7 @@ def benchmark(source_filepath, scop_filepath, output_filepath) :
     cleanup()
     return mean(res)
 
+#Generate the gnuplot data file from the speedup results
 def gnuplot_data(results, source_filename, type_list, rate_list) :
     pluto_res=results["pluto"]
     res_filepath = "{0}/{1}.results".format(res_dir, source_filename)

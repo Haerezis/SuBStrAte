@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Script to use with speedup results per nb_stmt
+#Script to use with speedup results per nb_stmt, and not per minimal aggregating rate.
 
 res_files_directory=""
 graphes_directory=""
