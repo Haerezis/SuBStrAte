@@ -42,6 +42,46 @@ void substrate_vectorization_profile_free(
     vp->size = 0;
 }
 
+/**
+ * @brief Dump the internal data of a substrate_vectorization_profile, in a 
+ * somewhat organized manner, to a FILE* (can be stdout).
+ *
+ * @param[in] output_stream The output FILE* used to print the dump.
+ * @param[in] vp The vectorization profile that will be dumped.
+ * @param[in] level The number of tabulation printed for indentation.
+ * 
+ */
+void substrate_vectorization_profile_dump_indent(
+        FILE * output_stream,
+        struct substrate_vectorization_profile * vp,
+        unsigned int level)
+{
+    unsigned int i = 0;
+    unsigned int k = 0;
+    
+    for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream, "+-- Vectorization Profile\n");
+
+    level++;
+
+    if(vp->size == 0)
+    {
+        for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+        fprintf(output_stream, "+-- Empty vectorizable loop vector\n");
+    }
+    else
+    {
+        for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+
+        fprintf(output_stream, "+-- Vectorizable loop vector : [");
+        for(i=0 ; i<(vp->size-1) ; i++)
+        {
+            fprintf(output_stream, "%d, ", vp->vectorizable_loops[i]);
+        }
+        fprintf(output_stream, "%d]\n", vp->vectorizable_loops[vp->size-1]);
+    }
+}
+
 
 /**
  * @brief Dump the internal data of a substrate_vectorization_profile, in a 
@@ -54,21 +94,7 @@ void substrate_vectorization_profile_dump(
         FILE * output_stream,
         struct substrate_vectorization_profile * vp)
 {
-    unsigned int i = 0;
-
-    if(vp->size == 0)
-    {
-        fprintf(output_stream, "Empty vectorizable loop vector\n");
-    }
-    else
-    {
-        fprintf(output_stream, "Vectorizable loop vector : [");
-        for(i=0 ; i<(vp->size-1) ; i++)
-        {
-            fprintf(output_stream, "%d, ", vp->vectorizable_loops[i]);
-        }
-        fprintf(output_stream, "%d]\n", vp->vectorizable_loops[vp->size-1]);
-    }
+    substrate_vectorization_profile_dump_indent(output_stream, vp, 0);
 }
 
 

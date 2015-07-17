@@ -84,6 +84,24 @@ void substrate_equivalence_class_dump(
         struct substrate_equivalence_class * ec);
 
 
+void substrate_reuse_profile_idump(
+        FILE * output_stream,
+        struct substrate_reuse_profile * rp,
+        unsigned int level);
+void substrate_array_profile_idump(
+        FILE * output_stream,
+        struct substrate_array_profile * ap,
+        unsigned int level);
+void substrate_uniformly_generated_set_idump(
+        FILE * output_stream,
+        struct substrate_uniformly_generated_set * ugs,
+        unsigned int level);
+void substrate_equivalence_class_idump(
+        FILE * output_stream,
+        struct substrate_equivalence_class * ec,
+        unsigned int level);
+
+
 struct substrate_reuse_profile substrate_reuse_profile_fusion(
         struct substrate_reuse_profile rp1,
         struct substrate_reuse_profile rp2);

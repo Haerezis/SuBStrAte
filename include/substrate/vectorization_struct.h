@@ -17,6 +17,10 @@ void substrate_vectorization_profile_free(
 void substrate_vectorization_profile_dump(
         FILE * output_stream,
         struct substrate_vectorization_profile * vp);
+void substrate_vectorization_profile_idump(
+        FILE * output_stream,
+        struct substrate_vectorization_profile * vp,
+        unsigned int level);
 struct substrate_vectorization_profile substrate_vectorization_profile_fusion(
         struct substrate_vectorization_profile * vp1,
         struct substrate_vectorization_profile * vp2);

@@ -46,7 +46,7 @@ struct osl_scop * substrate_analyze(struct osl_scop * scop)
                 fprintf(stdout,"\n================= DUMP S%d ==================\n",i);
                 fprintf(stdout,"body : ");
                 osl_generic_print(stdout,statement->extension);
-                /*substrate_reuse_profile_dump(stdout,&statement_profiles[i].reuse);*/
+                substrate_reuse_profile_dump(stdout,&stmt_prof->reuse);
                 substrate_parallelism_profile_dump(stdout,&stmt_prof->parallelism);
                 substrate_vectorization_profile_dump(stdout,&stmt_prof->vectorization);
                 substrate_tiling_hyperplane_profile_dump(stdout,&stmt_prof->tiling_hyperplane);

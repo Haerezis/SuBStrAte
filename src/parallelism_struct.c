@@ -53,15 +53,38 @@ void substrate_parallelism_profile_dump(
         FILE * output_stream,
         struct substrate_parallelism_profile * pp)
 {
-    unsigned int i = 0;
+    substrate_parallelism_profile_idump(output_stream, pp, 0);
+}
 
+
+/**
+ * @brief Dump the internal data of a parallelism_profile, in a 
+ * somewhat organized manner, to a FILE* (can be stdout).
+ *
+ * @param[in] output_stream The output FILE* used to print the dump.
+ * @param[in] pp The parallelism profile that will be dumped.
+ * @param[in] level Number of tabulation used for indentation.
+ */
+void substrate_parallelism_profile_idump(
+        FILE * output_stream,
+        struct substrate_parallelism_profile * pp,
+        unsigned int level)
+{
+    unsigned int i = 0, k = 0;
+
+    for ( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream, "+-- Parallelism Profile\n");
+
+    level++;
+
+    for ( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
     if(pp->size == 0)
     {
-        fprintf(output_stream, "Empty parallelizable loop vector\n");
+        fprintf(output_stream, "+-- Empty parallelizable loop vector\n");
     }
     else
     {
-        fprintf(output_stream, "Parallelizable loop vector : [");
+        fprintf(output_stream, "+-- Parallelizable loop vector : [");
         for(i=0 ; i<(pp->size-1) ; i++)
         {
             fprintf(output_stream, "%d, ", pp->parallelizable_loops[i]);

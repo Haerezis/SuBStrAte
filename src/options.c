@@ -184,6 +184,10 @@ void substrate_options_init(
         {
             g_substrate_options.aggregation_strategy = GREEDY_GRAPH_AGGREGATION;
         }
+        else if(strcmp(argv[i],"--dump") == 0)
+        {
+            g_substrate_options.dump = true;
+        }
         //else if(strcmp(argv[i],"") == 0)
         else if(argv[i][0] == '-')
         {
@@ -223,8 +227,12 @@ void substrate_print_help(
     fprintf(output," [-h]");
     fprintf(output," [-o FILE]");
     fprintf(output," [--column-major]");
+    fprintf(output," [--dump]");
     fprintf(output," INPUT_FILE");
     fprintf(output,"\n\n");
+
+    fprintf(output,"--dump\n");
+    fprintf(output,"\tDump the internal structure of the different profiles\n");
 
     fprintf(output,"-ssa, --simple-successive-aggregation\n");
     fprintf(output,"\tUse the Simple Successive Aggregation algorithm during aggregation optimization\n");

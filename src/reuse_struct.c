@@ -186,12 +186,36 @@ void substrate_reuse_profile_dump(
         FILE * output_stream,
         struct substrate_reuse_profile * rp)
 {
-    unsigned int i = 0;
+    substrate_reuse_profile_idump(output_stream, rp, 0);
+}
 
-    fprintf(output_stream,"Number of array in the statement : %d\n", rp->size);
+
+/**
+ * @brief Print the content of a substrate_reuse_profile in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] rp The structure that will be printed.
+ * @param[in] level The number of tabulation used in the indent.
+ */
+void substrate_reuse_profile_idump(
+        FILE * output_stream,
+        struct substrate_reuse_profile * rp,
+        unsigned int level)
+{
+    unsigned int i = 0, k = 0;
+
+    for ( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"+-- Data Reuse Profile\n");
+    for ( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"|-- Number of array in the statement : %d\n", rp->size);
+
     for(i=0 ; i<rp->size ; i++)
     {
-        substrate_array_profile_dump(output_stream, &rp->array_profiles[i]);
+        substrate_array_profile_idump(
+            output_stream,
+            &rp->array_profiles[i],
+            level + 1);
     }
 }
 
@@ -207,15 +231,37 @@ void substrate_array_profile_dump(
         FILE * output_stream,
         struct substrate_array_profile * ap)
 {
-    unsigned int i = 0;
+    substrate_array_profile_idump(output_stream, ap, 0);
+}
 
-    fprintf(output_stream,"\tArray id : ");
+/**
+ * @brief Print the content of a substrate_array_profile in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] ap The structure that will be printed.
+ * @param[in] level The number of tabulation used in the indent.
+ */
+void substrate_array_profile_idump(
+        FILE * output_stream,
+        struct substrate_array_profile * ap,
+        unsigned int level)
+{
+    unsigned int i = 0, k = 0;
+
+    for ( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"+-- Array id : ");
     osl_int_print(output_stream,ap->array_id_precision, ap->array_id);
     fprintf(output_stream,"\n");
-    fprintf(output_stream,"\tNumber of different Uniformly Generated Sets : %d\n",ap->size);
+
+    for ( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"|-- Number of different Uniformly Generated Sets : %d\n",ap->size);
     for(i=0; i<ap->size ; i++)
     {
-        substrate_uniformly_generated_set_dump(output_stream,&ap->uniformly_gen_sets[i]);
+        substrate_uniformly_generated_set_idump(
+            output_stream,
+            &ap->uniformly_gen_sets[i],
+            level + 1);
     }
 }
 
@@ -231,15 +277,51 @@ void substrate_uniformly_generated_set_dump(
         FILE * output_stream,
         struct substrate_uniformly_generated_set * ugs)
 {
-    unsigned int i = 0;
+    substrate_uniformly_generated_set_idump(output_stream, ugs, 0);
+}
 
-    fprintf(output_stream,"\t\tH matrix :\n");
-    osl_relation_idump(output_stream,ugs->H_matrix,2);
-    fprintf(output_stream,"\t\tNumber of equivalence classes : %d\n",ugs->size);
-    fprintf(output_stream,"\t\tEquivalence classes\n");
+
+/**
+ * @brief Print the content of a substrate_uniformly_generated_set in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] ugs The structure that will be printed.
+ * @param[in] level The number of tabulation used in the indent.
+ */
+void substrate_uniformly_generated_set_idump(
+        FILE * output_stream,
+        struct substrate_uniformly_generated_set * ugs,
+        unsigned int level)
+{
+    unsigned int i = 0, k = 0;
+
+    for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"+-- H matrix :\n");
+
+    for (int l = 0 ; l<ugs->H_matrix->nb_rows ; l++)
+    {
+        for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+
+        for (int c = 0 ; c<(ugs->H_matrix->nb_input_dims-1) ; c++)
+        {
+            osl_int_print(
+                output_stream,
+                ugs->H_matrix->precision,
+                ugs->H_matrix->m[l][c + (1+ugs->H_matrix->nb_output_dims)]);
+            fprintf(output_stream, " ");
+        }
+
+        fprintf(output_stream, "\n");
+    }
+    
+    for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"|-- Number of equivalence classes : %d\n",ugs->size);
+    for( k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"|-- Equivalence classes\n");
     for(i=0; i<ugs->size ; i++)
     {
-        substrate_equivalence_class_dump(output_stream,&ugs->classes[i]);
+        substrate_equivalence_class_idump(output_stream,&ugs->classes[i], level + 1);
     }
 }
 
@@ -255,11 +337,30 @@ void substrate_equivalence_class_dump(
         FILE * output_stream,
         struct substrate_equivalence_class * ec)
 {
-    fprintf(output_stream,"\n");
-    fprintf(output_stream,"\t\t######################################################\n");
-    fprintf(output_stream,"\t\tNumber of references in the class : %d\n",ec->size);
-    fprintf(output_stream,"\n");
-    osl_relation_list_idump(output_stream,ec->array_references,3);
+    substrate_equivalence_class_idump(output_stream, ec, 0);
+}
+
+
+/**
+ * @brief Print the content of a substrate_equivalence_class in an output stream
+ * (file, stdout...).
+ *
+ * @param[in] output_stream The output stream where the content will be printed.
+ * @param[in] ec The structure that will be printed.
+ * @param[in] level The number of tabulation used in the indentation.
+ */
+void substrate_equivalence_class_idump(
+        FILE * output_stream,
+        struct substrate_equivalence_class * ec,
+        unsigned int level)
+{
+    unsigned int k = 0;
+
+    for ( k = 0; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"######################################################\n");
+    for ( k = 0; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream,"+-- Number of references in the class : %d\n",ec->size);
+    osl_relation_list_idump(output_stream,ec->array_references,level+1);
 }
 
 

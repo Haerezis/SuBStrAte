@@ -127,15 +127,39 @@ void substrate_tiling_hyperplane_profile_dump(
         FILE * output_stream,
         struct substrate_tiling_hyperplane_profile * thp)
 {
-    fprintf(output_stream, "Tiling Hyperplane vectors : ");
+    substrate_tiling_hyperplane_profile_idump(output_stream, thp, 0);
+}
+
+
+/**
+ * @brief Dump the internal data of a tiling hyperplane profile, in a 
+ * somewhat organized manner, to a FILE* (can be stdout).
+ *
+ * @param[in] output_stream The output FILE* used to print the dump.
+ * @param[in] thp The tiling hyperplane profile that will be dumped.
+ * @param[in] level The number of tabulation used in the indent
+ */
+void substrate_tiling_hyperplane_profile_idump(
+        FILE * output_stream,
+        struct substrate_tiling_hyperplane_profile * thp,
+        unsigned int level)
+{
+    for (unsigned int k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream, "+-- Tiling Hyperplane Profile\n");
+
+    level++;
+
+    for (unsigned int k = 0 ; k<level ; k++) fprintf(output_stream, "|\t");
+    fprintf(output_stream, "+-- Tiling Hyperplane vectors :\n");
     for(unsigned int i=0; i < thp->nb_rows; i++)
     {        
+        for (unsigned int k = 0 ; k<(level+1) ; k++) fprintf(output_stream, "|\t");
         fprintf(output_stream, "(");
         for(unsigned int j=0; j < thp->nb_columns; j++)
         {
             fprintf(output_stream, "%lld%s", thp->vectors[i][j], j<(thp->nb_columns-1)? ", ":"");
         }
-        fprintf(output_stream, ")%s", i<(thp->nb_rows-1)? ", ":"");
+        fprintf(output_stream, ")%s\n", i<(thp->nb_rows-1)? ",":"");
     }
     fprintf(output_stream, "\n");
 }
