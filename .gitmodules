@@ -1,9 +1,16 @@
 [submodule "osl"]
 	path = osl
 	url = https://github.com/periscop/openscop.git
+  ignore = dirty
 [submodule "candl"]
 	path = candl
 	url = https://github.com/periscop/candl.git
+  ignore = dirty
 [submodule "pluto"]
 	path = pluto
 	url = http://repo.or.cz/pluto.git
+  ignore = dirty
+[submodule "clay"]
+	path = clay
+	url = https://github.com/periscop/clay.git
+  ignore = dirty
