@@ -18,6 +18,20 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pedantic")
 include_directories(${substrate_SOURCE_DIR}/include/)
 
 
+# Build doxygen
+	find_package(Doxygen)
+	if(DOXYGEN_FOUND)
+		add_custom_target(
+			doxygen
+			${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile
+			WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/"
+			COMMENT "Generating API documentation with Doxygen" VERBATIM
+		)
+	else()
+		message (STATUS "Doxygen not found :( API documentation can not be built")
+	endif()
+
+
 ###add osl to the build
 #If the "osl" directory is not empty, we assume that it is filled with
 #the openscop project. If this is the case, substrate will build and use
