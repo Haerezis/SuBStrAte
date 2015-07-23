@@ -13,14 +13,14 @@ Substrate depends on the following libraries:
 - [Clay](https://github.com/periscop/clay)
 - [Pluto](http://repo.or.cz/w/pluto.git)
 
-Substrate can either use the the system wide installed version of these libraries, or local versions.
-For each library, if their directory (osl, candl, clay and pluto) is filled with the library project, then cmake will build it and use this local version. If it's not the case, it will use the system wide installed version.
+<!--Substrate can either use the the system wide installed version of these libraries, or local versions.-->
+<!--For each library, if their directory (osl, candl, clay and pluto) is filled with the library project, then cmake will build it and use this local version. If it's not the case, it will use the system wide installed version.-->
 
-Each dependencies was added to this git as git submodule, so if you want to use the local version of a library, all you have to do is go in the library directory, and type :
-```
-git submodule update --init
-./get_submodules.sh
-```
+<!--Each dependencies was added to this git as git submodule, so if you want to use the local version of a library, all you have to do is go in the library directory, and type :-->
+<!--```-->
+<!--git submodule update --init-->
+<!--./get_submodules.sh-->
+<!--```-->
 
 To compile substrate :
 ```
