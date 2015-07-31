@@ -98,7 +98,7 @@ def gnuplot_data(results, source_filename, type_list, rate_list) :
 
 
 def print_usage() :
-    print("Usage : {0} <pluto_path> <inscop_path> <sources_directory> \
+    print("Usage : {0} <pluto_path> <inscop_path> <sources_directory | source_filepath> \
 <original_scops_directory> <optimized_scops_directory> <results_directory>".format(argv[0]))
 
 
